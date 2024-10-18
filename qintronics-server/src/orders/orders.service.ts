@@ -125,9 +125,11 @@ export class OrdersService {
 
     if (!product || product.availability < quantity) {
       throw new NotFoundException(
-        'Product not found or does not have enough stock',
+        'Product unavailable or does not have sufficient stock',
       );
     }
+    product.availability -= quantity;
+    await this.productsRepository.save(product);
 
     const orderProduct = this.orderProductsRepository.create({
       order,
@@ -327,6 +329,11 @@ export class OrdersService {
 
     if (orderToBeCanceled.userId !== user?.userId && user?.role !== 'Admin') {
       throw new UnauthorizedException('Not authorized to cancel this order');
+    }
+
+    for (const orderProduct of orderToBeCanceled.orderProduct) {
+      orderProduct.product.availability += orderProduct.quantity;
+      await this.productsRepository.save(orderProduct.product);
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeCanceled, {
