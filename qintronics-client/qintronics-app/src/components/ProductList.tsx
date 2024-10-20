@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BaseProduct } from "../common/types/products-interface";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
 import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
 import Sidebar from "./Sidebar";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 
 interface ProductListProps {
   categoryName: string;
-  productList: BaseProduct[];
+  productList: ProductAndFavFlag[];
   title?: string;
   total: number;
   currentPage: number;
@@ -17,7 +18,7 @@ interface ProductListProps {
   onPrevPage: () => void;
   hasNext: boolean;
   hasPrev: boolean;
-  onPageSizeChange: (size: number) => void; // New handler for changing page size
+  onPageSizeChange: (size: number) => void;
 }
 
 const ProductList = ({
@@ -31,15 +32,37 @@ const ProductList = ({
   onPrevPage,
   hasNext,
   hasPrev,
-  onPageSizeChange, // Accept page size change handler
+  onPageSizeChange,
 }: ProductListProps) => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [products, setProducts] = useState(productList); // Local state for products
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // Adjust as needed
 
   useEffect(() => {
+    setProducts(productList);
     setIsLoaded(true);
-    console.log(category);
   }, [productList]);
+
+  const handleToggleFavorite = (productId: string) => {
+    if (userId) {
+      axiosInstance
+        .post("/products/favorite", { productId })
+        .then(() => {
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product.id === productId
+                ? { ...product, isFavorite: !product.isFavorite }
+                : product
+            )
+          );
+          console.log("Favorite toggled");
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.log("User not logged in"); // Optional: Show popup or redirect to login
+    }
+  };
 
   const handleProductClick = (id: string) => {
     navigate(`/products/${id}`);
@@ -47,7 +70,7 @@ const ProductList = ({
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = parseInt(e.target.value, 10);
-    onPageSizeChange(newSize); // Trigger the page size change
+    onPageSizeChange(newSize);
   };
 
   return (
@@ -78,18 +101,13 @@ const ProductList = ({
               isLoaded ? "flip-in" : ""
             }`}
           >
-            {productList.length > 0 ? (
-              productList.map((product, index) => {
+            {products.length > 0 ? (
+              products.map((product, index) => {
                 const price = Number(product.price);
                 const discountedPrice =
                   product.discount > 0
                     ? calculateDiscountedPrice(price, product.discount)
                     : price;
-
-                const validPrice = !isNaN(price) ? price.toFixed(2) : "0.00";
-                const validDiscountedPrice = !isNaN(discountedPrice)
-                  ? discountedPrice.toFixed(2)
-                  : "0.00";
 
                 return (
                   <div
@@ -100,68 +118,61 @@ const ProductList = ({
                       animationDelay: `${index * 0.1}s`,
                     }}
                   >
-                    {/* Discount badge on the left */}
                     {product.discount > 0 && (
                       <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full">
                         {product.discount}% OFF
                       </div>
                     )}
-
-                    {/* Heart icon and ArrowRightLeft icon - Hidden until hover */}
                     <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <Heart
                         size={24}
-                        className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
+                        className={`${
+                          product.isFavorite
+                            ? "text-white bg-[#1A3F6B]"
+                            : "text-[#1A3F6B] bg-white"
+                        } border border-[#1A3F6B] rounded-full p-1`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card click
+                          handleToggleFavorite(product.id);
+                        }}
                       />
                       <ArrowRightLeft
                         size={24}
                         className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
                       />
                     </div>
-
-                    {/* Product image centered with lazy loading */}
                     <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                       <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
                         <img
                           src={product.img}
                           alt={`Image of ${product.name}`}
                           className="max-h-full max-w-full object-contain rounded-lg shadow-lg"
-                          aria-label={`Image of ${product.name}`}
                           loading="lazy"
                         />
                       </div>
-                      <h4 className="text-lg sm:text-xl font-semibold mt-2 min-h-[3rem] flex items-center justify-center">
+                      <h4 className="text-lg sm:text-xl font-semibold mt-2">
                         {product.name}
                       </h4>
                       <p className="text-md mt-1">Brand: {product.brand}</p>
-
-                      {/* Pricing Section */}
                       <div className="flex flex-col items-center">
                         <p
                           className={`text-lg sm:text-xl font-bold mt-1 ${
                             product.discount > 0 ? "text-[#1BD8C4]" : ""
                           }`}
                         >
-                          ${validDiscountedPrice}
+                          ${discountedPrice.toFixed(2)}
                         </p>
                         {product.discount > 0 && (
                           <p className="text-sm mt-1 line-through text-gray-500">
-                            ${validPrice}
+                            ${price.toFixed(2)}
                           </p>
                         )}
                       </div>
-
                       <p className="text-md mt-1">
                         Availability: {product.availability} units
                       </p>
-
-                      {/* Add to Cart Button */}
-                      <button
-                        className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
-                        aria-label="Add to Cart"
-                      >
-                        <FaShoppingCart className="mr-2" />
-                        Add to Cart
+                      <button className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg uppercase">
+                        <FaShoppingCart className="mr-2" /> Add to Cart
                       </button>
                     </div>
                   </div>
@@ -171,28 +182,14 @@ const ProductList = ({
               <p className="text-center text-lg">No products available.</p>
             )}
           </div>
-
-          {/* Pagination Controls */}
           <div className="flex justify-center mt-6 space-x-4">
-            <button
-              onClick={onPrevPage}
-              disabled={!hasPrev}
-              className={`px-4 py-2 bg-gray-300 rounded-lg ${
-                hasPrev ? "hover:bg-gray-400" : "cursor-not-allowed"
-              }`}
-            >
+            <button onClick={onPrevPage} disabled={!hasPrev}>
               Previous
             </button>
             <span>
               Page {currentPage} of {Math.ceil(total / pageSize)}
             </span>
-            <button
-              onClick={onNextPage}
-              disabled={!hasNext}
-              className={`px-4 py-2 bg-gray-300 rounded-lg ${
-                hasNext ? "hover:bg-gray-400" : "cursor-not-allowed"
-              }`}
-            >
+            <button onClick={onNextPage} disabled={!hasNext}>
               Next
             </button>
           </div>

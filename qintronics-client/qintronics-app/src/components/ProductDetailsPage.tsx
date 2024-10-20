@@ -1,10 +1,10 @@
+import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
+import { useEffect, useRef, useState } from "react";
+import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import { BaseProduct } from "../common/types/products-interface";
-import { useState, useRef, useEffect } from "react";
-import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
-import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
-import Sidebar from "./Sidebar";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Sidebar from "./Sidebar";
 
 const formatKey = (key: string) => {
   return key
@@ -16,17 +16,42 @@ const formatKey = (key: string) => {
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DONT FORGET TO UNHARDCOMMENT THIS
 
-  useEffect(() => {
+  const handleToggleFavorite = () => {
+    if (userId) {
+      axiosInstance
+        .post("/products/favorite", {
+          productId: product?.id,
+        })
+        .then(() => {
+          fetchProduct();
+          console.log("Favorite toggled");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    return; // Could possibly show an info popup or login redirect
+  };
+
+  const fetchProduct = () => {
     axiosInstance
-      .get(`/products/${id}`)
+      .post(`/products/id`, {
+        productId: id,
+        userId,
+      })
       .then((res) => {
         setProduct(res.data);
       })
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  useEffect(() => {
+    fetchProduct();
   }, []);
 
   const [quantity, setQuantity] = useState(1);
@@ -164,9 +189,23 @@ const ProductDetailsPage = () => {
 
               {/* Favorites (Wishlist) and Compare Buttons */}
               <div className="flex space-x-4 mb-4">
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <Heart size={20} className="mr-2" /> Wishlist
-                </button>
+                {product.isFavorite ? (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className="flex items-center justify-center w-10 h-10 text-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 bg-[#1A3F6B] rounded-full">
+                      <Heart size={20} className="text-white" />
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300"
+                  >
+                    <Heart size={20} className="mr-2" /> Wishlist
+                  </button>
+                )}
                 <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
                   <ArrowRightLeft size={20} className="mr-2" /> Compare
                 </button>
