@@ -28,7 +28,10 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PageDto } from 'src/common/pagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { OrderCreateDto } from './dtos/order-create.dto';
-import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
+import {
+  QueryOrderReturnDto,
+  SwaggerOrderReturnDto,
+} from './dtos/order-query-return.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
 import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
@@ -64,8 +67,8 @@ export class OrdersController {
   @Roles(Role.Admin, Role.DeliveryPerson, Role.Customer)
   @Post('/get')
   @ApiOperation({ summary: 'Retrieve all orders' })
-  @ApiCreatedResponse({
-    type: [QueryOrderReturnDto],
+  @ApiOkResponse({
+    type: SwaggerOrderReturnDto,
     description: 'Orders successfully retrieved',
   })
   @ApiBody({
