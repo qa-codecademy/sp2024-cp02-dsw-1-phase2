@@ -17,7 +17,7 @@ const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
   const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
-  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
 
   const handleToggleFavorite = () => {
     if (userId) {
@@ -192,22 +192,36 @@ const ProductDetailsPage = () => {
                 {product.isFavorite ? (
                   <button
                     onClick={handleToggleFavorite}
-                    className="flex items-center justify-center w-10 h-10 text-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] transition-all duration-300"
+                    className={`flex items-center justify-center w-12 h-12 text-[#1A3F6B] rounded-full border border-[#1A3F6B] transition-all duration-300 ${
+                      product.isFavorite
+                        ? "bg-white"
+                        : "hover:bg-[#1A3F6B] hover:text-white"
+                    }`}
+                    title="Remove from Favorites" // Tooltip for removing favorite
                   >
-                    <div className="flex items-center justify-center w-8 h-8 bg-[#1A3F6B] rounded-full">
-                      <Heart size={20} className="text-white" />
-                    </div>
+                    <Heart
+                      size={28} // Same size in both states
+                      className={`transition-all duration-300 ${
+                        product.isFavorite
+                          ? "fill-[#1A3F6B] stroke-[#1A3F6B]"
+                          : "fill-none stroke-white"
+                      }`}
+                    />
                   </button>
                 ) : (
                   <button
                     onClick={handleToggleFavorite}
-                    className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300"
+                    className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                    title="Add to Favorites" // Tooltip for adding favorite
                   >
-                    <Heart size={20} className="mr-2" /> Wishlist
+                    <Heart size={24} className="transition-all" />
                   </button>
                 )}
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <ArrowRightLeft size={20} className="mr-2" /> Compare
+                <button
+                  className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                  title="Compare Products" // Tooltip for comparing products
+                >
+                  <ArrowRightLeft size={24} className="transition-all" />
                 </button>
               </div>
 

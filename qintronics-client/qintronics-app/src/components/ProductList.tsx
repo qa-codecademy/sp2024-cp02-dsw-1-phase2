@@ -124,22 +124,33 @@ const ProductList = ({
                       </div>
                     )}
                     <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Heart
-                        size={24}
-                        className={`${
+                      <div
+                        title={
                           product.isFavorite
-                            ? "text-white bg-[#1A3F6B]"
-                            : "text-[#1A3F6B] bg-white"
-                        } border border-[#1A3F6B] rounded-full p-1`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click
-                          handleToggleFavorite(product.id);
-                        }}
-                      />
-                      <ArrowRightLeft
-                        size={24}
-                        className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
-                      />
+                            ? "Remove from Favorites"
+                            : "Add to Favorites"
+                        }
+                      >
+                        <Heart
+                          size={24}
+                          className={`${
+                            product.isFavorite
+                              ? "fill-[#1A3F6B] stroke-[#1A3F6B] bg-white border-2" // Filled heart with bold border
+                              : "fill-none stroke-[#1A3F6B] bg-white border" // Outline heart with normal border
+                          } border-[#1A3F6B] rounded-full p-1 cursor-pointer`}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent card click
+                            handleToggleFavorite(product.id);
+                          }}
+                        />
+                      </div>
+
+                      <div title="Compare Products">
+                        <ArrowRightLeft
+                          size={24}
+                          className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
+                        />
+                      </div>
                     </div>
                     <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                       <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">

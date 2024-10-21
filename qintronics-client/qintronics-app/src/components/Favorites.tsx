@@ -18,7 +18,6 @@ const Favorites = () => {
       .get(`/products/user/favorite`)
       .then((res) => {
         setFavoriteProducts(res.data);
-        console.log(res.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -47,9 +46,9 @@ const Favorites = () => {
             <div>Loading...</div> // You can replace this with a loader component if available
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full justify-center items-center">
-                {favoriteProducts && favoriteProducts.length > 0 ? (
-                  favoriteProducts.map((product, index) => {
+              {favoriteProducts && favoriteProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full justify-center items-center">
+                  {favoriteProducts.map((product, index) => {
                     const price = Number(product.price);
                     const discountedPrice =
                       product.discount > 0
@@ -138,13 +137,18 @@ const Favorites = () => {
                         </div>
                       </div>
                     );
-                  })
-                ) : (
-                  <p className="text-center text-lg">
+                  })}
+                </div>
+              ) : (
+                <div className="w-full mt-2 flex justify-center">
+                  <p className="text-center text-lg font-semibold text-gray-600 bg-gray-100 py-4 px-6 rounded-lg shadow-md">
+                    <span role="img" aria-label="heart-broken" className="mr-2">
+                      💔
+                    </span>
                     No favorite products available.
                   </p>
-                )}
-              </div>
+                </div>
+              )}
             </>
           )}
         </div>
