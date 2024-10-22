@@ -1,9 +1,9 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { Role } from 'src/common/enums/roles.enum';
-import { NoSensitiveUserInfoResponse } from 'src/user-info/dtos/no-sensitive-user-info-response.dto';
+import { NoSensitiveUserInfoResponseDto } from 'src/user-info/dtos/no-sensitive-user-info-response.dto';
 
-export class NoSensitiveUserResponse {
+export class NoSensitiveUserResponseDto {
   @Expose()
   @ApiResponseProperty({
     type: String,
@@ -26,9 +26,9 @@ export class NoSensitiveUserResponse {
   role: Role;
 
   @Expose()
-  @Type(() => NoSensitiveUserInfoResponse)
+  @Type(() => NoSensitiveUserInfoResponseDto)
   @ApiResponseProperty({
-    type: NoSensitiveUserInfoResponse,
+    type: NoSensitiveUserInfoResponseDto,
   })
-  userInfo: NoSensitiveUserInfoResponse;
+  userInfo: NoSensitiveUserInfoResponseDto;
 }

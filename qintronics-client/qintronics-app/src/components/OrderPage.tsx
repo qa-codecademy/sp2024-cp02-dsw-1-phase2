@@ -70,11 +70,20 @@ const CheckoutForm: React.FC = () => {
           deliveryDay: "",
         });
       })
+<<<<<<< HEAD
       .catch((err) => {
         console.error(err);
       });
   }, []);
 
+=======
+      .catch(() => {
+        // do something if you get error
+      });
+  }, []);
+
+  // Handle input field changes
+>>>>>>> a07782bf4e3a1faa0e28d99561d2a8d31eae0cdd
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {

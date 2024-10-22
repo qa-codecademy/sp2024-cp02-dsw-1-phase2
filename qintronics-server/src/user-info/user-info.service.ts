@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInfoDto } from './dtos/create-user-info.dto';
-import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
+import { NoSensitiveUserInfoResponseDto } from './dtos/no-sensitive-user-info-response.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfo } from './user-info.entity';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
@@ -17,7 +17,7 @@ export class UserInfoService {
 
   async createUserInfo(
     body: CreateUserInfoDto,
-  ): Promise<NoSensitiveUserInfoResponse> {
+  ): Promise<NoSensitiveUserInfoResponseDto> {
     const createdInfo = this.userInfoRepository.create(body);
 
     return this.userInfoRepository.save(createdInfo);

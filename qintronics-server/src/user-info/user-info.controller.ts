@@ -16,7 +16,7 @@ import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { DeleteUserInfoDto } from './dtos/delete-user-info.dto';
-import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
+import { NoSensitiveUserInfoResponseDto } from './dtos/no-sensitive-user-info-response.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfoService } from './user-info.service';
 
@@ -30,7 +30,7 @@ export class UserInfoController {
   @Patch('update') // When accessing /me page, all user info will be sent, including the user info ID, so the front end can send it as a route param
   @ApiBody({ type: UpdateUserInfoDto })
   @ApiOkResponse({
-    type: NoSensitiveUserInfoResponse,
+    type: NoSensitiveUserInfoResponseDto,
     description: 'User info has been updated.',
   })
   @ApiBadRequestResponse({
@@ -46,13 +46,13 @@ export class UserInfoController {
   async updateUserInfo(
     @Body() body: UpdateUserInfoDto,
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<NoSensitiveUserInfoResponse> {
+  ): Promise<NoSensitiveUserInfoResponseDto> {
     const userInfo = await this.userInfoService.changeUserInfo(
       currentUser,
       body,
     );
 
-    return plainToInstance(NoSensitiveUserInfoResponse, userInfo, {
+    return plainToInstance(NoSensitiveUserInfoResponseDto, userInfo, {
       excludeExtraneousValues: true,
     });
   }
@@ -60,7 +60,7 @@ export class UserInfoController {
   @Patch('delete')
   @ApiBody({ type: DeleteUserInfoDto })
   @ApiOkResponse({
-    type: NoSensitiveUserInfoResponse,
+    type: NoSensitiveUserInfoResponseDto,
     description: 'User info has been deleted.',
   })
   @ApiBadRequestResponse({
@@ -76,13 +76,13 @@ export class UserInfoController {
   async deleteSomeUserInfo(
     @Body() body: DeleteUserInfoDto,
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<NoSensitiveUserInfoResponse> {
+  ): Promise<NoSensitiveUserInfoResponseDto> {
     const userInfo = await this.userInfoService.changeUserInfo(
       currentUser,
       body,
     );
 
-    return plainToInstance(NoSensitiveUserInfoResponse, userInfo, {
+    return plainToInstance(NoSensitiveUserInfoResponseDto, userInfo, {
       excludeExtraneousValues: true,
     });
   }

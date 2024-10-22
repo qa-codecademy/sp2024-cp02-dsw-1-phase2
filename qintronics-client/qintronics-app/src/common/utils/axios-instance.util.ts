@@ -11,6 +11,7 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+<<<<<<< HEAD
   // authorization: false, // Default is false; for routes that require auth, authorization should be set to true when making the API call
 });
 
@@ -76,4 +77,9 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+=======
+  withCredentials: true,
+});
+
+>>>>>>> a07782bf4e3a1faa0e28d99561d2a8d31eae0cdd
 export default axiosInstance;

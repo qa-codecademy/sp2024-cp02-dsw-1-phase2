@@ -43,36 +43,13 @@ const SimpleLogin: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           password: formData.password,
         });
         console.log("Login response:", response.data);
-
-        if (response.data.tokens) {
-          setSuccessMessage("Logged in successfully!");
-          localStorage.setItem("accessToken", response.data.tokens.accessToken);
-          localStorage.setItem(
-            "refreshToken",
-            response.data.tokens.refreshToken
-          );
-
-          // Update the user context with available information
-          const userName = response.data.email.split("@")[0]; // Use email as fallback for name
-          setUser({
-            name: userName,
-            email: response.data.email,
-          });
-
-          // Store user data in localStorage
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              name: userName,
-              email: response.data.email,
-            })
-          );
-
-          onClose();
-          navigate("/");
-        } else {
-          throw new Error("Login successful, but no tokens received");
-        }
+        // Update the user context with available information
+        setUser({
+          name: response.data.firstName,
+          email: response.data.email,
+        });
+        onClose();
+        navigate("/");
       } else {
         response = await axiosInstance.post("/auth/register", formData);
         console.log("Registration response:", response.data);
