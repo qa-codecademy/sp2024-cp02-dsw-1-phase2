@@ -1,8 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import {
-  FaCcAmazonPay,
   FaCheck,
-  FaCheckCircle,
   FaCity,
   FaCreditCard,
   FaEnvelope,
@@ -40,16 +38,6 @@ const CheckoutForm: React.FC = () => {
   const [checkoutValid, setCheckoutValid] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Get today's date in YYYY-MM-DD format for the min attribute
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
   useEffect(() => {
     axiosInstance
       .get("/users/me")
@@ -70,20 +58,12 @@ const CheckoutForm: React.FC = () => {
           deliveryDay: "",
         });
       })
-<<<<<<< HEAD
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
-=======
       .catch(() => {
         // do something if you get error
       });
   }, []);
 
   // Handle input field changes
->>>>>>> a07782bf4e3a1faa0e28d99561d2a8d31eae0cdd
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -96,6 +76,7 @@ const CheckoutForm: React.FC = () => {
     updateProgress();
   };
 
+  // Handle changes to the payment method selection
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method);
     setIsSubmitted(false);
@@ -123,6 +104,7 @@ const CheckoutForm: React.FC = () => {
     }
   };
 
+  // Validate individual fields
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
     switch (name) {
@@ -154,6 +136,7 @@ const CheckoutForm: React.FC = () => {
     setErrors(newErrors);
   };
 
+  // Update progress based on filled fields (counting 8 input fields)
   const updateProgress = () => {
     const fieldsToCheck = [
       "firstName",
@@ -166,7 +149,7 @@ const CheckoutForm: React.FC = () => {
       "deliveryDay",
     ];
 
-    const totalFields = fieldsToCheck.length;
+    const totalFields = fieldsToCheck.length; // 8 fields
     const filledFields = fieldsToCheck.filter(
       (field) => formData[field as keyof FormData].trim() !== ""
     ).length;
@@ -175,11 +158,12 @@ const CheckoutForm: React.FC = () => {
     setProgress(Math.round(progressPercentage));
   };
 
+  // Validate the entire checkout form
   const validateCheckoutForm = () => {
     const newErrors: FormErrors = {};
     Object.keys(formData).forEach((key) => {
       const value = formData[key as keyof FormData];
-      if (typeof value === "string" && !value.trim()) {
+      if (!value.trim()) {
         newErrors[key as keyof FormErrors] = "This field is required";
       }
     });
@@ -190,6 +174,7 @@ const CheckoutForm: React.FC = () => {
     return isValid;
   };
 
+  // Handle confirm button click
   const handleConfirmOrder = () => {
     Swal.fire({
       icon: "success",
@@ -204,10 +189,9 @@ const CheckoutForm: React.FC = () => {
     });
   };
 
+  // Render validation icons
   const renderValidationIcon = (field: keyof FormData) => {
-    const fieldValue = formData[field];
-
-    if (typeof fieldValue === "string" && fieldValue.trim() === "") return null;
+    if (!formData[field].trim()) return null;
 
     return errors[field] ? (
       <FaTimes className="absolute right-3 text-red-500" />
@@ -217,16 +201,13 @@ const CheckoutForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white py-12 flex flex-col justify-center sm:py-20">
+    <div className="min-h-screen bg-white py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-3xl sm:mx-auto w-full">
         <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-xl"></div>
-        <div className="relative px-10 py-12 bg-white shadow-lg sm:rounded-xl sm:p-20">
+        <div className="relative px-10 py-10 bg-white shadow-lg sm:rounded-xl sm:p-20">
           <div className="max-w-2xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-semibold text-primary text-center mb-12 flex justify-center items-center">
-                Checkout Details
-                <FaCheckCircle className="ml-2 text-blue-500" />
-              </h1>
+            <div className="mb-4">
+              <h1 className="text-3xl font-semibold text-primary">Checkout</h1>
               <div className="mt-2 h-2 bg-gray-200 rounded-full">
                 <div
                   className="h-full bg-secondary rounded-full transition-all duration-500 ease-out"
@@ -236,7 +217,7 @@ const CheckoutForm: React.FC = () => {
             </div>
 
             <form>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* First Name */}
                 <div className="flex flex-col">
                   <div className="flex items-center space-x-2">
@@ -428,7 +409,6 @@ const CheckoutForm: React.FC = () => {
                       name="deliveryDay"
                       value={formData.deliveryDay}
                       onChange={handleChange}
-                      min={getTodayDate()} // Disable dates before today
                       className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
                       disabled={isSubmitted}
                     />
@@ -443,17 +423,16 @@ const CheckoutForm: React.FC = () => {
               </div>
 
               {/* Payment Method Section */}
-              <div className="mt-12">
-                <h2 className="text-3xl font-semibold text-primary text-center flex justify-center items-center mb-12">
+              <div className="mt-6">
+                <h2 className="text-2xl font-semibold text-primary mb-4">
                   Choose Payment Method
-                  <FaCcAmazonPay className="ml-2 text-blue-500" />
                 </h2>
 
-                <div className="flex flex-row justify-between space-x-20">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   {/* Pay with Cash */}
                   <button
                     type="button"
-                    className={`flex flex-col items-center justify-center p-6 border rounded-xl shadow-lg transition-transform duration-300 transform hover:scale-105 w-64 ${
+                    className={`flex flex-col items-center justify-center p-6 border rounded-xl shadow-lg transition-transform duration-300 transform hover:scale-105 w-full sm:w-1/2 ${
                       paymentMethod === "cod"
                         ? "bg-indigo-100 border-indigo-500"
                         : "bg-white border-gray-200"
@@ -472,7 +451,7 @@ const CheckoutForm: React.FC = () => {
                   {/* Pay with Card */}
                   <button
                     type="button"
-                    className={`flex flex-col items-center justify-center p-6 border rounded-xl shadow-lg transition-transform duration-300 transform hover:scale-105 w-64 ${
+                    className={`flex flex-col items-center justify-center p-6 border rounded-xl shadow-lg transition-transform duration-300 transform hover:scale-105 w-full sm:w-1/2 ${
                       paymentMethod === "card"
                         ? "bg-indigo-100 border-indigo-500"
                         : "bg-white border-gray-200"
@@ -482,25 +461,25 @@ const CheckoutForm: React.FC = () => {
                     <FaCreditCard className="text-blue-500 text-3xl mb-2" />
                     <span className="font-semibold text-lg">Pay with Card</span>
                     <span className="text-gray-500 text-sm">
-                    Enter your card details to pay online or choose your card.
+                      Enter your card details to pay online.
                     </span>
                   </button>
                 </div>
-
-                {/* Confirm Button */}
-                {checkoutValid && paymentMethod === "cod" && (
-                  <div className="mt-8 flex justify-center">
-                    <button
-                      type="button"
-                      className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
-                      onClick={handleConfirmOrder}
-                    >
-                      <GiConfirmed className="mr-2" size={18} />
-                      Confirm Order
-                    </button>
-                  </div>
-                )}
               </div>
+
+              {/* Confirm Button */}
+              {checkoutValid && paymentMethod === "cod" && (
+                <div className="mt-6 flex justify-center">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+                    onClick={handleConfirmOrder}
+                  >
+                    <GiConfirmed className="mr-2" size={18} />
+                    Confirm Order
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>
