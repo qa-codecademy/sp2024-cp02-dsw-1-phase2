@@ -33,7 +33,7 @@ import {
   SwaggerOrderReturnDto,
 } from './dtos/order-query-return.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
-import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
+import { MonthlyTotalsDto } from './dtos/order-totals-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { GetAllOrdersDto } from './dtos/orders-get-all.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
@@ -50,7 +50,7 @@ export class OrdersController {
   @Get('/monthly-totals')
   @ApiOperation({ summary: 'Get monthly totals for admin dashboard' })
   @ApiOkResponse({
-    type: [MonthlyTotalHistoryDto],
+    type: [MonthlyTotalsDto],
     description: 'Monthly totals successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -59,7 +59,7 @@ export class OrdersController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  async getMonthlyHistory(): Promise<MonthlyTotalHistoryDto[]> {
+  async getMonthlyHistory(): Promise<MonthlyTotalsDto> {
     return await this.ordersService.getMonthlyTotalsHistory();
   }
 

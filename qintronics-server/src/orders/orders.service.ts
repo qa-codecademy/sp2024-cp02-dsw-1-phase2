@@ -28,7 +28,7 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
-import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
+import { MonthlyTotalsDto } from './dtos/order-totals-return.dto';
 
 @Injectable()
 export class OrdersService {
@@ -93,20 +93,30 @@ export class OrdersService {
   }
 
   // * GET TOTALS FOR ADMIN DASHBOARD
-  async getMonthlyTotalsHistory(): Promise<MonthlyTotalHistoryDto[]> {
-    return await this.ordersRepository
+  async getMonthlyTotalsHistory(): Promise<MonthlyTotalsDto> {
+    const orderTotals = await this.ordersRepository
       .createQueryBuilder('order')
       .select("TO_CHAR(order.created_at, 'YYYY-MM')", 'month')
-      .addSelect('SUM(order.total)', 'total_sum')
-      .addSelect(
-        `(SELECT COUNT(*) FROM users WHERE role = 'customer')`,
-        'total_customers',
-      )
+      .addSelect('SUM(order.total)', 'totalSum')
+      .addSelect('COUNT(order.id)', 'totalOrdersNumber')
+      .addSelect('AVG(order.total)', 'averageOrderValue')
       .where("order.created_at >= DATE_TRUNC('year', now())")
       .andWhere('order.isCanceled = false')
       .groupBy("TO_CHAR(order.created_at, 'YYYY-MM')")
       .orderBy('month', 'ASC')
       .getRawMany();
+
+    const userTotals = await this.usersRepository
+      .createQueryBuilder('user')
+      .select("TO_CHAR(user.created_at, 'YYYY-MM')", 'month')
+      .addSelect('COUNT(*)', 'newCustomers')
+      .where('user.role = :role', { role: 'Customer' })
+      .andWhere("user.created_at >= DATE_TRUNC('year', now())")
+      .groupBy("TO_CHAR(user.created_at, 'YYYY-MM')")
+      .orderBy('month', 'ASC')
+      .getRawMany();
+
+    return { orderTotals, userTotals };
   }
 
   // * ADD PRODUCT TO ORDER

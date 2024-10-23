@@ -167,7 +167,7 @@ export class ProductsService {
     await this.productRepository.save(product);
   }
 
-  async getFavoriteProducts(userId: string): Promise<Product[]> {
+  async getFavoriteProducts(userId: string): Promise<FavoritedProducts[]> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['favoriteProducts'],
@@ -175,7 +175,10 @@ export class ProductsService {
 
     if (!user) throw new NotFoundException('User not found!');
 
-    return user.favoriteProducts;
+    return user.favoriteProducts.map((product) => ({
+      ...product,
+      isFavorite: true,
+    }));
   }
 
   async deleteProduct(id: string): Promise<void> {
