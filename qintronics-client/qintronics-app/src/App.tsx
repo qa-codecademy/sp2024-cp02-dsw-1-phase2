@@ -18,7 +18,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
 import SalesPage from "./components/SalesPage";
 import AuthContextProvider from "./context/auth.context";
-import { CardPaymentProvider } from "./context/card-payment.context";
+import CardPaymentProvider from "./context/card-payment.context";
 import AboutUs from "./components/AboutUs";
 import FAQ from "./components/FAQ";
 import Shipping from "./components/Shipping";

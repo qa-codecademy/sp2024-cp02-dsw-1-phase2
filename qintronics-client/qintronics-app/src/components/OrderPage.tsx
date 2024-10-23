@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import {
   FaCheck,
   FaCity,
@@ -15,11 +15,19 @@ import { GiConfirmed } from "react-icons/gi";
 import { TbTruckDelivery } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { CartItem } from "../common/interfaces/cart.item.interface";
 import { FormData } from "../common/interfaces/form.data.interface";
 import { FormErrors } from "../common/interfaces/form.error.interface";
+import { ProductsAndQuantity } from "../common/interfaces/order.details.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { CardPaymentContext } from "../context/card-payment.context";
 
 const CheckoutForm: React.FC = () => {
+  const cartItems = () => {
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  };
+
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -36,6 +44,7 @@ const CheckoutForm: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [checkoutValid, setCheckoutValid] = useState<boolean>(false);
+  const { orderDetails, setOrderDetails } = useContext(CardPaymentContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,9 +86,24 @@ const CheckoutForm: React.FC = () => {
   };
 
   // Handle changes to the payment method selection
-  const handlePaymentMethodChange = (method: string) => {
+  const handlePaymentMethodChange = async (method: string) => {
     setPaymentMethod(method);
     setIsSubmitted(false);
+
+    const mappedCartItems: ProductsAndQuantity[] = cartItems().map(
+      (item: CartItem) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })
+    );
+
+    setOrderDetails({
+      address: formData.address,
+      city: formData.city,
+      zip: Number(formData.zipCode),
+      prefDeliveryDate: formData.deliveryDay,
+      productsAndQuantity: [...mappedCartItems],
+    });
 
     if (method === "cod") {
       if (validateCheckoutForm()) {
@@ -93,6 +117,8 @@ const CheckoutForm: React.FC = () => {
       }
     } else if (method === "card") {
       if (validateCheckoutForm()) {
+        if (orderDetails) setOrderDetails({ ...orderDetails, isPaid: true });
+
         navigate("/payment");
       } else {
         Swal.fire({
@@ -176,17 +202,26 @@ const CheckoutForm: React.FC = () => {
 
   // Handle confirm button click
   const handleConfirmOrder = () => {
-    Swal.fire({
-      icon: "success",
-      title: "Order Confirmed!",
-      text: "Your order has been successfully placed. Thank you!",
-      timer: 3000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-    }).then(() => {
-      setIsSubmitted(true);
-      navigate("/");
-    });
+    if (orderDetails) {
+      axiosInstance
+        .post("/orders", { ...orderDetails, isPaid: false })
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Order Confirmed!",
+            text: "Your order has been successfully placed. Thank you!",
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          }).then(() => {
+            setIsSubmitted(true);
+            navigate("/");
+          });
+
+          localStorage.removeItem("cart");
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   // Render validation icons

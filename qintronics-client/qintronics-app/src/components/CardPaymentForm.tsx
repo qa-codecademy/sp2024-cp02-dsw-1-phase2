@@ -1,20 +1,27 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import {
-  FaExclamationCircle,
-  FaUser,
-  FaCreditCard,
-  FaLock,
-  FaCalendarAlt,
-} from "react-icons/fa";
-import { BsCalendar2MonthFill, BsCreditCard2FrontFill } from "react-icons/bs";
-import { TbCreditCardPay } from "react-icons/tb";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+  useContext,
+} from "react";
 import { AiOutlinePlus } from "react-icons/ai";
+import { BsCalendar2MonthFill, BsCreditCard2FrontFill } from "react-icons/bs";
+import {
+  FaCalendarAlt,
+  FaCreditCard,
+  FaExclamationCircle,
+  FaLock,
+  FaUser,
+} from "react-icons/fa";
 import { GrCheckboxSelected } from "react-icons/gr";
-import Swal from "sweetalert2";
+import { TbCreditCardPay } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import "../styles/card.css";
-import axiosInstance from "../common/utils/axios-instance.util";
+import Swal from "sweetalert2";
 import { SavedCard } from "../common/interfaces/saved.card.interface";
+import axiosInstance from "../common/utils/axios-instance.util";
+import "../styles/card.css";
+import { CardPaymentContext } from "../context/card-payment.context";
 
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
@@ -29,6 +36,7 @@ const CardPaymentForm: React.FC = () => {
     cvv: "",
   });
   const [savedCard, setSavedCard] = useState<SavedCard>();
+  const { orderDetails } = useContext(CardPaymentContext);
 
   useEffect(() => {
     axiosInstance
@@ -144,16 +152,25 @@ const CardPaymentForm: React.FC = () => {
       return;
     }
 
-    Swal.fire({
-      icon: "success",
-      title: "Payment Successful!",
-      text: "Your payment has been processed successfully. Thank you!",
-      timer: 3000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-    }).then(() => {
-      navigate("/");
-    });
+    if (orderDetails) {
+      axiosInstance
+        .post("/orders", { ...orderDetails, isPaid: true })
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Payment Successful!",
+            text: "Your payment has been processed successfully. Thank you!",
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          }).then(() => {
+            navigate("/");
+          });
+
+          localStorage.removeItem("cart");
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const handleUseSelectedCard = () => {

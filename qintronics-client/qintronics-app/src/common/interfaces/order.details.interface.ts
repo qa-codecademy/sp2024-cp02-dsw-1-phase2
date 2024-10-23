@@ -7,7 +7,7 @@ export interface OrderDetails {
   address: string;
   city: string;
   zip: number;
-  prefDeliveryDate: Date; // ????????
+  prefDeliveryDate: string;
   isPaid?: boolean;
   productsAndQuantity: ProductsAndQuantity[];
 }

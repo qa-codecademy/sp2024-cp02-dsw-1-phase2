@@ -5,11 +5,13 @@ const addToCart = (product: CartItem) => {
   const savedCart = localStorage.getItem("cart");
   let cartItems: CartItem[] = savedCart ? JSON.parse(savedCart) : [];
 
-  const existingProductIndex = cartItems.findIndex((item) => item.id === product.id);
+  const existingProductIndex = cartItems.findIndex(
+    (item) => item.id === product.id
+  );
 
   if (existingProductIndex > -1) {
     // If the product is already in the cart, increment the quantity
-    cartItems[existingProductIndex].quantity += 1;
+    cartItems[existingProductIndex].quantity += product.quantity;
   } else {
     // If the product is not in the cart, add it with the specified quantity
     cartItems.push(product);
