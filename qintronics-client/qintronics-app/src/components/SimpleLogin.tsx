@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../common/utils/axios-instance.util";
 import { motion } from "framer-motion";
-import { useUser } from "../context/UserContext";
+import { AuthContext } from "../context/auth.context";
 
 interface AuthFormData {
   email: string;
@@ -24,7 +24,8 @@ const SimpleLogin: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setUser } = useUser();
+
+  const { setUser } = useContext(AuthContext);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,11 +44,8 @@ const SimpleLogin: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           password: formData.password,
         });
         console.log("Login response:", response.data);
-        // Update the user context with available information
-        setUser({
-          name: response.data.firstName,
-          email: response.data.email,
-        });
+        // Update the AuthContext with user information
+        setUser(response.data);
         onClose();
         navigate("/");
       } else {

@@ -1,4 +1,5 @@
-import { ReactNode, createContext, useEffect, useRef, useState } from "react";
+// auth.context.ts
+import { ReactNode, createContext, useEffect, useState } from "react";
 import { User } from "../common/interfaces/user.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
 
