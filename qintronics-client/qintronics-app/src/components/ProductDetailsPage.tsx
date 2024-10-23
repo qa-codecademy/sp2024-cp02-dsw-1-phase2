@@ -17,7 +17,8 @@ const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
   const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
-  const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
 
   const handleToggleFavorite = () => {
     if (userId) {

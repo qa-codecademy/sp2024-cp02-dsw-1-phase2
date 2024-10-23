@@ -16,7 +16,8 @@ const CategoryPage = () => {
   const [pageSize, setPageSize] = useState(8); // Number of products per page
   const [hasNext, setHasNext] = useState(false); // Track if next page exists
   const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
-  const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
 
   const fetchProducts = (page: number, size: number) => {
     setLoading(true);
@@ -28,7 +29,6 @@ const CategoryPage = () => {
         userId,
       })
       .then((res) => {
-        console.log(res.data);
         setFilteredProducts(res.data.products);
         setTotal(res.data.total);
         setHasNext(res.data.next); // Check if there is a next page

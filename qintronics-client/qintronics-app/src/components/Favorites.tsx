@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { BaseProduct } from "../common/types/products-interface";
-import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
-import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
-import Sidebar from "./Sidebar";
+import { useEffect, useState } from "react";
+import { FaShoppingCart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Sidebar from "./Sidebar";
 
 const Favorites = () => {
-  const [favoriteProducts, setFavoriteProducts] = useState<BaseProduct[]>([]);
+  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+  const [favoriteProducts, setFavoriteProducts] = useState<ProductAndFavFlag[]>(
+    []
+  );
+
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -24,6 +29,23 @@ const Favorites = () => {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  const handleToggleFavorite = (productId: string) => {
+    if (userId) {
+      axiosInstance
+        .post("/products/favorite", {
+          productId,
+        })
+        .then(() => {
+          fetchFavorites();
+          console.log("Favorite toggled");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    return; // Could possibly show an info popup or login redirect
   };
 
   useEffect(() => {
@@ -82,7 +104,15 @@ const Favorites = () => {
                         <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <Heart
                             size={24}
-                            className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
+                            className={`${
+                              product.isFavorite
+                                ? "fill-[#1A3F6B] stroke-[#1A3F6B] bg-white border-2" // Filled heart with bold border
+                                : "fill-none stroke-[#1A3F6B] bg-white border" // Outline heart with normal border
+                            } border-[#1A3F6B] rounded-full p-1 cursor-pointer`}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent card click
+                              handleToggleFavorite(product.id);
+                            }}
                           />
                           <ArrowRightLeft
                             size={24}

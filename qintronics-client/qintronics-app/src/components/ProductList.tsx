@@ -37,7 +37,8 @@ const ProductList = ({
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const [products, setProducts] = useState(productList); // Local state for products
-  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // Adjust as needed
+  // const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // Adjust as needed
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
 
   useEffect(() => {
     setProducts(productList);
