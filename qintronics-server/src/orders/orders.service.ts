@@ -98,6 +98,10 @@ export class OrdersService {
       .createQueryBuilder('order')
       .select("TO_CHAR(order.created_at, 'YYYY-MM')", 'month')
       .addSelect('SUM(order.total)', 'total_sum')
+      .addSelect(
+        `(SELECT COUNT(*) FROM users WHERE role = 'customer')`,
+        'total_customers',
+      )
       .where("order.created_at >= DATE_TRUNC('year', now())")
       .andWhere('order.isCanceled = false')
       .groupBy("TO_CHAR(order.created_at, 'YYYY-MM')")
