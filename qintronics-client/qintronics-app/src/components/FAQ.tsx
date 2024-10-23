@@ -64,7 +64,7 @@ const FAQ: React.FC = () => {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto">
-        <h2 className="text-5xl font-extrabold text-gray-900 text-center mb-12">
+        <h2 className="text-5xl font-extrabold text-[#1A3F6B] text-center mb-12">
           Frequently Asked Questions
         </h2>
         <div className="max-w-4xl mx-auto space-y-4">

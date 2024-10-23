@@ -5,7 +5,7 @@ import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-p
 import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
 import Sidebar from "./Sidebar";
-import Loader from "./Loader"; 
+import Loader from "./Loader";
 
 interface ProductListProps {
   categoryName: string;
@@ -50,7 +50,10 @@ const ProductList = ({
     navigate(`/products/${id}`);
   };
 
-  const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>, productId: string) => {
+  const handleAddToCart = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    productId: string
+  ) => {
     event.stopPropagation(); // Prevent the click event from bubbling up to the product card
     // Add the product to the cart logic here
     console.log(`Added product ${productId} to cart`);
@@ -184,18 +187,20 @@ const ProductList = ({
 
                         {/* Pricing Section */}
                         <div className="flex flex-col items-center">
-                          <p
-                            className={`text-lg sm:text-xl font-bold mt-1 ${
-                              product.discount > 0 ? "text-[#1BD8C4]" : ""
-                            }`}
-                          >
-                            ${validDiscountedPrice}
-                          </p>
-                          {product.discount > 0 && (
-                            <p className="text-sm mt-1 line-through text-gray-500">
-                              ${validPrice}
+                          <div className="flex items-center space-x-2">
+                            <p
+                              className={`text-lg sm:text-xl font-bold mt-1 ${
+                                product.discount > 0 ? "text-[#1BD8C4]" : ""
+                              }`}
+                            >
+                              ${validDiscountedPrice}
                             </p>
-                          )}
+                            {product.discount > 0 && (
+                              <p className="text-sm line-through text-gray-500">
+                                ${validPrice}
+                              </p>
+                            )}
+                          </div>
                         </div>
 
                         <p className="text-md mt-1">
@@ -206,7 +211,9 @@ const ProductList = ({
                         <button
                           className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
                           aria-label="Add to Cart"
-                          onClick={(event) => handleAddToCart(event, product.id)} // Add click handler
+                          onClick={(event) =>
+                            handleAddToCart(event, product.id)
+                          } // Add click handler
                         >
                           <FaShoppingCart className="mr-2" />
                           Add to Cart

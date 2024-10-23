@@ -2,9 +2,10 @@ import { useParams } from "react-router-dom";
 import { BaseProduct } from "../common/types/products-interface";
 import { useState, useRef, useEffect } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
-import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
+import { Heart, ArrowRightLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Loader from "./Loader"; // Loader component for showing a loading indicator
 
 const formatKey = (key: string) => {
   return key
@@ -15,48 +16,34 @@ const formatKey = (key: string) => {
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
   const [product, setProduct] = useState<BaseProduct | null>(null);
-
-  useEffect(() => {
-    axiosInstance
-      .get(`/products/${id}`)
-      .then((res) => {
-        setProduct(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
   const [quantity, setQuantity] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
-  const [zoomStyle, setZoomStyle] = useState<{
-    transformOrigin: string;
-    transform: string;
-    transition: string;
-  }>({
+  const [zoomStyle, setZoomStyle] = useState({
     transformOrigin: "center",
     transform: "scale(1)",
     transition: "transform 0.5s ease-in-out",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Scroll to top when the component mounts or when the product ID changes
   useEffect(() => {
-    window.scrollTo(0, 0);
+    setLoading(true); // Start loading
+    axiosInstance
+      .get(`/products/${id}`)
+      .then((res) => {
+        setProduct(res.data);
+        setLoading(false); // End loading when data is fetched
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load product details");
+        setLoading(false);
+      });
   }, [id]);
-
-  if (!product) {
-    return (
-      <div className="text-center text-2xl font-bold mt-10">
-        Product not found
-      </div>
-    );
-  }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -93,6 +80,29 @@ const ProductDetailsPage = () => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // Display loader before product details are available
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader /> {/* Display the loader while product details are loading */}
+      </div>
+    );
+  }
+
+  // If there's an error, display it
+  if (error) {
+    return <div className="text-center text-2xl font-bold mt-10">{error}</div>;
+  }
+
+  // If no product is found, display a message
+  if (!product) {
+    return (
+      <div className="text-center text-2xl font-bold mt-10">
+        Product not found
+      </div>
+    );
+  }
 
   return (
     <div className="flex">
@@ -243,7 +253,7 @@ const ProductDetailsPage = () => {
                       margin: "0 10px",
                     }}
                   />
-
+                  {/* Custom CSS to remove number input spinners */}
                   <style>{`
                     input[type="number"]::-webkit-outer-spin-button,
                     input[type="number"]::-webkit-inner-spin-button {

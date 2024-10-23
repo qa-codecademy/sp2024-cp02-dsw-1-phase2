@@ -34,14 +34,6 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/products"
-                  className="hover:text-[#FFD700] transition-colors duration-300"
-                >
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/about-us"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
@@ -54,6 +46,14 @@ const Footer = () => {
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/careers"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
+                  Careers
                 </Link>
               </li>
             </ul>
@@ -87,7 +87,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/privacy"
+                  to="/privacy-policy"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Privacy Policy

@@ -12,7 +12,7 @@ const Shipping: React.FC = () => {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto">
-        <h2 className="text-5xl font-extrabold text-gray-900 text-center mb-12 tracking-wide">
+        <h2 className="text-5xl font-extrabold text-[#1A3F6B] text-center mb-12 tracking-wide">
           Shipping Information
         </h2>
         <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12 leading-relaxed">
