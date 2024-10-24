@@ -1,26 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductList from "./ProductList";
-import { BaseProduct } from "../common/types/products-interface";
-import Loader from "./Loader";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Loader from "./Loader";
+import ProductList from "./ProductList";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
-  const [filteredProducts, setFilteredProducts] = useState<BaseProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductAndFavFlag[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [pageSize, setPageSize] = useState(8); // Number of products per page
   const [hasNext, setHasNext] = useState(false); // Track if next page exists
   const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
+  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
 
   const fetchProducts = (page: number, size: number) => {
     setLoading(true);
     axiosInstance
-      .get(
-        `/products?sort=ASC&sortBy=name&pageSize=${size}&page=${page}&categoryName=${category}`
-      )
+      .post(`/products`, {
+        page,
+        pageSize: size,
+        categoryName: category,
+        userId,
+      })
       .then((res) => {
         setFilteredProducts(res.data.products);
         setTotal(res.data.total);
