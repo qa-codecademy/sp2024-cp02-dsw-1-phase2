@@ -23,6 +23,9 @@ import AboutUs from "./components/AboutUs";
 import FAQ from "./components/FAQ";
 import Shipping from "./components/Shipping";
 import Favorites from "./components/Favorites";
+import Returns from "./components/Returns";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import OurServices from "./components/OurServices";
 import NotFound from "./components/NotFound";
 
 function App() {
@@ -57,6 +60,9 @@ function App() {
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/shipping" element={<Shipping />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/our-services" element={<OurServices />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </CardPaymentProvider>
