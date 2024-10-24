@@ -23,6 +23,10 @@ import AboutUs from "./components/AboutUs";
 import FAQ from "./components/FAQ";
 import Shipping from "./components/Shipping";
 import Favorites from "./components/Favorites";
+import NotFound from "./components/NotFound";
+import Returns from "./components/Returns";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import OurServices from "./components/OurServices";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -54,8 +58,12 @@ function App() {
               <Route path="/category/:category" element={<CategoryPage />} />
               <Route path="/category/gift-cards" element={<GiftCard />} />
               <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/our-services" element={<OurServices />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/shipping" element={<Shipping />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </CardPaymentProvider>
         </div>
