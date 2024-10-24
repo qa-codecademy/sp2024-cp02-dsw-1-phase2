@@ -1,8 +1,9 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { Role } from 'src/common/enums/roles.enum';
+import { BasicUserInfoResponse } from 'src/user-info/dtos/basic-user-info-response.dto';
 
-export class BasicUserResponse {
+export class BasicUserResponseDto {
   @Expose()
   @ApiResponseProperty({
     type: String,
@@ -23,4 +24,11 @@ export class BasicUserResponse {
     example: Role.Customer,
   })
   role: Role;
+
+  @Expose()
+  @Type(() => BasicUserInfoResponse)
+  @ApiResponseProperty({
+    type: BasicUserInfoResponse,
+  })
+  userInfo: BasicUserInfoResponse;
 }

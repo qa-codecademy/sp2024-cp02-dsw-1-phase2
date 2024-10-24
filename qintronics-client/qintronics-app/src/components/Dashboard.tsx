@@ -54,18 +54,6 @@ const AdminDashboard = () => {
       queryParams.set("page", page.toString());
       queryParams.set("pageSize", pageSize.toString());
 
-      // const response = await fetch(
-      //   `http://localhost:3000/api/products?${queryParams}`
-      // );
-
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch products");
-      // }
-
-      // const data: ProductsResponse = await response.json();
-      // setProducts(data.products);
-      // setTotalProducts(data.total);
-
       const { data } = await axiosInstance.get<ProductsResponse>(
         `/products?${queryParams}`
       );

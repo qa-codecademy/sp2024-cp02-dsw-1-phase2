@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SimpleLogin from ".//SimpleLogin";
+import SimpleLogin from "../components/SimpleLogin";
 
 interface LoginPopupProps {
   isOpen: boolean;

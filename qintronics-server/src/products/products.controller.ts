@@ -9,7 +9,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
 import {
   ApiBody,
   ApiForbiddenResponse,
@@ -21,19 +20,24 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ProductResponseDto } from './dtos/product-response.dto';
-import { Product } from './product.entity';
-import { ProductCreateDto } from './dtos/product-create.dto';
-import { ProductUpdateDto } from './dtos/product-update.dto';
-import { ProductQueryDto } from './dtos/product-query.dto';
-import { JwtGuard } from 'src/common/guards/jwt.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Role } from 'src/common/enums/roles.enum';
-import { PublicRoute } from 'src/common/decorators/public-route.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { PublicRoute } from 'src/common/decorators/public-route.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/roles.enum';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
+import { ProductCreateDto } from './dtos/product-create.dto';
 import { ProductFavoriteDto } from './dtos/product-favorite.dto';
+import { ProductQueryDto } from './dtos/product-query.dto';
+import {
+  FavoritedProducts,
+  ProductResponseDto,
+} from './dtos/product-response.dto';
+import { ProductUpdateDto } from './dtos/product-update.dto';
+import { Product } from './product.entity';
+import { ProductsService } from './products.service';
+import { getProductByIdQueryDto } from './dtos/product-by-id.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -44,83 +48,36 @@ export class ProductsController {
 
   // ========== GET ALL PRODUCTS ==========
   @PublicRoute()
-  @Get('/')
-  @ApiOperation({ summary: 'Get Products' })
+  @Post('/')
+  @ApiOperation({ summary: 'Get All products with queries' })
   @ApiOkResponse({
     description: 'Retrieved all products.',
     type: ProductResponseDto,
   })
-  @ApiQuery({
-    type: Boolean,
-    name: 'discount',
-    description: 'Discounted Products',
-    required: false,
+  @ApiBody({
+    type: ProductQueryDto,
   })
-  @ApiQuery({
-    type: String,
-    name: 'name',
-    description: 'Product Name',
-    required: false,
-  })
-  @ApiQuery({
-    type: String,
-    name: 'brand',
-    description: 'Product Brand',
-    required: false,
-  })
-  @ApiQuery({
-    type: String,
-    name: 'categoryName',
-    description: 'Category Name',
-    required: false,
-  })
-  @ApiQuery({
-    type: Number,
-    name: 'page',
-    description: 'Page Number',
-    required: false,
-  })
-  @ApiQuery({
-    type: Number,
-    name: 'pageSize',
-    description: 'Page Size',
-    required: false,
-  })
-  @ApiQuery({
-    type: String,
-    name: 'sortBy',
-    description: 'Sort By',
-    required: false,
-  })
-  @ApiQuery({
-    type: String,
-    name: 'sort',
-    description: 'Sort order (ASC or DESC)',
-    required: false,
-  })
-  getProducts(@Query() query: ProductQueryDto): Promise<ProductResponseDto> {
-    return this.productsService.getProducts(query);
+  getProducts(@Body() body: ProductQueryDto): Promise<ProductResponseDto> {
+    return this.productsService.getProducts(body);
   }
 
   // ========== GET PRODUCT BY ID ==========
   @PublicRoute()
-  @Get('/:id')
+  @Post('/id')
   @ApiOperation({ summary: 'Get Product by ID' })
   @ApiOkResponse({
     description: 'Retrieved product by ID.',
-    type: Product,
+    type: FavoritedProducts,
   })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'Product ID',
+  @ApiBody({
+    type: getProductByIdQueryDto,
   })
-  getProductById(@Param('id') id: string): Promise<Product> {
-    return this.productsService.getProductById(id);
+  getProductById(@Body() body: getProductByIdQueryDto): Promise<Product> {
+    return this.productsService.getProductById(body);
   }
 
   // ========== CREATE PRODUCT ==========
-  @Post('/')
+  @Post('/create')
   @ApiOperation({ summary: 'Create Product' })
   @ApiOkResponse({
     description: 'Product created successfully.',

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../common/utils/axios-instance.util";
 import { motion } from "framer-motion";
-import { useUser } from "../context/UserContext";
+import { AuthContext } from "../context/auth.context";
 
 interface AuthFormData {
   email: string;
@@ -24,7 +24,8 @@ const SimpleLogin: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setUser } = useUser();
+
+  const { setUser } = useContext(AuthContext);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,36 +44,10 @@ const SimpleLogin: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           password: formData.password,
         });
         console.log("Login response:", response.data);
-
-        if (response.data.tokens) {
-          setSuccessMessage("Logged in successfully!");
-          localStorage.setItem("accessToken", response.data.tokens.accessToken);
-          localStorage.setItem(
-            "refreshToken",
-            response.data.tokens.refreshToken
-          );
-
-          // Update the user context with available information
-          const userName = response.data.email.split("@")[0]; // Use email as fallback for name
-          setUser({
-            name: userName,
-            email: response.data.email,
-          });
-
-          // Store user data in localStorage
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              name: userName,
-              email: response.data.email,
-            })
-          );
-
-          onClose();
-          navigate("/");
-        } else {
-          throw new Error("Login successful, but no tokens received");
-        }
+        // Update the AuthContext with user information
+        setUser(response.data);
+        onClose();
+        navigate("/");
       } else {
         response = await axiosInstance.post("/auth/register", formData);
         console.log("Registration response:", response.data);

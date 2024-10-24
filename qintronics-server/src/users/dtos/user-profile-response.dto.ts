@@ -1,13 +1,13 @@
 import { Expose, Type } from 'class-transformer';
-import { UserInfoProfileResponse } from 'src/user-info/dtos/user-info-profile-response.dto';
-import { NoSensitiveUserResponse } from './no-sensitive-user-response.dto';
+import { UserInfoProfileResponseDto } from 'src/user-info/dtos/user-info-profile-response.dto';
+import { NoSensitiveUserResponseDto } from './no-sensitive-user-response.dto';
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-export class UserProfileResponse extends NoSensitiveUserResponse {
+export class UserProfileResponseDto extends NoSensitiveUserResponseDto {
   @Expose()
-  @Type(() => UserInfoProfileResponse)
+  @Type(() => UserInfoProfileResponseDto)
   @ApiResponseProperty({
-    type: UserInfoProfileResponse,
+    type: UserInfoProfileResponseDto,
   })
-  userInfo: UserInfoProfileResponse;
+  userInfo: UserInfoProfileResponseDto;
 }

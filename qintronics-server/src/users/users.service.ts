@@ -9,8 +9,12 @@ import { RegisterDto } from 'src/auth/dtos/register.dto';
 import { Role } from 'src/common/enums/roles.enum';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { UserInfoService } from 'src/user-info/user-info.service';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { User } from './user.entity';
+import { UsersQueryDto } from './dtos/users-query.dto';
+import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
+import { PageMetaDto } from 'src/common/pagination/page-meta.dto';
+import { PageDto } from 'src/common/pagination/page.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,16 +23,37 @@ export class UsersService {
     private readonly userInfoService: UserInfoService,
   ) {}
 
-  // Just customer users or?
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepository.find({
-      where: { role: Role.Customer },
-      relations: { userInfo: true },
-    });
+  async getAllUsers(
+    { search }: UsersQueryDto,
+    paginationQueries: PageOptionsDto,
+  ): Promise<PageDto<User>> {
+    const { skip, perPage } = paginationQueries;
+
+    const usersQuery = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userInfo', 'userInfo');
+
+    if (search) {
+      usersQuery
+        .where('user.firstName LIKE :searchParam', { search: `%${search}%` })
+        .orWhere('user.lastName LIKE :searchParam', { search: `%${search}%` })
+        .orWhere('user.email LIKE :searchParam', { search: `%${search}%` });
+    }
+
+    usersQuery.skip(skip).take(perPage);
+
+    const [entities, itemCount] = await usersQuery.getManyAndCount();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async getUserById(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOne({
+      where: { id },
+      relations: { userInfo: true },
+    });
   }
 
   // will everything be returned (even the sensitive info)? If so, make NoSensitiveUser in the controller (will use same function in auth, where refresh tokens are needed, and in NoSensitiveUser they won't be exposed)
@@ -88,29 +113,6 @@ export class UsersService {
 
   async saveNewPassword(userId: string, password: string): Promise<void> {
     password = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
-
-    await this.userRepository.update(userId, {
-      password,
-      resetPasswordToken: null,
-    });
-  }
-
-  async saveRefreshToken(user: User, refreshToken: string): Promise<void> {
-    await this.userRepository.update(user.id, {
-      refreshTokens: [...user.refreshTokens, refreshToken],
-    });
-  }
-
-  async saveResetPasswordToken(userId: string, resetPasswordToken) {
-    await this.userRepository.update(userId, { resetPasswordToken });
-  }
-
-  async removeRefreshToken(user: User, refreshToken: string): Promise<void> {
-    await this.userRepository.update(user.id, {
-      refreshTokens: user.refreshTokens.filter(
-        (token) => token !== refreshToken,
-      ),
-    });
   }
 
   async changeUserRole(id: string, role: Role): Promise<User> {
@@ -201,6 +203,4 @@ export class UsersService {
 
     return this.userRepository.find({ relations: { userInfo: true } });
   }
-
-  // can admin search for one particular user?
 }

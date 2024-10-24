@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { BasicUserResponse } from 'src/users/dtos/basic-user-response.dto';
+import { Product } from 'src/products/product.entity';
+import { NoSensitiveUserResponseDto } from 'src/users/dtos/no-sensitive-user-response.dto';
 
 class BasicProductDto {
   @Expose()
@@ -148,12 +149,12 @@ export class OrderReturnDto {
   total: number;
 
   @Expose()
-  @Type(() => BasicUserResponse)
+  @Type(() => NoSensitiveUserResponseDto)
   @ApiProperty({
-    type: BasicUserResponse,
+    type: NoSensitiveUserResponseDto,
     description: 'User who made the order',
   })
-  user: BasicUserResponse;
+  user: NoSensitiveUserResponseDto;
 
   @Expose()
   @Type(() => ProductsAndQuantityReturnDto)

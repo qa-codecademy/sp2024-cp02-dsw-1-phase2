@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
+import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
 import { OrderQueryDto } from './order-query.dto';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';

@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Role } from 'src/common/enums/roles.enum';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { UsersService } from 'src/users/users.service';
+import { Request } from 'express';
 
 type JwtStrategyPayload = {
   sub: string;
@@ -18,7 +19,9 @@ type JwtStrategyPayload = {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly usersService: UsersService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => request.cookies?.accessToken,
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_ACCESS_SECRET,
     });

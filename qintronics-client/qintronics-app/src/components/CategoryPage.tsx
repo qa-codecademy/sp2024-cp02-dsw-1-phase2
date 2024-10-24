@@ -1,17 +1,59 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
+<<<<<<< HEAD
 import ProductList from "./ProductList";
 import { BaseProduct } from "../common/types/products-interface";
+=======
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
+>>>>>>> 5900c0cb480f0a48f04467cda0e47a8847f54e68
 import axiosInstance from "../common/utils/axios-instance.util";
+import Loader from "./Loader";
+import ProductList from "./ProductList";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
+<<<<<<< HEAD
   const [filteredProducts, setFilteredProducts] = useState<BaseProduct[]>([]);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [hasNext, setHasNext] = useState(false);
   const [hasPrev, setHasPrev] = useState(false);
+=======
+  const [filteredProducts, setFilteredProducts] = useState<ProductAndFavFlag[]>(
+    []
+  );
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [pageSize, setPageSize] = useState(8); // Number of products per page
+  const [hasNext, setHasNext] = useState(false); // Track if next page exists
+  const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
+  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
+  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+
+  const fetchProducts = (page: number, size: number) => {
+    setLoading(true);
+    axiosInstance
+      .post(`/products`, {
+        page,
+        pageSize: size,
+        categoryName: category,
+        userId,
+      })
+      .then((res) => {
+        setFilteredProducts(res.data.products);
+        setTotal(res.data.total);
+        setHasNext(res.data.next); // Check if there is a next page
+        setHasPrev(res.data.prev); // Check if there is a previous page
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
+>>>>>>> 5900c0cb480f0a48f04467cda0e47a8847f54e68
 
   // Fetch products when category, page, or page size changes
   useEffect(() => {
