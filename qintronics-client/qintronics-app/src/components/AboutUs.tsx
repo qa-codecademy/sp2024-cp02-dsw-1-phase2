@@ -7,20 +7,16 @@ import {
   FaUserCheck,
   FaBatteryFull,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
 const AboutUs = () => {
-  const navigate = useNavigate();
-
   return (
     <section className="bg-white py-16">
       <div className="container mx-auto px-4">
         {/* Introduction Section */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-extrabold text-[#1A3F6B] mb-6">
+          <h2 className="text-5xl font-extrabold text-gray-900 mb-6">
             About Us
           </h2>
-
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Welcome to Qintronics, where innovation meets reliability. Learn
             about our mission, values, and dedication to delivering the latest
@@ -59,6 +55,57 @@ const AboutUs = () => {
               alt="Our Story"
               className="w-full h-auto rounded-lg shadow-xl transition-transform transform hover:scale-105 duration-300"
             />
+          </div>
+        </div>
+
+        {/* Why Choose Us Section */}
+        <div className="mb-16">
+          <h3 className="text-4xl font-bold text-gray-900 text-center mb-12">
+            Why Choose Qintronics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="relative p-8 bg-gradient-to-br from-[#1BD8C4] to-[#1A3F6B] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#1A3F6B] p-4 rounded-full">
+                <FaStar className="text-4xl" />
+              </div>
+              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
+                Premium Products
+              </h4>
+              <p className="text-sm leading-relaxed text-center">
+                We partner with renowned brands to offer products that meet the
+                highest standards of quality and innovation. Each product
+                undergoes rigorous testing to ensure reliability and
+                performance.
+              </p>
+            </div>
+
+            <div className="relative p-8 bg-gradient-to-br from-[#8e44ad] to-[#3498db] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#8e44ad] p-4 rounded-full">
+                <FaHeadset className="text-4xl" />
+              </div>
+              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
+                Outstanding Customer Support
+              </h4>
+              <p className="text-sm leading-relaxed text-center">
+                Our dedicated customer service team is here to help with any
+                questions or issues, ensuring a smooth and pleasant shopping
+                experience from start to finish.
+              </p>
+            </div>
+
+            <div className="relative p-8 bg-gradient-to-br from-[#2ecc71] to-[#16a085] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#2ecc71] p-4 rounded-full">
+                <FaTruck className="text-4xl" />
+              </div>
+              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
+                Fast and Secure Delivery
+              </h4>
+              <p className="text-sm leading-relaxed text-center">
+                We prioritize secure and timely delivery, ensuring that your
+                purchases arrive at your doorstep without delay, no matter where
+                you are.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -148,67 +195,6 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Why Choose Us Section */}
-        <div className="mb-16">
-          <h3 className="text-4xl font-bold text-gray-900 text-center mb-12">
-            Why Choose Qintronics
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="relative p-8 bg-gradient-to-br from-[#1BD8C4] to-[#1A3F6B] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
-              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#1A3F6B] p-4 rounded-full">
-                <FaStar className="text-4xl" />
-              </div>
-              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
-                Premium Products
-              </h4>
-              <p className="text-sm leading-relaxed text-center">
-                We partner with renowned brands to offer products that meet the
-                highest standards of quality and innovation. Each product
-                undergoes rigorous testing to ensure reliability and
-                performance.
-              </p>
-            </div>
-
-            <div className="relative p-8 bg-gradient-to-br from-[#8e44ad] to-[#3498db] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
-              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#8e44ad] p-4 rounded-full">
-                <FaHeadset className="text-4xl" />
-              </div>
-              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
-                Outstanding Customer Support
-              </h4>
-              <p className="text-sm leading-relaxed text-center">
-                Our dedicated customer service team is here to help with any
-                questions or issues, ensuring a smooth and pleasant shopping
-                experience from start to finish.
-              </p>
-            </div>
-
-            <div className="relative p-8 bg-gradient-to-br from-[#2ecc71] to-[#16a085] text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
-              <div className="absolute top-[-2rem] left-1/2 transform -translate-x-1/2 bg-white text-[#2ecc71] p-4 rounded-full">
-                <FaTruck className="text-4xl" />
-              </div>
-              <h4 className="text-xl font-semibold text-center mt-10 mb-4">
-                Fast and Secure Delivery
-              </h4>
-              <p className="text-sm leading-relaxed text-center">
-                We prioritize secure and timely delivery, ensuring that your
-                purchases arrive at your doorstep without delay, no matter where
-                you are.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Add Return Home Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => navigate("/")}
-            className="bg-[#1A3F6B] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-white hover:text-[#1A3F6B] hover:shadow-xl border border-transparent hover:border-[#1A3F6B] transition-all duration-300 transform hover:scale-105 mb-6"
-          >
-            Return Home
-          </button>
         </div>
       </div>
     </section>

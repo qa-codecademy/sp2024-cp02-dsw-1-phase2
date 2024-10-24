@@ -15,17 +15,10 @@ const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            {/* Add your logo here */}
-            <img
-              src="../../public/images/qintronics-high-resolution-logo-white-transparent-removebg-preview (1).png" // Replace with the path to your logo image
-              alt="Company Logo"
-              className="h-12 w-auto mb-4" // Adjust the size of your logo
-            />
-            <h3 className="text-xl font-bold mb-6">Skopje</h3>
+            <h3 className="text-xl font-bold mb-6">About Us</h3>
             <p className="text-sm leading-relaxed">
-              11th October St. 33A
-              <br />
-              1000 Skopje, Macedonia
+              We are a leading tech retailer offering the latest gadgets and
+              electronics, bringing the best of innovation to your doorstep.
             </p>
           </div>
           <div>
@@ -37,6 +30,14 @@ const Footer = () => {
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/products"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
+                  Products
                 </Link>
               </li>
               <li>
@@ -53,14 +54,6 @@ const Footer = () => {
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/our-services"
-                  className="hover:text-[#FFD700] transition-colors duration-300"
-                >
-                  Our Services
                 </Link>
               </li>
             </ul>
@@ -94,7 +87,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/privacy-policy"
+                  to="/privacy"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Privacy Policy

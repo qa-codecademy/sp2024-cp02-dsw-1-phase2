@@ -69,7 +69,7 @@ const SalesPage = () => {
           onPrevPage={handlePrevPage}
           hasNext={hasNext}
           hasPrev={hasPrev}
-          onPageSizeChange={handlePageSizeChange}
+          onPageSizeChange={handlePageSizeChange} // Pass page size change handler
           title="Products on Sale"
         />
       )}
