@@ -12,6 +12,7 @@ import SearchBar from "./SearchBar";
 import IconButtons from "./IconButtons";
 import DropdownMenu from "./DropdownMenu";
 import { AuthContext } from "../context/auth.context";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 interface HeaderProps {
   onLoginClick: () => void;
@@ -34,6 +35,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const handleLogout = () => {
     setUser(null);
     setIsUserPanelOpen(false);
+    axiosInstance.post("/auth/logout");
   };
 
   return (
