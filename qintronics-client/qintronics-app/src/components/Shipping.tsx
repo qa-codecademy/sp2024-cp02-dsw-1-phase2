@@ -7,8 +7,11 @@ import {
   FaShieldAlt,
   FaInfoCircle,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Shipping: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto">
@@ -24,13 +27,11 @@ const Shipping: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Fast Delivery Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#1BD8C4] to-[#1A3F6B] p-4 rounded-full">
                 <FaTruck className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/fast-delivery.webp"
               alt="Fast Delivery"
@@ -48,13 +49,11 @@ const Shipping: React.FC = () => {
 
           {/* Global Shipping Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
-              <div className="bg-gradient-to-br from-[#3498db] to-[#2980b9]  p-4 rounded-full">
+              <div className="bg-gradient-to-br from-[#3498db] to-[#2980b9] p-4 rounded-full">
                 <FaGlobe className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/global-shipping.jpg"
               alt="Global Shipping"
@@ -71,13 +70,11 @@ const Shipping: React.FC = () => {
 
           {/* Estimated Delivery Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
-              <div className="   bg-gradient-to-br from-[#FFA500] to-[#FFD700] p-4 rounded-full">
+              <div className="bg-gradient-to-br from-[#FFA500] to-[#FFD700] p-4 rounded-full">
                 <FaClock className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/estimated-delivery.webp"
               alt="Estimated Delivery"
@@ -94,13 +91,11 @@ const Shipping: React.FC = () => {
 
           {/* Shipping Costs Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#2ecc71] to-[#16a085] p-4 rounded-full">
                 <FaDollarSign className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/shipping-rates.jpeg"
               alt="Shipping Costs"
@@ -117,13 +112,11 @@ const Shipping: React.FC = () => {
 
           {/* Shipping Insurance Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#A3D8F4] to-[#73BFE6] p-4 rounded-full">
                 <FaShieldAlt className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/shipping-insurance.png"
               alt="Shipping Insurance"
@@ -141,13 +134,11 @@ const Shipping: React.FC = () => {
 
           {/* Shipping Transparency Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#9b59b6] to-[#8e44ad] p-4 rounded-full">
                 <FaInfoCircle className="text-4xl text-white" />
               </div>
             </div>
-            {/* Image */}
             <img
               src="../../public/images/shipping/track-order.png"
               alt="Shipping Transparency"
@@ -162,6 +153,16 @@ const Shipping: React.FC = () => {
               delivery times and tracking details.
             </p>
           </div>
+        </div>
+
+        {/* Add Return Home Button */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-[#1A3F6B] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-white hover:text-[#1A3F6B] hover:shadow-xl border border-transparent hover:border-[#1A3F6B] transition-all duration-300 transform hover:scale-105 mb-6"
+          >
+            Return Home
+          </button>
         </div>
       </div>
     </section>

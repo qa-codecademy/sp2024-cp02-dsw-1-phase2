@@ -26,6 +26,7 @@ import Favorites from "./components/Favorites";
 import NotFound from "./components/NotFound";
 import Returns from "./components/Returns";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import OurServices from "./components/OurServices";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -57,6 +58,7 @@ function App() {
               <Route path="/category/:category" element={<CategoryPage />} />
               <Route path="/category/gift-cards" element={<GiftCard />} />
               <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/our-services" element={<OurServices />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/shipping" element={<Shipping />} />
               <Route path="/returns" element={<Returns />} />

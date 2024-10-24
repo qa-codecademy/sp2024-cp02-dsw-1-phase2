@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaQuestionCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Importing navigate for button functionality
 
 const faqData = [
   {
@@ -56,6 +57,7 @@ const faqData = [
 
 const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const navigate = useNavigate(); // Initialize the navigate hook for routing
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -103,6 +105,16 @@ const FAQ: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Add Return Home Button */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-[#1A3F6B] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-white hover:text-[#1A3F6B] hover:shadow-xl border border-transparent hover:border-[#1A3F6B] transition-all duration-300 transform hover:scale-105 mb-6"
+          >
+            Return Home
+          </button>
         </div>
       </div>
     </section>

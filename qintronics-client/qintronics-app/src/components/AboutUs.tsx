@@ -7,8 +7,11 @@ import {
   FaUserCheck,
   FaBatteryFull,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const AboutUs = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="bg-white py-16">
       <div className="container mx-auto px-4">
@@ -196,6 +199,16 @@ const AboutUs = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Add Return Home Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-[#1A3F6B] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-white hover:text-[#1A3F6B] hover:shadow-xl border border-transparent hover:border-[#1A3F6B] transition-all duration-300 transform hover:scale-105 mb-6"
+          >
+            Return Home
+          </button>
         </div>
       </div>
     </section>
