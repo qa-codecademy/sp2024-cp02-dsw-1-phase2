@@ -1,10 +1,11 @@
 import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
 import Sidebar from "./Sidebar";
+import { AuthContext } from "../context/auth.context";
 
 const formatKey = (key: string) => {
   return key
@@ -17,11 +18,10 @@ const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
   const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
-  const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
-  // const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+  const { user } = useContext(AuthContext);
 
   const handleToggleFavorite = () => {
-    if (userId) {
+    if (user) {
       axiosInstance
         .post("/products/favorite", {
           productId: product?.id,
@@ -41,7 +41,7 @@ const ProductDetailsPage = () => {
     axiosInstance
       .post(`/products/id`, {
         productId: id,
-        userId,
+        userId: user?.userId,
       })
       .then((res) => {
         setProduct(res.data);

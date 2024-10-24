@@ -1,15 +1,15 @@
 import { ArrowRightLeft, Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
 import Sidebar from "./Sidebar";
+import { AuthContext } from "../context/auth.context";
 
 const Favorites = () => {
-  // const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
-  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+  const { user } = useContext(AuthContext);
   const [favoriteProducts, setFavoriteProducts] = useState<ProductAndFavFlag[]>(
     []
   );
@@ -32,7 +32,7 @@ const Favorites = () => {
   };
 
   const handleToggleFavorite = (productId: string) => {
-    if (userId) {
+    if (user) {
       axiosInstance
         .post("/products/favorite", {
           productId,

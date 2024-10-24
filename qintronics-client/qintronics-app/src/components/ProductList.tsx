@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
 import { FaShoppingCart } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { ArrowRightLeft, Heart } from "lucide-react";
 import Sidebar from "./Sidebar";
 import axiosInstance from "../common/utils/axios-instance.util";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
+import { AuthContext } from "../context/auth.context";
 
 interface ProductListProps {
   categoryName: string;
@@ -37,8 +38,7 @@ const ProductList = ({
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const [products, setProducts] = useState(productList); // Local state for products
-  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // Adjust as needed
-  // const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     setProducts(productList);
@@ -46,7 +46,7 @@ const ProductList = ({
   }, [productList]);
 
   const handleToggleFavorite = (productId: string) => {
-    if (userId) {
+    if (user) {
       axiosInstance
         .post("/products/favorite", { productId })
         .then(() => {

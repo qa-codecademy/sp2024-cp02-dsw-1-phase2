@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
 import Loader from "./Loader";
 import ProductList from "./ProductList";
+import { AuthContext } from "../context/auth.context";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
@@ -16,8 +17,7 @@ const CategoryPage = () => {
   const [pageSize, setPageSize] = useState(8); // Number of products per page
   const [hasNext, setHasNext] = useState(false); // Track if next page exists
   const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
-  const userId = "aa711739-3f57-4d82-8c68-0f3696b85ceb"; // DONT FORGET TO UNHARDCOMMENT THIS
-  // const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
+  const { user } = useContext(AuthContext);
 
   const fetchProducts = (page: number, size: number) => {
     setLoading(true);
@@ -26,7 +26,7 @@ const CategoryPage = () => {
         page,
         pageSize: size,
         categoryName: category,
-        userId,
+        userId: user?.userId,
       })
       .then((res) => {
         setFilteredProducts(res.data.products);
