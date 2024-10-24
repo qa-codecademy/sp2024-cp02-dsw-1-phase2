@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Product } from "./../common/types/Product-interface";
 import ProductFilter from "./ProductFilter";
 import ProductCard from "./ProductCard";
-// import { fetchProducts } from "./../common/utils/fetchProducts";
+import { fetchProducts } from "./../common/utils/fetchProducts";
 import { XCircle, CheckCircle, PlusCircle } from "lucide-react";
 
 const CompareProducts = () => {
@@ -12,15 +12,6 @@ const CompareProducts = () => {
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isComparing, setIsComparing] = useState(false);
   const [comparisonMode, setComparisonMode] = useState<2 | 3>(3);
-
-  const fetchProducts = async (): Promise<Product[]> => {
-    const response = await fetch("http://localhost:3000/api/products");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.products; // Assuming 'products' key exists
-  };
 
   useEffect(() => {
     const loadProducts = async () => {

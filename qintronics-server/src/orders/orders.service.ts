@@ -6,9 +6,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { SortingOrder } from 'src/common/enums/sorting.enum';
-import { PageMetaDto } from 'src/common/pagination/page-meta.dto';
-import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
-import { PageDto } from 'src/common/pagination/page.dto';
+import { PageMetaDto } from 'src/common/ordersPagination/page-meta.dto';
+import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
+import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { EmailService } from 'src/email/email.service';
 import { Order } from 'src/orders/order.entity';
@@ -28,7 +28,7 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
-import { MonthlyTotalsDto } from './dtos/order-totals-return.dto';
+import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 
 @Injectable()
 export class OrdersService {
@@ -93,30 +93,16 @@ export class OrdersService {
   }
 
   // * GET TOTALS FOR ADMIN DASHBOARD
-  async getMonthlyTotalsHistory(): Promise<MonthlyTotalsDto> {
-    const orderTotals = await this.ordersRepository
+  async getMonthlyTotalsHistory(): Promise<MonthlyTotalHistoryDto[]> {
+    return await this.ordersRepository
       .createQueryBuilder('order')
       .select("TO_CHAR(order.created_at, 'YYYY-MM')", 'month')
-      .addSelect('SUM(order.total)', 'totalSum')
-      .addSelect('COUNT(order.id)', 'totalOrdersNumber')
-      .addSelect('AVG(order.total)', 'averageOrderValue')
+      .addSelect('SUM(order.total)', 'total_sum')
       .where("order.created_at >= DATE_TRUNC('year', now())")
       .andWhere('order.isCanceled = false')
       .groupBy("TO_CHAR(order.created_at, 'YYYY-MM')")
       .orderBy('month', 'ASC')
       .getRawMany();
-
-    const userTotals = await this.usersRepository
-      .createQueryBuilder('user')
-      .select("TO_CHAR(user.created_at, 'YYYY-MM')", 'month')
-      .addSelect('COUNT(*)', 'newCustomers')
-      .where('user.role = :role', { role: 'Customer' })
-      .andWhere("user.created_at >= DATE_TRUNC('year', now())")
-      .groupBy("TO_CHAR(user.created_at, 'YYYY-MM')")
-      .orderBy('month', 'ASC')
-      .getRawMany();
-
-    return { orderTotals, userTotals };
   }
 
   // * ADD PRODUCT TO ORDER
@@ -139,11 +125,9 @@ export class OrdersService {
 
     if (!product || product.availability < quantity) {
       throw new NotFoundException(
-        'Product unavailable or does not have sufficient stock',
+        'Product not found or does not have enough stock',
       );
     }
-    product.availability -= quantity;
-    await this.productsRepository.save(product);
 
     const orderProduct = this.orderProductsRepository.create({
       order,
@@ -343,11 +327,6 @@ export class OrdersService {
 
     if (orderToBeCanceled.userId !== user?.userId && user?.role !== 'Admin') {
       throw new UnauthorizedException('Not authorized to cancel this order');
-    }
-
-    for (const orderProduct of orderToBeCanceled.orderProduct) {
-      orderProduct.product.availability += orderProduct.quantity;
-      await this.productsRepository.save(orderProduct.product);
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeCanceled, {

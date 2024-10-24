@@ -7,8 +7,6 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { RefreshTokensModule } from 'src/refresh-tokens/refresh-tokens.module';
-import { ResetPasswordModule } from 'src/reset-password/reset-password.module';
 
 @Module({
   imports: [
@@ -26,8 +24,6 @@ import { ResetPasswordModule } from 'src/reset-password/reset-password.module';
     }),
     PassportModule,
     UsersModule,
-    RefreshTokensModule,
-    ResetPasswordModule,
     EmailModule,
   ],
   controllers: [AuthController],

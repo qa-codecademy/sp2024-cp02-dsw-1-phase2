@@ -1,18 +1,16 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { AuthContext } from "../context/auth.context";
-import Loader from "./Loader";
 import LoginPopup from "./LoginPopup";
 
 export default function PrivateRoute() {
-  const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
-  const { user, isLoading } = useContext(AuthContext);
+  // If there is an access token, a user should be logged in
+  const accessToken = localStorage.getItem("accessToken");
 
-  if (isLoading) return <Loader />;
+  const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
 
   const toggleLoginPopup = () => setLoginPopupOpen((prev) => !prev);
 
-  if (!user) {
+  if (!accessToken) {
     if (!isLoginPopupOpen) toggleLoginPopup();
     return <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />;
   }

@@ -15,7 +15,6 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { RefreshToken } from '../refresh-tokens/refresh-token.entity';
 
 @Entity()
 @Unique(['email'])
@@ -57,17 +56,32 @@ export class User {
   })
   role: Role;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  @Column({
+    name: 'refresh_tokens',
+    type: String,
+    array: true,
+    nullable: true,
+  })
   @ApiProperty({
-    type: [RefreshToken],
+    type: String,
+    isArray: true,
     description: `User's refresh tokens`,
     example: [
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjdmZTI2NC04MjliLTQ5YTYtOTk2OS0xNTRmYjFmMTUyMzciLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwicmVmcmVzaFRva2VucyI6W10sImlhdCI6MTcyNzUzMzAxMCwiZXhwIjoxNzI4MTM3ODEwLCJpc3MiOiJRaW50cm9uaWNzIn0.i0AdtjMZS_58gsRL6ybELVNykqWmxTfqKG-onJJN-34',
     ],
   })
-  refreshTokens: RefreshToken[];
+  refreshTokens: string[] = [];
   // Refresh tokens are an array in case the user logs in from multiple devices, i.e. multiple refresh tokens are saved
+
+  @Column({ name: 'reset_password_token', nullable: true })
+  @ApiProperty({
+    type: String,
+    description: `User's reset password token`,
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
+  })
+  resetPasswordToken: string;
 
   @OneToOne(() => UserInfo, { cascade: true })
   @JoinColumn({ name: 'user_info_id' })

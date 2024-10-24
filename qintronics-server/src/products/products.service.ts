@@ -1,17 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Product } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/categories/category.entity';
-import { User } from 'src/users/user.entity';
 import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
 import { ProductCreateDto } from './dtos/product-create.dto';
-import { ProductQueryDto } from './dtos/product-query.dto';
+import { ProductResponseDto } from './dtos/product-response.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
-import { Product } from './product.entity';
-import {
-  FavoritedProducts,
-  ProductResponseDto,
-} from './dtos/product-response.dto';
-import { getProductByIdQueryDto } from './dtos/product-by-id.dto';
+import { ProductQueryDto } from './dtos/product-query.dto';
+import { Category } from 'src/categories/category.entity';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -33,7 +29,6 @@ export class ProductsService {
     pageSize = 10,
     sortBy = 'name',
     sort = 'ASC',
-    userId,
   }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
 
@@ -80,21 +75,10 @@ export class ProductsService {
       },
     });
 
-    let favoriteProductIds: string[] = [];
-    if (userId) {
-      const favorites = await this.getFavoriteProducts(userId);
-      favoriteProductIds = favorites.map((product) => product.id);
-    }
-
-    const productsWithFavorites = products.map((product) => ({
-      ...product,
-      isFavorite: favoriteProductIds.includes(product.id),
-    }));
-
     const totalPages = Math.ceil(total / pageSize);
 
     const payload: ProductResponseDto = {
-      products: productsWithFavorites,
+      products: products,
       total: total,
       next: page < totalPages,
       prev: page > 1,
@@ -103,22 +87,10 @@ export class ProductsService {
     return payload;
   }
 
-  async getProductById({
-    productId,
-    userId,
-  }: getProductByIdQueryDto): Promise<FavoritedProducts> {
-    const product = await this.productRepository.findOneBy({ id: productId });
+  async getProductById(id: string): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id });
     if (!product) throw new NotFoundException('Product not found!');
-    let isFavorite = false;
-    if (userId) {
-      const favorites = await this.getFavoriteProducts(userId);
-      const favoriteProductIds = favorites.map((favProduct) => favProduct.id);
-      isFavorite = favoriteProductIds.includes(product.id);
-    }
-    return {
-      ...product,
-      isFavorite,
-    };
+    return product;
   }
 
   async createProduct(body: ProductCreateDto): Promise<Product> {
@@ -167,7 +139,7 @@ export class ProductsService {
     await this.productRepository.save(product);
   }
 
-  async getFavoriteProducts(userId: string): Promise<FavoritedProducts[]> {
+  async getFavoriteProducts(userId: string): Promise<Product[]> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['favoriteProducts'],
@@ -175,10 +147,7 @@ export class ProductsService {
 
     if (!user) throw new NotFoundException('User not found!');
 
-    return user.favoriteProducts.map((product) => ({
-      ...product,
-      isFavorite: true,
-    }));
+    return user.favoriteProducts;
   }
 
   async deleteProduct(id: string): Promise<void> {

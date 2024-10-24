@@ -8,8 +8,6 @@ import { ProductsModule } from './products/products.module';
 import { UserInfoModule } from './user-info/user-info.module';
 import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
-import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
-import { ResetPasswordModule } from './reset-password/reset-password.module';
 
 @Module({
   imports: [
@@ -24,8 +22,6 @@ import { ResetPasswordModule } from './reset-password/reset-password.module';
     UsersModule,
     UserInfoModule,
     EmailModule,
-    RefreshTokensModule,
-    ResetPasswordModule,
   ],
   controllers: [],
   providers: [],

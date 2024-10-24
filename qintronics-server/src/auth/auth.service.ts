@@ -3,39 +3,34 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { IRefreshToken } from 'src/common/types/refresh-token.interface';
-import { IResetPasswordToken } from 'src/common/types/reset-password-token.interface';
-import { EmailService } from 'src/email/email.service';
-import { RefreshTokensService } from 'src/refresh-tokens/refresh-tokens.service';
-import { ResetPasswordService } from 'src/reset-password/reset-password.service';
-import { NoSensitiveUserResponseDto } from 'src/users/dtos/no-sensitive-user-response.dto';
+import { NoSensitiveUserResponse } from 'src/users/dtos/no-sensitive-user-response.dto';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { LoginRefreshResponseDto } from './dtos/login-refresh-response.dto';
+import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
+import { LogoutDto } from './dtos/logout.dto';
+import { RefreshTokensResponse } from './dtos/refresh-tokens-response.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { ILoginRefreshUser } from 'src/common/types/login-refresh-user.interface';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly refreshTokensService: RefreshTokensService,
-    private readonly resetPasswordService: ResetPasswordService,
     private readonly emailService: EmailService,
   ) {}
 
-  async register(body: RegisterDto): Promise<NoSensitiveUserResponseDto> {
+  async register(body: RegisterDto): Promise<NoSensitiveUserResponse> {
     const createdUser = await this.usersService.createUser(body);
 
-    return plainToInstance(NoSensitiveUserResponseDto, createdUser, {
+    return plainToInstance(NoSensitiveUserResponse, createdUser, {
       excludeExtraneousValues: true,
     });
   }
 
-  async login(loggedUser: LoginDto): Promise<LoginRefreshResponseDto> {
+  async login(loggedUser: LoginDto): Promise<LoginResponseDto> {
     const foundUser: User = await this.usersService.getUserByEmail(
       loggedUser.email,
     );
@@ -47,17 +42,36 @@ export class AuthService {
 
     if (!validPassword) throw new UnauthorizedException('Invalid credentials.');
 
-    return this.#createTokensForUser(foundUser);
+    const { cleanUser, accessToken, refreshToken } =
+      await this.#createTokensForUser(foundUser);
+
+    return {
+      ...cleanUser,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    };
   }
 
-  async refreshTokens(
-    sentRefreshToken: string,
-  ): Promise<LoginRefreshResponseDto> {
+  async refreshTokens(refreshToken: string): Promise<RefreshTokensResponse> {
     try {
-      const foundUser =
-        await this.#authenticateRefreshTokenForUser(sentRefreshToken);
+      const foundUser = await this.#verifyToken(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET,
+      );
 
-      return this.#createTokensForUser(foundUser);
+      await this.#validateRefreshTokenForUser(foundUser, refreshToken);
+
+      await this.usersService.removeRefreshToken(foundUser, refreshToken);
+
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        await this.#createTokensForUser(foundUser);
+
+      return {
+        newAccessToken,
+        newRefreshToken,
+      };
     } catch (error) {
       // If verification fails
       throw new UnauthorizedException('Invalid token.');
@@ -70,16 +84,9 @@ export class AuthService {
     const resetPasswordToken =
       await this.#generateResetPasswordToken(foundUser);
 
-    const resetPasswordTokenObject: IResetPasswordToken = {
+    await this.usersService.saveResetPasswordToken(
+      foundUser.id,
       resetPasswordToken,
-      expDate: new Date(
-        Date.now() + parseInt(process.env.JWT_RESET_PASSWORD_EXPIRATION_TIME),
-      ),
-      user: foundUser,
-    };
-
-    await this.resetPasswordService.saveResetPasswordToken(
-      resetPasswordTokenObject,
     );
 
     await this.emailService.sendResetPasswordEmail(
@@ -96,15 +103,8 @@ export class AuthService {
         process.env.JWT_RESET_PASSWORD_SECRET,
       );
 
-      await this.resetPasswordService.validateResetPasswordTokenForUser(
-        foundUser,
-        token,
-      );
-
-      await this.resetPasswordService.removeResetPasswordToken(
-        foundUser,
-        token,
-      );
+      if (foundUser.resetPasswordToken !== token)
+        throw new UnauthorizedException('Invalid token.');
 
       await this.usersService.saveNewPassword(foundUser.id, password);
     } catch (error) {
@@ -113,29 +113,26 @@ export class AuthService {
     }
   }
 
-  async logout(sentRefreshToken: string): Promise<void> {
-    try {
-      await this.#authenticateRefreshTokenForUser(sentRefreshToken);
-    } catch (error) {
-      // If verification fails
-      throw new UnauthorizedException('Invalid token.');
-    }
+  async logout({ userId, refreshToken }: LogoutDto): Promise<void> {
+    const foundUser = await this.usersService.getUserById(userId);
+
+    if (!foundUser) return;
+
+    await this.usersService.removeRefreshToken(foundUser, refreshToken);
   }
 
   async #generateTokens(loggedUser: ICurrentUser) {
-    // expiresIn needs the value in seconds or as a string
-
     const accessToken = await this.jwtService.signAsync(
       { sub: loggedUser.userId, ...loggedUser },
       {
-        expiresIn: parseInt(process.env.JWT_ACCESS_EXPIRATION_TIME) / 1000,
+        expiresIn: process.env.JWT_ACCESS_EXPIRATION_TIME,
         secret: process.env.JWT_ACCESS_SECRET,
       },
     );
     const refreshToken = await this.jwtService.signAsync(
       { sub: loggedUser.userId, ...loggedUser },
       {
-        expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRATION_TIME) / 1000,
+        expiresIn: process.env.JWT_REFRESH_EXPIRATION_TIME,
         secret: process.env.JWT_REFRESH_SECRET,
       },
     );
@@ -147,8 +144,6 @@ export class AuthService {
   }
 
   async #generateResetPasswordToken(user: User) {
-    // expiresIn needs the value in seconds or as a string
-
     const resetPasswordToken = await this.jwtService.signAsync(
       {
         sub: user.id,
@@ -156,8 +151,7 @@ export class AuthService {
         role: user.role,
       },
       {
-        expiresIn:
-          parseInt(process.env.JWT_RESET_PASSWORD_EXPIRATION_TIME) / 1000,
+        expiresIn: process.env.JWT_RESET_PASSWORD_EXPIRATION_TIME,
         secret: process.env.JWT_RESET_PASSWORD_SECRET,
       },
     );
@@ -178,46 +172,27 @@ export class AuthService {
     return foundUser;
   }
 
+  async #validateRefreshTokenForUser(user: User, refreshToken: string) {
+    const validToken = user.refreshTokens.includes(refreshToken);
+
+    if (!validToken) throw new UnauthorizedException('Invalid token.');
+  }
+
   async #createTokensForUser(user: User) {
-    const cleanUser: ILoginRefreshUser = {
+    const cleanUser: ICurrentUser = {
       userId: user.id,
       email: user.email,
       role: user.role,
-      firstName: user.userInfo.firstName,
     };
 
     const { accessToken, refreshToken } = await this.#generateTokens(cleanUser);
 
-    const refreshTokenObject: IRefreshToken = {
-      refreshToken,
-      expDate: new Date(
-        Date.now() + parseInt(process.env.JWT_REFRESH_EXPIRATION_TIME),
-      ),
-      user,
-    };
-
-    await this.refreshTokensService.saveRefreshToken(refreshTokenObject);
+    await this.usersService.saveRefreshToken(user, refreshToken);
 
     return {
-      ...cleanUser,
+      cleanUser,
       accessToken,
       refreshToken,
     };
-  }
-
-  async #authenticateRefreshTokenForUser(refreshToken: string) {
-    const foundUser = await this.#verifyToken(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET,
-    );
-
-    await this.refreshTokensService.validateRefreshTokenForUser(
-      foundUser,
-      refreshToken,
-    );
-
-    await this.refreshTokensService.removeRefreshToken(foundUser, refreshToken);
-
-    return foundUser;
   }
 }

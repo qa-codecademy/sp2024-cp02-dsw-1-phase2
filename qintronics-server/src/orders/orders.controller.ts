@@ -25,15 +25,12 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { PageDto } from 'src/common/pagination/page.dto';
+import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { OrderCreateDto } from './dtos/order-create.dto';
-import {
-  QueryOrderReturnDto,
-  SwaggerOrderReturnDto,
-} from './dtos/order-query-return.dto';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
-import { MonthlyTotalsDto } from './dtos/order-totals-return.dto';
+import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { GetAllOrdersDto } from './dtos/orders-get-all.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
@@ -50,7 +47,7 @@ export class OrdersController {
   @Get('/monthly-totals')
   @ApiOperation({ summary: 'Get monthly totals for admin dashboard' })
   @ApiOkResponse({
-    type: [MonthlyTotalsDto],
+    type: [MonthlyTotalHistoryDto],
     description: 'Monthly totals successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -59,7 +56,7 @@ export class OrdersController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  async getMonthlyHistory(): Promise<MonthlyTotalsDto> {
+  async getMonthlyHistory(): Promise<MonthlyTotalHistoryDto[]> {
     return await this.ordersService.getMonthlyTotalsHistory();
   }
 
@@ -67,8 +64,8 @@ export class OrdersController {
   @Roles(Role.Admin, Role.DeliveryPerson, Role.Customer)
   @Post('/get')
   @ApiOperation({ summary: 'Retrieve all orders' })
-  @ApiOkResponse({
-    type: SwaggerOrderReturnDto,
+  @ApiCreatedResponse({
+    type: [QueryOrderReturnDto],
     description: 'Orders successfully retrieved',
   })
   @ApiBody({

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BaseProduct } from "../common/types/products-interface";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
 import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
@@ -8,7 +9,7 @@ import Loader from "./Loader";
 
 interface ProductListProps {
   categoryName: string;
-  productList: ProductAndFavFlag[];
+  productList: BaseProduct[];
   title?: string;
   total: number;
   currentPage: number;
@@ -32,13 +33,9 @@ const ProductList = ({
   hasNext,
   hasPrev,
   onPageSizeChange,
-  onPageSizeChange,
 }: ProductListProps) => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [products, setProducts] = useState(productList); // Local state for products
-  // const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // Adjust as needed
-  const userId = "d49299cd-6e15-4ba0-a313-ad443c073195"; // DON'T FORGET TO UNHARDCOMMENT THIS
 
   useEffect(() => {
     // Simulate loading as in the GiftCard component
@@ -48,26 +45,6 @@ const ProductList = ({
     }, 500); // Adjust the loading delay as needed
     return () => clearTimeout(timeoutId);
   }, [productList]);
-
-  const handleToggleFavorite = (productId: string) => {
-    if (userId) {
-      axiosInstance
-        .post("/products/favorite", { productId })
-        .then(() => {
-          setProducts((prevProducts) =>
-            prevProducts.map((product) =>
-              product.id === productId
-                ? { ...product, isFavorite: !product.isFavorite }
-                : product
-            )
-          );
-          console.log("Favorite toggled");
-        })
-        .catch((err) => console.error(err));
-    } else {
-      console.log("User not logged in"); // Optional: Show popup or redirect to login
-    }
-  };
 
   const handleProductClick = (id: string) => {
     navigate(`/products/${id}`);
@@ -84,7 +61,6 @@ const ProductList = ({
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = parseInt(e.target.value, 10);
-    onPageSizeChange(newSize);
     onPageSizeChange(newSize);
   };
 

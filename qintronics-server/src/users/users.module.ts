@@ -5,10 +5,9 @@ import { UserInfoService } from 'src/user-info/user-info.service';
 import { User } from './user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { RefreshToken } from '../refresh-tokens/refresh-token.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserInfo, RefreshToken])],
+  imports: [TypeOrmModule.forFeature([User, UserInfo])],
   controllers: [UsersController],
   providers: [UsersService, UserInfoService],
   exports: [UsersService],

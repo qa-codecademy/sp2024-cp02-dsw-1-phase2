@@ -1,8 +1,8 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { NoSensitiveUserInfoResponseDto } from './no-sensitive-user-info-response.dto';
+import { NoSensitiveUserInfoResponse } from './no-sensitive-user-info-response.dto';
 
-export class UserInfoProfileResponseDto extends NoSensitiveUserInfoResponseDto {
+export class UserInfoProfileResponse extends NoSensitiveUserInfoResponse {
   @Expose()
   @ApiResponseProperty({
     type: String,

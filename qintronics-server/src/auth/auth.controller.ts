@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Req,
-  UnauthorizedException,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -17,15 +10,17 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
-import { TokenResponseInterceptor } from 'src/common/interceptors/token-response.interceptor';
-import { NoSensitiveUserResponseDto } from 'src/users/dtos/no-sensitive-user-response.dto';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { NoSensitiveUserResponse } from 'src/users/dtos/no-sensitive-user-response.dto';
 import { AuthService } from './auth.service';
-import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { LoginRefreshResponseDto } from './dtos/login-refresh-response.dto';
+import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginDto } from './dtos/login.dto';
+import { LogoutDto } from './dtos/logout.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { RefreshTokensResponse } from './dtos/refresh-tokens-response.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -36,46 +31,43 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a user' })
   @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({
-    type: NoSensitiveUserResponseDto,
+    type: NoSensitiveUserResponse,
     description: 'User has been registered.',
   })
   @ApiBadRequestResponse({ description: 'Invalid body information.' })
   @ApiConflictResponse({ description: 'User already exists.' })
-  register(@Body() body: RegisterDto): Promise<NoSensitiveUserResponseDto> {
+  register(@Body() body: RegisterDto): Promise<NoSensitiveUserResponse> {
     return this.authService.register(body);
   }
 
   @Post('login')
-  @UseInterceptors(TokenResponseInterceptor)
   @ApiOperation({ summary: 'Log in a user' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
-    type: LoginRefreshResponseDto,
+    type: LoginResponseDto,
     status: 200,
     description: 'User has successfully logged in.',
   })
   @ApiBadRequestResponse({ description: 'Invalid body information.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
-  async login(@Body() body: LoginDto): Promise<LoginRefreshResponseDto> {
+  login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(body);
   }
 
   @Post('refresh-tokens')
-  @UseInterceptors(TokenResponseInterceptor)
   @ApiOperation({ summary: `Refresh user's tokens` })
+  @ApiBody({ type: RefreshTokenDto })
   @ApiResponse({
+    type: RefreshTokensResponse,
     status: 200,
     description: 'Tokens have been refreshed.',
   })
-  @ApiUnauthorizedResponse({ description: 'Invalid or expired token.' })
-  async refreshTokens(
-    @Req() request: Request,
-  ): Promise<LoginRefreshResponseDto> {
-    if (!request.cookies.refreshToken)
-      throw new UnauthorizedException('User is logged out.');
-
-    return this.authService.refreshTokens(request.cookies.refreshToken);
+  @ApiUnauthorizedResponse({ description: 'Invalid token.' })
+  refreshTokens(
+    @Body() { refreshToken }: RefreshTokenDto,
+  ): Promise<RefreshTokensResponse> {
+    return this.authService.refreshTokens(refreshToken);
   }
 
   @Post('forgot-password')
@@ -104,17 +96,16 @@ export class AuthController {
     return this.authService.resetPassword(body);
   }
 
+  @UseGuards(JwtGuard)
   @Post('logout')
   @ApiOperation({ summary: 'Log out a user' })
+  @ApiBody({ type: LogoutDto })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'User has successfully logged out.',
   })
   @ApiUnauthorizedResponse({ description: 'Invalid token.' })
-  logout(@Req() request: Request): Promise<void> {
-    if (!request.cookies.refreshToken)
-      throw new UnauthorizedException('User is logged out.');
-
-    return this.authService.logout(request.cookies.refreshToken);
+  logout(@Body() body: LogoutDto): Promise<void> {
+    return this.authService.logout(body);
   }
 }

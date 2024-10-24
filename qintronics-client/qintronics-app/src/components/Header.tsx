@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,7 +11,7 @@ import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import IconButtons from "./IconButtons";
 import DropdownMenu from "./DropdownMenu";
-import { AuthContext } from "../context/auth.context";
+import { useUser } from "../context/UserContext";
 
 interface HeaderProps {
   onLoginClick: () => void;
@@ -22,9 +22,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
   const [language, setLanguage] = useState("EN");
   const [currency, setCurrency] = useState("USD");
-
-  // Access user and loading state from AuthContext
-  const { user, setUser, isLoading } = useContext(AuthContext);
+  const { user, logout } = useUser();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserPanel = () => setIsUserPanelOpen(!isUserPanelOpen);
@@ -32,7 +30,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const toggleCurrency = () => setCurrency(currency === "USD" ? "MKD" : "USD");
 
   const handleLogout = () => {
-    setUser(null);
+    logout();
     setIsUserPanelOpen(false);
   };
 
@@ -42,14 +40,12 @@ const Header = ({ onLoginClick }: HeaderProps) => {
         <Logo />
         <SearchBar />
         <div className="flex items-center space-x-4">
-          {!isLoading && (
-            <IconButtons
-              onLoginClick={user ? toggleUserPanel : onLoginClick}
-              toggleMenu={toggleMenu}
-              loggedIn={!!user}
-              userName={user?.firstName || null}
-            />
-          )}
+          <IconButtons
+            onLoginClick={user ? toggleUserPanel : onLoginClick}
+            toggleMenu={toggleMenu}
+            loggedIn={!!user}
+            userName={user?.name || null}
+          />
           {user && (
             <Link
               to="/dashboard"
@@ -61,8 +57,6 @@ const Header = ({ onLoginClick }: HeaderProps) => {
           )}
         </div>
       </div>
-
-      {/* Dropdown menu for language and currency */}
       <DropdownMenu
         isMenuOpen={isMenuOpen}
         language={language}
@@ -70,12 +64,10 @@ const Header = ({ onLoginClick }: HeaderProps) => {
         toggleLanguage={toggleLanguage}
         toggleCurrency={toggleCurrency}
       />
-
-      {/* User panel when logged in */}
       {isUserPanelOpen && user && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
           <div className="px-4 py-2 text-sm text-gray-700">
-            <p className="font-bold">{user.firstName}</p>
+            <p className="font-bold">{user.name}</p>
             <p className="text-xs text-gray-500">{user.email}</p>
           </div>
           <Link
