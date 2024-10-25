@@ -26,6 +26,7 @@ import { LoginRefreshResponseDto } from './dtos/login-refresh-response.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { ClearCookiesInterceptor } from 'src/common/interceptors/clear-cookies.interceptor';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -105,6 +106,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @UseInterceptors(ClearCookiesInterceptor)
   @ApiOperation({ summary: 'Log out a user' })
   @ApiResponse({
     status: 204,

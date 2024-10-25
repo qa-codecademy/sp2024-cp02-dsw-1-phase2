@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { RiMailSendLine } from "react-icons/ri";
 import "sweetalert2/dist/sweetalert2.min.css";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -72,18 +73,27 @@ const ContactForm = () => {
       return;
     }
 
-    Swal.fire({
-      icon: "success",
-      title: "Success",
-      text: "Message sent successfully! Thank you!",
-    });
-
     setFormData({
       name: "",
       email: "",
       phone: "",
       message: "",
     });
+
+    axiosInstance
+      .post("/contact", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      })
+      .then(() =>
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Message sent successfully! Thank you!",
+        })
+      );
   };
 
   return (

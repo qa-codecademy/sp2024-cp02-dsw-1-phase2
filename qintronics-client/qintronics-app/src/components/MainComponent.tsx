@@ -56,7 +56,7 @@ const MainComponent = () => {
             <AdBanner
               title="Summer Sale: Up to 50% Off!"
               description="Get amazing deals on the latest tech gadgets and accessories."
-              imageUrl="../../public/images/summer-sale.jpg"
+              imageUrl="/api/placeholder/800/400"
             />
           </div>
         </section>

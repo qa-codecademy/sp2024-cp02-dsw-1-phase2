@@ -40,6 +40,10 @@
   transform-style: preserve-3d;
 }
 
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
 .front,
 .back {
   width: 100%;
@@ -132,10 +136,6 @@
 }
 
 .back {
-  transform: rotateY(180deg);
-}
-
-.card:hover .card-inner {
   transform: rotateY(180deg);
 }
 

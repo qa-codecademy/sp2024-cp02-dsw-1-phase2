@@ -1,8 +1,9 @@
-// CardsDiv.tsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/Product-interface";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
 
 const CardsDiv: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -133,6 +134,17 @@ const CardsDiv: React.FC = () => {
                           whileHover="hover"
                           whileTap="tap"
                           variants={buttonVariants}
+                          onClick={() => {
+                            const cartItem: CartItem = {
+                              id: product.id,
+                              name: product.name,
+                              description: product.description,
+                              price: product.price,
+                              quantity: 1, // Set default quantity to 1
+                              image: product.img,
+                            };
+                            addToCart(cartItem); // Add product to cart
+                          }}
                         >
                           <ShoppingCart size={14} />
                           <span className="text-sm">Add</span>

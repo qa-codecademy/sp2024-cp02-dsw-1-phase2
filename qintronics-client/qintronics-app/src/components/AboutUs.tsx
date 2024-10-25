@@ -45,17 +45,10 @@ const AboutUs = () => {
               advanced technologies. Our mission is to make cutting-edge
               technology accessible to everyone, no matter where they are.
             </p>
-            <p className="text-lg leading-relaxed">
-              At Qintronics, we believe in a future where technology is not just
-              a luxury but a necessity for all. By blending innovation with
-              customer-centric service, we strive to create an exceptional
-              shopping experience that empowers individuals and transforms the
-              way they interact with the digital world.
-            </p>
           </div>
           <div className="relative">
             <img
-              src="../../public/images/qintronics-office.webp"
+              src="https://via.placeholder.com/600x400"
               alt="Our Story"
               className="w-full h-auto rounded-lg shadow-xl transition-transform transform hover:scale-105 duration-300"
             />
@@ -67,85 +60,46 @@ const AboutUs = () => {
           <h3 className="text-4xl font-bold text-gray-900 text-center mb-12">
             Our Mission and Values
           </h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Image Section */}
-            <div className="w-full h-full">
-              <img
-                src="../../public/images/qintronics-shop.webp"
-                alt="Mission and Values"
-                className="w-full h-auto rounded-lg shadow-xl transition-transform transform hover:scale-105 duration-300"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="p-8 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <h4 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <FaLightbulb className="mr-3 text-[#1BD8C4]" /> Innovation
+              </h4>
+              <p className="text-gray-600 leading-relaxed">
+                We continuously seek out the latest technological advancements
+                to bring innovative solutions to our customers. Our commitment
+                to innovation drives everything we do.
+              </p>
             </div>
-
-            {/* Mission and Values Text Section */}
-            <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <div className="p-4 bg-gradient-to-br from-[#1BD8C4] to-[#1A3F6B] text-white rounded-full">
-                  <FaLightbulb className="text-4xl" />
-                </div>
-                <div>
-                  <h4 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Innovation
-                  </h4>
-                  <p className="text-sm leading-relaxed text-gray-600">
-                    We continuously seek out the latest technological
-                    advancements to bring innovative solutions to our customers.
-                    Our commitment to innovation drives everything we do.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="p-4 bg-gradient-to-br from-[#FFA500] to-[#FFD700] text-white rounded-full">
-                  <FaShieldAlt className="text-4xl" />
-                </div>
-
-                <div>
-                  <h4 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Integrity
-                  </h4>
-                  <p className="text-sm leading-relaxed text-gray-600">
-                    We believe in honest, transparent business practices. Our
-                    customers trust us to deliver products and services that
-                    meet their expectations, with no compromises on quality or
-                    ethics.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="p-4 bg-gradient-to-br from-[#8e44ad] to-[#3498db] text-white rounded-full">
-                  <FaUserCheck className="text-4xl" />
-                </div>
-                <div>
-                  <h4 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Customer Focus
-                  </h4>
-                  <p className="text-sm leading-relaxed text-gray-600">
-                    We put our customers at the center of everything we do,
-                    providing personalized experiences, dedicated support, and a
-                    carefully curated selection of the best products on the
-                    market.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="p-4 bg-gradient-to-br from-[#2ecc71] to-[#16a085] text-white rounded-full">
-                  <FaBatteryFull className="text-4xl" />
-                </div>
-                <div>
-                  <h4 className="text-2xl font-semibold text-gray-900 mb-2">
-                    Sustainability
-                  </h4>
-                  <p className="text-sm leading-relaxed text-gray-600">
-                    We are committed to sustainable practices, working with
-                    partners who share our vision of responsible sourcing and
-                    environmental stewardship to minimize our impact on the
-                    planet.
-                  </p>
-                </div>
-              </div>
+            <div className="p-8 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <h4 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <FaShieldAlt className="mr-3 text-[#1BD8C4]" /> Integrity
+              </h4>
+              <p className="text-gray-600 leading-relaxed">
+                We believe in honest, transparent business practices. Our
+                customers trust us to deliver products and services that meet
+                their expectations, with no compromises on quality or ethics.
+              </p>
+            </div>
+            <div className="p-8 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <h4 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <FaUserCheck className="mr-3 text-[#1BD8C4]" /> Customer Focus
+              </h4>
+              <p className="text-gray-600 leading-relaxed">
+                We put our customers at the center of everything we do,
+                providing personalized experiences, dedicated support, and a
+                carefully curated selection of the best products on the market.
+              </p>
+            </div>
+            <div className="p-8 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+              <h4 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <FaBatteryFull className="mr-3 text-[#1BD8C4]" /> Sustainability
+              </h4>
+              <p className="text-gray-600 leading-relaxed">
+                We are committed to sustainable practices, working with partners
+                who share our vision of responsible sourcing and environmental
+                stewardship to minimize our impact on the planet.
+              </p>
             </div>
           </div>
         </div>
