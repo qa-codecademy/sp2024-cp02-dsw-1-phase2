@@ -196,7 +196,6 @@ const CardPaymentForm: React.FC = () => {
         <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
       </h2>
 
-      {/* Conditionally render based on savedCard */}
       {savedCard ? (
         <>
           <h3 className="text-xl font-semibold mb-6 flex items-center">
@@ -205,52 +204,51 @@ const CardPaymentForm: React.FC = () => {
           </h3>
 
           <ul className="space-y-6">
-            <li>
-              <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl shadow-sm hover:shadow-lg hover:bg-white transition-all duration-300">
-                <FaCreditCard className="mr-3 text-indigo-500 text-xl" />
-                <input
-                  type="radio"
-                  name="savedCard"
-                  id={`card-${savedCard?.id}`}
-                  className="mr-4"
-                  onChange={() => setSelectedCardId(savedCard?.id ?? null)}
-                />
-                <label
-                  htmlFor={`card-${savedCard?.id}`}
-                  className="flex flex-col space-y-1 text-gray-800"
-                >
-                  <span className="font-semibold text-lg">
-                    {savedCard?.ccNum} — {savedCard?.firstName}
-                  </span>
-                  {savedCard && savedCard.expDate ? (
-                    !isNaN(Date.parse(savedCard.expDate)) ? (
-                      new Date(savedCard.expDate) > new Date() ? (
-                        <span className="text-sm text-gray-500">
-                          Valid until{" "}
-                          {new Date(savedCard.expDate as string).toLocaleDateString(
-                            "en-US",
-                            { month: "2-digit", year: "2-digit" }
-                          )}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-red-500 flex items-center">
-                          <FaExclamationCircle className="mr-2" />
-                          Expired
-                        </span>
-                      )
-                    ) : (
-                      <span className="text-sm text-gray-500">
-                        Invalid expiry date
-                      </span>
-                    )
-                  ) : (
-                    <span className="text-sm text-gray-500">N/A</span>
-                  )}
-                </label>
-              </div>
-            </li>
-          </ul>
-
+  <li>
+    <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
+      <FaCreditCard className="mr-4 text-indigo-600 text-3xl" />
+      <input
+        type="radio"
+        name="savedCard"
+        id={`card-${savedCard?.id}`}
+        className="mr-4 cursor-pointer accent-indigo-600"
+        onChange={() => setSelectedCardId(savedCard?.id ?? null)}
+      />
+      <label
+        htmlFor={`card-${savedCard?.id}`}
+        className="flex flex-col space-y-1 text-gray-800"
+      >
+        <span className="font-semibold text-lg tracking-wide">
+          {savedCard?.ccNum} — {savedCard?.firstName}
+        </span>
+        {savedCard && savedCard.expDate ? (
+          !isNaN(Date.parse(savedCard.expDate)) ? (
+            new Date(savedCard.expDate) > new Date() ? (
+              <span className="text-sm text-gray-500 font-medium">
+                Valid until{" "}
+                {new Date(savedCard.expDate as string).toLocaleDateString(
+                  "en-US",
+                  { month: "2-digit", year: "2-digit" }
+                )}
+              </span>
+            ) : (
+              <span className="text-sm text-red-500 flex items-center font-medium">
+                <FaExclamationCircle className="mr-2 text-lg" />
+                Expired
+              </span>
+            )
+          ) : (
+            <span className="text-sm text-gray-500 font-medium">
+              Invalid expiry date
+            </span>
+          )
+        ) : (
+          <span className="text-sm text-gray-500 font-medium">N/A</span>
+        )}
+      </label>
+    </div>
+  </li>
+</ul>
           {selectedCardId && (
             <div className="mt-6 flex justify-center">
               <button
@@ -263,7 +261,7 @@ const CardPaymentForm: React.FC = () => {
             </div>
           )}
         </>
-      ) : null}
+      ): null}
 
       {/* Conditionally render Add a New Card form when no card is selected */}
       {!selectedCardId && (
