@@ -40,15 +40,14 @@ const ProductList = ({
 }: ProductListProps) => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [products, setProducts] = useState(productList); // Local state for products
+  const [products, setProducts] = useState(productList);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    // Simulate loading
     setIsLoaded(false);
     const timeoutId = setTimeout(() => {
       setIsLoaded(true);
-    }, 500); // Adjust the loading delay as needed
+    }, 500);
     return () => clearTimeout(timeoutId);
   }, [productList]);
 
@@ -68,7 +67,7 @@ const ProductList = ({
         })
         .catch((err) => console.error(err));
     } else {
-      console.log("User not logged in"); // Optional: Show popup or redirect to login
+      console.log("User not logged in");
     }
   };
 
@@ -78,11 +77,19 @@ const ProductList = ({
 
   const handleAddToCart = (
     event: React.MouseEvent<HTMLButtonElement>,
-    productId: string
+    product: ProductAndFavFlag
   ) => {
-    event.stopPropagation(); // Prevent the click event from bubbling up to the product card
-    // Add the product to the cart logic here
-    console.log(`Added product ${productId} to cart`);
+    event.stopPropagation();
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
+    console.log(`Added product ${product.id} to cart`);
   };
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -90,7 +97,6 @@ const ProductList = ({
     onPageSizeChange(newSize);
   };
 
-  // Calculate the range of displayed products
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, total);
 
@@ -103,8 +109,6 @@ const ProductList = ({
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6">
               {title} {category}
             </h1>
-
-            {/* Centered Dropdown and Pagination Controls */}
             <div className="flex flex-col items-center w-full mb-4">
               <div className="flex justify-center items-center mb-4">
                 <label htmlFor="pageSize" className="mr-2 text-lg font-medium">
@@ -121,8 +125,6 @@ const ProductList = ({
                   <option value={24}>24</option>
                 </select>
               </div>
-
-              {/* Pagination Buttons */}
               <div className="flex justify-center items-center mb-6">
                 <button
                   onClick={onPrevPage}
@@ -151,8 +153,6 @@ const ProductList = ({
                 </button>
               </div>
             </div>
-
-            {/* Products Grid */}
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-[90%] justify-center items-center ${
                 isLoaded ? "flip-in" : ""
@@ -180,14 +180,11 @@ const ProductList = ({
                         animationDelay: `${index * 0.1}s`,
                       }}
                     >
-                      {/* Discount badge on the left */}
                       {product.discount > 0 && (
                         <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full">
                           {product.discount}% OFF
                         </div>
                       )}
-
-                      {/* Heart icon and ArrowRightLeft icon - Hidden until hover */}
                       <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <Heart
                           size={24}
@@ -206,8 +203,6 @@ const ProductList = ({
                           className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
                         />
                       </div>
-
-                      {/* Product image centered with lazy loading */}
                       <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                         <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
                           <img
@@ -222,7 +217,6 @@ const ProductList = ({
                         </h4>
                         <p className="text-md mt-1">Brand: {product.brand}</p>
 
-                        {/* Pricing Section */}
                         <div className="flex flex-col items-center">
                           <div className="flex items-center space-x-2">
                             <p
@@ -239,47 +233,18 @@ const ProductList = ({
                             )}
                           </div>
                         </div>
-
                         <p className="text-md mt-1">
                           Availability: {product.availability} units
                         </p>
-
-                        {/* Add to Cart Button */}
                         <button
                           className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
                           aria-label="Add to Cart"
-                          onClick={(event) =>
-                            handleAddToCart(event, product.id)
-                          }
+                          onClick={(event) => handleAddToCart(event, product)}
                         >
                           <FaShoppingCart className="mr-2" />
                           Add to Cart
                         </button>
                       </div>
-
-                      <p className="text-md mt-1">
-                        Availability: {product.availability} units
-                      </p>
-
-                      {/* Add to Cart Button */}
-                      <button
-                        className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
-                        aria-label="Add to Cart"
-                        onClick={() => {
-                          const cartItem: CartItem = {
-                            id: product.id,
-                            name: product.name,
-                            description: product.description,
-                            price: product.price,
-                            quantity: 1, // Set default quantity to 1
-                            image: product.img,
-                          };
-                          addToCart(cartItem); // Add product to cart
-                        }}
-                      >
-                        <FaShoppingCart className="mr-2" />
-                        Add to Cart
-                      </button>
                     </div>
                   );
                 })
@@ -287,14 +252,12 @@ const ProductList = ({
                 <p className="text-center text-lg">No products available.</p>
               )}
             </div>
-
-            {/* Showing 1-20 of total results */}
             <div className="mt-6 text-center text-lg">
               Showing {startItem}-{endItem} of {total} results
             </div>
           </div>
         ) : (
-          <Loader /> // Display loader while the products are being loaded
+          <Loader />
         )}
       </div>
     </div>
