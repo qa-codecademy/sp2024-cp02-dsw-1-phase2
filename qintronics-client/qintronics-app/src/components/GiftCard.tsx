@@ -48,8 +48,6 @@ const GiftCard = () => {
   const [toNameError, setToNameError] = useState<string>("");
 
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [customAmount, setCustomAmount] = useState<string>("");
-  const [customAmountError, setCustomAmountError] = useState<string>("");
 
   const [message, setMessage] = useState("");
   const [charCount, setCharCount] = useState(0);
@@ -83,26 +81,8 @@ const GiftCard = () => {
     if (isFlipped) setIsFlipped(false); // Flip to front
   };
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    // Limit input to 4 digits
-    if (/^\d{0,4}$/.test(value)) {
-      setCustomAmount(value);
-      if (parseInt(value) < 30 || parseInt(value) > 1000) {
-        setCustomAmountError("Please enter a value between $30 and $1000");
-      } else {
-        setCustomAmountError(""); // Clear error when valid value is entered
-        setSelectedAmount(null);
-        if (isFlipped) setIsFlipped(false); // Flip to front
-      }
-    }
-  };
-
   const handleAmountChange = (amount: number) => {
     setSelectedAmount(amount);
-    setCustomAmount(""); // Clear custom amount when selecting a predefined amount
-    setCustomAmountError(""); // Clear custom amount error
     if (isFlipped) setIsFlipped(false); // Flip to front
   };
 
@@ -136,8 +116,8 @@ const GiftCard = () => {
       return;
     }
 
-    if (!selectedAmount && !customAmount) {
-      setCustomAmountError("Please select or enter a gift card amount.");
+    if (!selectedAmount) {
+      console.log("Please select a gift card amount.");
       return;
     }
 
@@ -163,7 +143,7 @@ const GiftCard = () => {
             </div>
 
             {/* Gift Card Display */}
-            <div className="gift-card-container w-full h-48 sm:h-60 mx-auto relative">
+            <div className="gift-card-container w-full h-48 sm:h-60 mx-auto relative mt-4">
               <div
                 className={`gift-card transition-transform transform-gpu ${
                   isFlipped ? "rotate-y-180" : ""
@@ -242,7 +222,7 @@ const GiftCard = () => {
                     {toName || "To: Recipient's Name"}
                   </h3>
                   <p className="mt-2 text-lg sm:text-2xl font-bold truncate">
-                    ${selectedAmount || customAmount || "Amount"}
+                    ${selectedAmount || "Amount"}
                   </p>
                 </div>
 
@@ -297,82 +277,59 @@ const GiftCard = () => {
               </div>
             </div>
 
-            {/* Form Fields */}
-            <div className="mt-4 sm:mt-6">
-              <label className="block font-semibold mb-1 text-xs sm:text-sm">
-                To:
-              </label>
+            <div className="mt-4 mb-4">
+              <label className="block text-sm font-semibold mb-2">To:</label>
               <input
                 type="text"
-                className={`w-full border p-1 sm:p-2 rounded-lg mb-2 ${
+                className={`w-full border p-2 rounded-lg ${
                   toNameError ? "border-red-500" : ""
                 }`}
                 value={toName}
                 onChange={handleToNameChange}
-                placeholder="Recipient's name"
-                maxLength={40} // Limit name to 40 characters
+                placeholder="Enter recipient's name"
+                maxLength={40} // Limit to 40 characters
               />
               {toNameError && (
-                <p className="text-xs sm:text-sm text-red-500 mb-2">
-                  {toNameError}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{toNameError}</p>
               )}
+            </div>
 
-              {/* Amount Selection */}
-              <h2 className="font-semibold mb-4 text-center text-sm sm:text-base">
-                Select Gift Card Amount:
-              </h2>
-              <div className="grid grid-cols-2 gap-4 sm:flex sm:justify-center sm:space-x-4 mb-4">
-                {[30, 40, 50, 100].map((amount) => (
-                  <label
-                    key={amount}
-                    className={`cursor-pointer flex justify-center items-center h-20 w-full sm:h-24 sm:w-24 border-2 rounded-lg transition-all duration-300 ${
-                      selectedAmount === amount
-                        ? "border-blue-500 bg-blue-100 shadow-lg"
-                        : "border-gray-300 bg-gray-100"
-                    } hover:bg-blue-50 hover:shadow-md hover:border-blue-500`}
-                  >
-                    <input
-                      type="radio"
-                      name="amount"
-                      value={amount}
-                      checked={selectedAmount === amount}
-                      onChange={() => handleAmountChange(amount)}
-                      className="hidden"
-                    />
-                    <span className="text-sm sm:text-md font-semibold text-center">
-                      ${amount}
+            {/* Amount Selection */}
+            <h2 className="font-semibold mb-4 text-center text-sm sm:text-base">
+              Select Gift Card Amount:
+            </h2>
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              {[10, 20, 30, 40, 50, 100, 200, 500].map((amount) => (
+                <label
+                  key={amount}
+                  className={`cursor-pointer flex justify-center items-center h-20 w-full sm:h-24 sm:w-24 border-2 rounded-lg transition-all duration-300 ${
+                    selectedAmount === amount
+                      ? "border-blue-500 bg-blue-100 shadow-lg"
+                      : "border-gray-300 bg-gray-100"
+                  } hover:bg-blue-50 hover:shadow-md hover:border-blue-500`}
+                >
+                  <input
+                    type="radio"
+                    name="amount"
+                    value={amount}
+                    checked={selectedAmount === amount}
+                    onChange={() => handleAmountChange(amount)}
+                    className="hidden"
+                  />
+                  <span className="text-sm sm:text-md font-semibold text-center">
+                    ${amount}
+                  </span>
+                  {selectedAmount === amount && (
+                    <span className="absolute top-2 right-2 text-blue-500">
+                      ✓
                     </span>
-                    {selectedAmount === amount && (
-                      <span className="absolute top-2 right-2 text-blue-500">
-                        ✓
-                      </span>
-                    )}
-                  </label>
-                ))}
-              </div>
+                  )}
+                </label>
+              ))}
+            </div>
 
-              {/* Custom Amount */}
-              <label className="block font-semibold mb-1 text-xs sm:text-sm">
-                Or Enter a Custom Amount (between $30 and $1000):
-              </label>
-              <input
-                type="text"
-                className={`w-full border p-1 sm:p-2 rounded-lg mb-2 ${
-                  customAmountError ? "border-red-500" : ""
-                }`}
-                value={customAmount}
-                onChange={handleCustomAmountChange}
-                placeholder="Enter custom amount"
-                maxLength={4} // Max length of 4 digits
-              />
-              {customAmountError && (
-                <p className="text-xs sm:text-sm text-red-500 mb-2">
-                  {customAmountError}
-                </p>
-              )}
-
-              {/* Message Field */}
+            {/* Message Field */}
+            <div className="mt-4 sm:mt-6">
               <label className="block font-semibold mb-1 text-xs sm:text-sm">
                 Message:
               </label>

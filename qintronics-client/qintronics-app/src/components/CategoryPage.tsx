@@ -1,26 +1,33 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductList from "./ProductList";
-import { BaseProduct } from "../common/types/products-interface";
-import Loader from "./Loader";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Loader from "./Loader";
+import ProductList from "./ProductList";
+import { AuthContext } from "../context/auth.context";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
-  const [filteredProducts, setFilteredProducts] = useState<BaseProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductAndFavFlag[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [pageSize, setPageSize] = useState(8); // Number of products per page
   const [hasNext, setHasNext] = useState(false); // Track if next page exists
   const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
+  const { user } = useContext(AuthContext);
 
   const fetchProducts = (page: number, size: number) => {
     setLoading(true);
     axiosInstance
-      .get(
-        `/products?sort=ASC&sortBy=name&pageSize=${size}&page=${page}&categoryName=${category}`
-      )
+      .post(`/products`, {
+        page,
+        pageSize: size,
+        categoryName: category,
+        userId: user?.userId,
+      })
       .then((res) => {
         setFilteredProducts(res.data.products);
         setTotal(res.data.total);

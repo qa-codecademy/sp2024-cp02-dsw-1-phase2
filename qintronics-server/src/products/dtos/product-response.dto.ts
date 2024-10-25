@@ -1,12 +1,21 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Product } from '../product.entity';
+
+export class FavoritedProducts extends Product {
+  @ApiPropertyOptional({
+    type: 'boolean',
+    description: 'Indicates if the product is favorited by the user',
+    example: false,
+  })
+  isFavorite?: boolean;
+}
 
 export class ProductResponseDto {
   @ApiProperty({
     description: 'List of products',
-    type: [Product],
+    type: [FavoritedProducts],
   })
-  products: Product[];
+  products: FavoritedProducts[];
 
   @ApiProperty({
     description: 'Total number of products',

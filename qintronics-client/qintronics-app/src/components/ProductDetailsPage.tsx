@@ -1,12 +1,13 @@
+import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
+import { useContext, useEffect, useRef, useState } from "react";
+import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import { BaseProduct } from "../common/types/products-interface";
-import { useState, useRef, useEffect } from "react";
-import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
-import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
-import Sidebar from "./Sidebar";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import Sidebar from "./Sidebar";
+import { AuthContext } from "../context/auth.context";
 
 const formatKey = (key: string) => {
   return key
@@ -18,17 +19,42 @@ const formatKey = (key: string) => {
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
+  const handleToggleFavorite = () => {
+    if (user) {
+      axiosInstance
+        .post("/products/favorite", {
+          productId: product?.id,
+        })
+        .then(() => {
+          fetchProduct();
+          console.log("Favorite toggled");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    return; // Could possibly show an info popup or login redirect
+  };
+
+  const fetchProduct = () => {
     axiosInstance
-      .get(`/products/${id}`)
+      .post(`/products/id`, {
+        productId: id,
+        userId: user?.userId,
+      })
       .then((res) => {
         setProduct(res.data);
       })
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  useEffect(() => {
+    fetchProduct();
   }, []);
 
   const [quantity, setQuantity] = useState(1);
@@ -166,11 +192,39 @@ const ProductDetailsPage = () => {
 
               {/* Favorites (Wishlist) and Compare Buttons */}
               <div className="flex space-x-4 mb-4">
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <Heart size={20} className="mr-2" /> Wishlist
-                </button>
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <ArrowRightLeft size={20} className="mr-2" /> Compare
+                {product.isFavorite ? (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={`flex items-center justify-center w-12 h-12 text-[#1A3F6B] rounded-full border border-[#1A3F6B] transition-all duration-300 ${
+                      product.isFavorite
+                        ? "bg-white"
+                        : "hover:bg-[#1A3F6B] hover:text-white"
+                    }`}
+                    title="Remove from Favorites" // Tooltip for removing favorite
+                  >
+                    <Heart
+                      size={28} // Same size in both states
+                      className={`transition-all duration-300 ${
+                        product.isFavorite
+                          ? "fill-[#1A3F6B] stroke-[#1A3F6B]"
+                          : "fill-none stroke-white"
+                      }`}
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                    title="Add to Favorites" // Tooltip for adding favorite
+                  >
+                    <Heart size={24} className="transition-all" />
+                  </button>
+                )}
+                <button
+                  className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                  title="Compare Products" // Tooltip for comparing products
+                >
+                  <ArrowRightLeft size={24} className="transition-all" />
                 </button>
               </div>
 
