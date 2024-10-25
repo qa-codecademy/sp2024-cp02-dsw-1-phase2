@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { BsCalendar2MonthFill, BsCreditCard2FrontFill } from "react-icons/bs";
+import { BsCreditCard2FrontFill } from "react-icons/bs";
 import {
   FaCalendarAlt,
   FaCreditCard,
@@ -35,21 +35,24 @@ const CardPaymentForm: React.FC = () => {
     expiryYear: "",
     cvv: "",
   });
-  const [savedCard, setSavedCard] = useState<SavedCard>();
+  const [savedCard, setSavedCard] = useState<SavedCard | null>(null);
   const { orderDetails } = useContext(CardPaymentContext);
 
   useEffect(() => {
     axiosInstance
       .get("/users/me")
       .then((res) => {
-        res.data.userInfo.ccNum ? setSavedCard(res.data.userInfo) : null;
+        if (res.data.userInfo.ccNum) {
+          setSavedCard(res.data.userInfo);
+        } else {
+          setSavedCard(null);
+        }
       })
       .catch((err) => {
         console.error(err);
       });
   }, []);
 
-  // Function to detect card type based on card number
   const detectCardType = (cardNumber: string) => {
     const firstDigit = cardNumber[0];
     const firstTwoDigits = cardNumber.slice(0, 2);
@@ -58,7 +61,7 @@ const CardPaymentForm: React.FC = () => {
     if (firstTwoDigits >= "51" && firstTwoDigits <= "55") return "MasterCard";
     if (firstTwoDigits === "34" || firstTwoDigits === "37")
       return "AmericanExpress";
-    return ""; // Return empty string if no match
+    return ""; 
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +75,6 @@ const CardPaymentForm: React.FC = () => {
         cardNumber: formattedValue,
       }));
 
-      // Detect and set card type based on number
       const detectedType = detectCardType(cleaned);
       setCardType(detectedType);
     } else if (name === "expiryMonth" || name === "expiryYear") {
@@ -95,14 +97,17 @@ const CardPaymentForm: React.FC = () => {
     }
   };
 
+  const clearCart = () => {
+    localStorage.removeItem("cart"); // Remove cart data from localStorage
+  };
+
   const handlePaymentSubmit = (e: FormEvent) => {
     e.preventDefault();
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
 
-    const currentYear = new Date().getFullYear() % 100; // Get last two digits of the current year
-    const currentMonth = new Date().getMonth() + 1; // Get the current month
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
 
-    // Card number validation
     if (
       cardNumberWithoutSpaces.length !== 16 ||
       isNaN(Number(cardNumberWithoutSpaces))
@@ -115,7 +120,6 @@ const CardPaymentForm: React.FC = () => {
       return;
     }
 
-    // Expiry month validation
     if (
       parseInt(cardData.expiryMonth) < 1 ||
       parseInt(cardData.expiryMonth) > 12 ||
@@ -129,7 +133,6 @@ const CardPaymentForm: React.FC = () => {
       return;
     }
 
-    // Expiry date validation (past dates not allowed)
     if (
       parseInt(cardData.expiryYear) < currentYear ||
       (parseInt(cardData.expiryYear) === currentYear &&
@@ -164,10 +167,9 @@ const CardPaymentForm: React.FC = () => {
             timerProgressBar: true,
             showConfirmButton: false,
           }).then(() => {
+            clearCart(); // Clear cart after successful payment
             navigate("/");
           });
-
-          localStorage.removeItem("cart");
         })
         .catch((err) => console.log(err));
     }
@@ -182,6 +184,7 @@ const CardPaymentForm: React.FC = () => {
       timerProgressBar: true,
       showConfirmButton: false,
     }).then(() => {
+      clearCart(); // Clear cart after successful payment
       navigate("/");
     });
   };
@@ -193,74 +196,82 @@ const CardPaymentForm: React.FC = () => {
         <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
       </h2>
 
-      <h3 className="text-xl font-semibold mb-6 flex items-center">
-        <GrCheckboxSelected className="mr-2 text-secondary text-lg" />
-        Select your saved card, or pay with another.
-      </h3>
+      {/* Conditionally render based on savedCard */}
+      {savedCard ? (
+        <>
+          <h3 className="text-xl font-semibold mb-6 flex items-center">
+            <GrCheckboxSelected className="mr-2 text-secondary text-lg" />
+            Select your saved card, or pay with another.
+          </h3>
 
-      <ul className="space-y-6">
-        <li>
-          <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl shadow-sm hover:shadow-lg hover:bg-white transition-all duration-300">
-            <FaCreditCard className="mr-3 text-indigo-500 text-xl" />
-            <input
-              type="radio"
-              name="savedCard"
-              id={`card-${savedCard?.id}`}
-              className="mr-4"
-              onChange={() => setSelectedCardId(savedCard?.id ?? null)}
-            />
-            <label
-              htmlFor={`card-${savedCard?.id}`}
-              className="flex flex-col space-y-1 text-gray-800"
-            >
-              <span className="font-semibold text-lg">
-                {savedCard?.ccNum} — {savedCard?.firstName}
-              </span>
-              {savedCard && savedCard.expDate ? (
-                !isNaN(Date.parse(savedCard.expDate)) ? (
-                  new Date(savedCard.expDate) > new Date() ? (
-                    <span className="text-sm text-gray-500">
-                      Valid until{" "}
-                      {new Date(savedCard.expDate as string).toLocaleDateString(
-                        "en-US",
-                        { month: "2-digit", year: "2-digit" }
-                      )}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-red-500 flex items-center">
-                      <FaExclamationCircle className="mr-2" />
-                      Expired
-                    </span>
-                  )
-                ) : (
-                  <span className="text-sm text-gray-500">
-                    Invalid expiry date
+          <ul className="space-y-6">
+            <li>
+              <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl shadow-sm hover:shadow-lg hover:bg-white transition-all duration-300">
+                <FaCreditCard className="mr-3 text-indigo-500 text-xl" />
+                <input
+                  type="radio"
+                  name="savedCard"
+                  id={`card-${savedCard?.id}`}
+                  className="mr-4"
+                  onChange={() => setSelectedCardId(savedCard?.id ?? null)}
+                />
+                <label
+                  htmlFor={`card-${savedCard?.id}`}
+                  className="flex flex-col space-y-1 text-gray-800"
+                >
+                  <span className="font-semibold text-lg">
+                    {savedCard?.ccNum} — {savedCard?.firstName}
                   </span>
-                )
-              ) : (
-                <span className="text-sm text-gray-500">N/A</span>
-              )}
-            </label>
-          </div>
-        </li>
-      </ul>
-      {selectedCardId ? (
-        <div className="mt-6 flex justify-center">
-          <button
-            onClick={handleUseSelectedCard}
-            className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
-          >
-            <TbCreditCardPay className="mr-2" size={18} />
-            Use Selected Card to Pay
-          </button>
-        </div>
-      ) : (
+                  {savedCard && savedCard.expDate ? (
+                    !isNaN(Date.parse(savedCard.expDate)) ? (
+                      new Date(savedCard.expDate) > new Date() ? (
+                        <span className="text-sm text-gray-500">
+                          Valid until{" "}
+                          {new Date(savedCard.expDate as string).toLocaleDateString(
+                            "en-US",
+                            { month: "2-digit", year: "2-digit" }
+                          )}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-red-500 flex items-center">
+                          <FaExclamationCircle className="mr-2" />
+                          Expired
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-sm text-gray-500">
+                        Invalid expiry date
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-sm text-gray-500">N/A</span>
+                  )}
+                </label>
+              </div>
+            </li>
+          </ul>
+
+          {selectedCardId && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleUseSelectedCard}
+                className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+              >
+                <TbCreditCardPay className="mr-2" size={18} />
+                Use Selected Card to Pay
+              </button>
+            </div>
+          )}
+        </>
+      ) : null}
+
+      {/* Conditionally render Add a New Card form when no card is selected */}
+      {!selectedCardId && (
         <div className="mt-10">
           <h3 className="text-xl font-semibold mb-6 flex items-center">
             <AiOutlinePlus className="mr-2 text-secondary text-lg" />
             Add a New Card
           </h3>
-          {/* Card Preview */}
           <div className="card-container">
             <div
               className="card"
@@ -383,7 +394,7 @@ const CardPaymentForm: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
-                <BsCalendar2MonthFill className="mr-2 text-secondary text-lg" />
+                <FaCalendarAlt className="mr-2 text-secondary text-lg" />
                 <label className="block text-sm text-primary">
                   Expiry Month
                 </label>
@@ -428,7 +439,7 @@ const CardPaymentForm: React.FC = () => {
                 value={cardData.cvv}
                 onChange={(e) => {
                   handleInputChange(e);
-                  setIsCardFlipped(true); // Flip the card when typing
+                  setIsCardFlipped(true); 
                 }}
                 onFocus={() => setIsCardFlipped(true)}
                 onBlur={() => setIsCardFlipped(false)}
