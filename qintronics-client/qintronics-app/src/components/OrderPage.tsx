@@ -14,12 +14,12 @@ import {
 import { GiConfirmed } from "react-icons/gi";
 import { TbTruckDelivery } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 import { FormData } from "../common/interfaces/form.data.interface";
 import { FormErrors } from "../common/interfaces/form.error.interface";
 import { ProductsAndQuantity } from "../common/interfaces/order.details.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { orderConfirm, orderFormIncomplete } from "../common/utils/swalUtils";
 import { CardPaymentContext } from "../context/card-payment.context";
 
 const CheckoutForm: React.FC = () => {
@@ -109,11 +109,7 @@ const CheckoutForm: React.FC = () => {
       if (validateCheckoutForm()) {
         setCheckoutValid(true);
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Incomplete Form",
-          text: "Please complete the checkout form before confirming the order.",
-        });
+        orderFormIncomplete();
       }
     } else if (method === "card") {
       if (validateCheckoutForm()) {
@@ -121,11 +117,7 @@ const CheckoutForm: React.FC = () => {
 
         navigate("/payment");
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Incomplete Form",
-          text: "Please complete the checkout form before proceeding to payment.",
-        });
+        orderFormIncomplete();
       }
     }
   };
@@ -149,7 +141,7 @@ const CheckoutForm: React.FC = () => {
           : "Invalid phone number";
         break;
       case "zipCode":
-        newErrors.zipCode = /^\d{5}$/.test(value) ? "" : "Invalid ZIP code";
+        newErrors.zipCode = /^\d{3,6}$/.test(value) ? "" : "Invalid ZIP code";
         break;
       case "deliveryDay":
         newErrors.deliveryDay = value
@@ -206,19 +198,9 @@ const CheckoutForm: React.FC = () => {
       axiosInstance
         .post("/orders", { ...orderDetails, isPaid: false })
         .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Order Confirmed!",
-            text: "Your order has been successfully placed. Thank you!",
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-          }).then(() => {
-            setIsSubmitted(true);
-            navigate("/");
-          });
-
+          setIsSubmitted(true);
           localStorage.removeItem("cart");
+          orderConfirm(navigate);
         })
         .catch((err) => console.log(err));
     }

@@ -14,8 +14,11 @@ import { motion } from "framer-motion";
 import { RiMailSendLine } from "react-icons/ri";
 import "sweetalert2/dist/sweetalert2.min.css";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { contactPageSuccess } from "../common/utils/swalUtils";
+import { useNavigate } from "react-router-dom";
 
 const ContactForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,13 +90,7 @@ const ContactForm = () => {
         phone: formData.phone,
         message: formData.message,
       })
-      .then(() =>
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Message sent successfully! Thank you!",
-        })
-      );
+      .then(() => contactPageSuccess(navigate));
   };
 
   return (

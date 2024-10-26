@@ -1,15 +1,16 @@
+import { ArrowRightLeft, Heart } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
-import { FaShoppingCart } from "react-icons/fa";
-import { ArrowRightLeft, Heart } from "lucide-react";
-import Sidebar from "./Sidebar";
-import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
-import axiosInstance from "../common/utils/axios-instance.util";
-import Loader from "./Loader";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
+import addToCart from "../common/utils/addToCart";
+import axiosInstance from "../common/utils/axios-instance.util";
 import { AuthContext } from "../context/auth.context";
+import Loader from "./Loader";
+import Sidebar from "./Sidebar";
+import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
 
 interface ProductListProps {
   categoryName: string;
@@ -67,7 +68,7 @@ const ProductList = ({
         })
         .catch((err) => console.error(err));
     } else {
-      console.log("User not logged in");
+      notLoggedFavoriteProduct(navigate);
     }
   };
 

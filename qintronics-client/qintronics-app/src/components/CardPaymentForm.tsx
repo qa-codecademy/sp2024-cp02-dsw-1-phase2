@@ -1,9 +1,9 @@
 import React, {
   ChangeEvent,
   FormEvent,
+  useContext,
   useEffect,
   useState,
-  useContext,
 } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BsCreditCard2FrontFill } from "react-icons/bs";
@@ -17,11 +17,19 @@ import {
 import { GrCheckboxSelected } from "react-icons/gr";
 import { TbCreditCardPay } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import { SavedCard } from "../common/interfaces/saved.card.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
-import "../styles/card.css";
+import {
+  invalidCardNumber,
+  invalidExpiryDate,
+  invalidExpiryMonth,
+  invalidExpiryYear,
+  paymentSuccessful,
+  selectedCart,
+} from "../common/utils/swalUtils";
 import { CardPaymentContext } from "../context/card-payment.context";
+import "../styles/card.css";
+import Swal from "sweetalert2";
 
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
@@ -119,7 +127,7 @@ const CardPaymentForm: React.FC = () => {
       return false;
     }
   };
-
+  const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
   const prepareCardDataPayload = () => {
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
     const expiryDate = new Date(
@@ -133,84 +141,105 @@ const CardPaymentForm: React.FC = () => {
       cvv: parseInt(cardData.cvv, 10),
     };
   };
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+
+    if (
+      cardNumberWithoutSpaces.length !== 16 ||
+      isNaN(Number(cardNumberWithoutSpaces))
+    ) {
+      invalidCardNumber();
+      return;
+    }
+
+    if (
+      parseInt(cardData.expiryMonth) < 1 ||
+      parseInt(cardData.expiryMonth) > 12 ||
+      cardData.expiryMonth.length !== 2
+    ) {
+      invalidExpiryMonth();
+      return;
+    }
+
+    if (
+      parseInt(cardData.expiryYear) < currentYear ||
+      (parseInt(cardData.expiryYear) === currentYear &&
+        parseInt(cardData.expiryMonth) < currentMonth)
+    ) {
+      invalidExpiryDate();
+      return;
+    }
+
+    if (cardData.expiryYear.length !== 2) {
+      invalidExpiryYear();
+      return;
+    }
+    
+    const handlePaymentSubmit = async (e: FormEvent) => {
+      e.preventDefault();
+     
+  
+      try {
+        // Save the order first
+        await handleSaveOrder();
+  
+        // Check if there is no saved card, prompt to save the new card
+        if (!savedCard) {
+          const result = await Swal.fire({
+            title: "Save Card?",
+            text: "Would you like to save this card for future use?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, save it",
+          });
+  
+          if (result.isConfirmed) {
+            // Prepare the card data payload
+            const cardDataPayload = prepareCardDataPayload();
+            const saveSuccess = await handleSaveCardRequest(cardDataPayload);
+  
+            if (saveSuccess) {
+              await loadSavedCard(); // Reload saved card if save was successful
+            }
+          }
+        }
+  
+        // Show success payment message after handling save card prompt
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful!",
+          text: "Your payment has been processed successfully. Thank you!",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          clearCart();
+          navigate("/");
+        });
+      } catch (paymentError) {
+        Swal.fire(
+          "Payment Error",
+          "An error occurred while processing the payment. Please try again.",
+          "error"
+        );
+      }
+    };
 
   const handleSaveOrder = async () => {
     if (orderDetails) {
-      await axiosInstance.post("/orders", { ...orderDetails, isPaid: true });
+      axiosInstance
+        .post("/orders", { ...orderDetails, isPaid: true })
+        .then(() => {
+          clearCart();
+          paymentSuccessful(navigate);
+        })
+        .catch((err) => console.log(err));
     }
   };
 
-  const handlePaymentSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      // Save the order first
-      await handleSaveOrder();
-
-      // Check if there is no saved card, prompt to save the new card
-      if (!savedCard) {
-        const result = await Swal.fire({
-          title: "Save Card?",
-          text: "Would you like to save this card for future use?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Yes, save it",
-        });
-
-        if (result.isConfirmed) {
-          // Prepare the card data payload
-          const cardDataPayload = prepareCardDataPayload();
-          const saveSuccess = await handleSaveCardRequest(cardDataPayload);
-
-          if (saveSuccess) {
-            await loadSavedCard(); // Reload saved card if save was successful
-          }
-        }
-      }
-
-      // Show success payment message after handling save card prompt
-      Swal.fire({
-        icon: "success",
-        title: "Payment Successful!",
-        text: "Your payment has been processed successfully. Thank you!",
-        timer: 3000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      }).then(() => {
-        clearCart();
-        navigate("/");
-      });
-    } catch (paymentError) {
-      Swal.fire(
-        "Payment Error",
-        "An error occurred while processing the payment. Please try again.",
-        "error"
-      );
-    }
-  };
-
-  const handleUseSelectedCard = async () => {
-    try {
-      await handleSaveOrder();
-
-      Swal.fire({
-        icon: "success",
-        title: "Payment Successful!",
-        text: "Your payment has been processed successfully. Thank you!",
-        timer: 3000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      }).then(() => {
-        clearCart();
-        navigate("/");
-      });
-    } catch (error) {
-      Swal.fire(
-        "Payment Error",
-        "An error occurred while processing the payment. Please try again.",
-        "error"
-      );
-    }
+  const handleUseSelectedCard = () => {
+    clearCart();
+    selectedCart(navigate);
   };
 
   return (
