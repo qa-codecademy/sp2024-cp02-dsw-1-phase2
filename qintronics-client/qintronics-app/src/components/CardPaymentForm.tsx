@@ -1,9 +1,9 @@
 import React, {
   ChangeEvent,
   FormEvent,
+  useContext,
   useEffect,
   useState,
-  useContext,
 } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BsCreditCard2FrontFill } from "react-icons/bs";
@@ -17,11 +17,18 @@ import {
 import { GrCheckboxSelected } from "react-icons/gr";
 import { TbCreditCardPay } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import { SavedCard } from "../common/interfaces/saved.card.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
-import "../styles/card.css";
+import {
+  invalidCardNumber,
+  invalidExpiryDate,
+  invalidExpiryMonth,
+  invalidExpiryYear,
+  paymentSuccessful,
+  selectedCart,
+} from "../common/utils/swalUtils";
 import { CardPaymentContext } from "../context/card-payment.context";
+import "../styles/card.css";
 
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
@@ -112,11 +119,7 @@ const CardPaymentForm: React.FC = () => {
       cardNumberWithoutSpaces.length !== 16 ||
       isNaN(Number(cardNumberWithoutSpaces))
     ) {
-      Swal.fire(
-        "Invalid Card Number",
-        "Please enter a valid 16-digit card number.",
-        "error"
-      );
+      invalidCardNumber();
       return;
     }
 
@@ -125,11 +128,7 @@ const CardPaymentForm: React.FC = () => {
       parseInt(cardData.expiryMonth) > 12 ||
       cardData.expiryMonth.length !== 2
     ) {
-      Swal.fire(
-        "Invalid Expiry Month",
-        "Please enter a valid expiry month (01-12).",
-        "error"
-      );
+      invalidExpiryMonth();
       return;
     }
 
@@ -138,20 +137,12 @@ const CardPaymentForm: React.FC = () => {
       (parseInt(cardData.expiryYear) === currentYear &&
         parseInt(cardData.expiryMonth) < currentMonth)
     ) {
-      Swal.fire(
-        "Invalid Expiry Date",
-        "The expiry date cannot be in the past.",
-        "error"
-      );
+      invalidExpiryDate();
       return;
     }
 
     if (cardData.expiryYear.length !== 2) {
-      Swal.fire(
-        "Invalid Expiry Year",
-        "Please enter a valid 2-digit expiry year.",
-        "error"
-      );
+      invalidExpiryYear();
       return;
     }
 
@@ -159,34 +150,16 @@ const CardPaymentForm: React.FC = () => {
       axiosInstance
         .post("/orders", { ...orderDetails, isPaid: true })
         .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Payment Successful!",
-            text: "Your payment has been processed successfully. Thank you!",
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-          }).then(() => {
-            clearCart(); // Clear cart after successful payment
-            navigate("/");
-          });
+          clearCart();
+          paymentSuccessful(navigate);
         })
         .catch((err) => console.log(err));
     }
   };
 
   const handleUseSelectedCard = () => {
-    Swal.fire({
-      icon: "success",
-      title: "Payment Successful!",
-      text: "Your payment has been processed successfully. Thank you!",
-      timer: 3000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-    }).then(() => {
-      clearCart(); // Clear cart after successful payment
-      navigate("/");
-    });
+    clearCart();
+    selectedCart(navigate);
   };
 
   return (

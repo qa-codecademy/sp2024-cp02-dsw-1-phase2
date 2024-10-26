@@ -1,13 +1,14 @@
 import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
 import { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
-import axiosInstance from "../common/utils/axios-instance.util";
-import addToCart from "../common/utils/addToCart";
+import { useNavigate, useParams } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
-import Sidebar from "./Sidebar";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
+import addToCart from "../common/utils/addToCart";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
 import { AuthContext } from "../context/auth.context";
+import Sidebar from "./Sidebar";
 
 const formatKey = (key: string) => {
   return key
@@ -17,6 +18,7 @@ const formatKey = (key: string) => {
 };
 
 const ProductDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
   const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
@@ -35,8 +37,9 @@ const ProductDetailsPage = () => {
         .catch((err) => {
           console.error(err);
         });
+    } else {
+      notLoggedFavoriteProduct(navigate);
     }
-    return; // Could possibly show an info popup or login redirect
   };
 
   const fetchProduct = () => {
@@ -125,7 +128,7 @@ const ProductDetailsPage = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="min-h-screen flex flex-1 justify-center items-center p-4 md:p-8">
+      <div className="min-h-screen flex flex-1 justify-center items-start p-4 md:p-8">
         <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[80vh] relative">
           {/* For larger screens, show the discount badge in the top-left corner */}
           {product.discount > 0 && (

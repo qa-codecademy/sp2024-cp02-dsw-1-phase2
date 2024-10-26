@@ -15,6 +15,12 @@ import Loader from "./Loader";
 import giftImage from "/images/gift-bow-removebg-preview.png";
 import barcodeImage from "/images/barcode.png"; // Static barcode image
 import Sidebar from "./Sidebar";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+import addToCart from "../common/utils/addToCart";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { BaseProduct } from "../common/types/products-interface";
+import { giftCardComplete } from "../common/utils/swalUtils";
+import { useNavigate } from "react-router-dom";
 
 const colorOptions = [
   {
@@ -22,24 +28,28 @@ const colorOptions = [
     gradient: "linear-gradient(135deg, #1a3f6b, #1bd8c4)",
     borderColor: "#1a3f6b",
     backColor: "#1bd8c4",
+    backColorName: "cyan",
   },
   {
     id: 2,
     gradient: "linear-gradient(135deg, #ff0080, #ff8c00)",
     borderColor: "#ff0080",
     backColor: "#ff8c00",
+    backColorName: "orange",
   },
   {
     id: 3,
     gradient: "linear-gradient(135deg, #8e44ad, #3498db)",
     borderColor: "#8e44ad",
     backColor: "#3498db",
+    backColorName: "purple",
   },
   {
     id: 4,
     gradient: "linear-gradient(135deg, #2ecc71, #16a085)",
     borderColor: "#2ecc71",
     backColor: "#16a085",
+    backColorName: "green",
   },
 ];
 
@@ -47,7 +57,7 @@ const GiftCard = () => {
   const [toName, setToName] = useState("");
   const [toNameError, setToNameError] = useState<string>("");
 
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [selectedAmount, setSelectedAmount] = useState<number>(10);
 
   const [message, setMessage] = useState("");
   const [charCount, setCharCount] = useState(0);
@@ -56,6 +66,9 @@ const GiftCard = () => {
   const [selectedColor, setSelectedColor] = useState(colorOptions[0].gradient);
   const [borderColor, setBorderColor] = useState(colorOptions[0].borderColor);
   const [backColor, setBackColor] = useState(colorOptions[0].backColor);
+  const [backColorName, setBackColorName] = useState(
+    colorOptions[0].backColorName
+  );
 
   const expirationDate = "01/25/2025";
 
@@ -103,14 +116,32 @@ const GiftCard = () => {
   const handleColorChange = (
     gradient: string,
     borderColor: string,
-    backColor: string
+    backColor: string,
+    backColorName: string
   ) => {
     setSelectedColor(gradient);
     setBorderColor(borderColor);
     setBackColor(backColor);
+    setBackColorName(backColorName);
   };
 
-  const handleAddToCart = () => {
+  const navigate = useNavigate();
+
+  const findAppropriateGiftCard = (color: string, amount: string) => {
+    axiosInstance
+      .post("/products", {
+        name: `${amount} Gift Card - ${color}`,
+        categoryName: "Gift Cards",
+        page: 1,
+        pageSize: 1,
+      })
+      .then((res) => {
+        console.log(res.data.products[0].id);
+        handleAddToCart(res.data.products[0]);
+      });
+  };
+
+  const handleAddToCart = (product: BaseProduct) => {
     if (toNameError || !toName) {
       setToNameError("Recipient's name is required.");
       return;
@@ -120,14 +151,23 @@ const GiftCard = () => {
       console.log("Please select a gift card amount.");
       return;
     }
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
 
-    console.log("Item added to cart");
+    giftCardComplete(navigate);
   };
 
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex justify-center items-center min-h-screen flex-1 bg-gray-50">
+      <div className="flex justify-center items-start pt-2 min-h-screen flex-1 bg-gray-50">
         {loading ? (
           <Loader />
         ) : (
@@ -265,7 +305,8 @@ const GiftCard = () => {
                       handleColorChange(
                         color.gradient,
                         color.borderColor,
-                        color.backColor
+                        color.backColor,
+                        color.backColorName
                       )
                     }
                   >
@@ -354,7 +395,12 @@ const GiftCard = () => {
             {/* Add to Cart Button */}
             <div className="flex justify-center mt-4 sm:mt-6">
               <button
-                onClick={handleAddToCart}
+                onClick={() =>
+                  findAppropriateGiftCard(
+                    backColorName,
+                    selectedAmount?.toString()
+                  )
+                }
                 className="w-full sm:w-auto mt-4 bg-[#1A3F6B] text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-lg shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex justify-center items-center"
               >
                 <FaShoppingCart className="mr-1 sm:mr-2" />
