@@ -40,6 +40,7 @@ const ContactForm = () => {
 
     const { name, email, phone, message } = formData;
 
+    // Validation checks
     if (!name) {
       Swal.fire({
         icon: "error",
@@ -76,6 +77,7 @@ const ContactForm = () => {
       return;
     }
 
+    // Clear the form fields
     setFormData({
       name: "",
       email: "",
@@ -83,6 +85,10 @@ const ContactForm = () => {
       message: "",
     });
 
+    // Show the success Swal message immediately
+    contactPageSuccess(navigate);
+
+    // Proceed with the API call
     axiosInstance
       .post("/contact", {
         name: formData.name,
@@ -90,7 +96,7 @@ const ContactForm = () => {
         phone: formData.phone,
         message: formData.message,
       })
-      .then(() => contactPageSuccess(navigate));
+      .catch((err) => console.log(err)); // Catch errors if needed
   };
 
   return (
@@ -188,7 +194,8 @@ const ContactForm = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="submit"
-                className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+                className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
+
               >
                 <RiMailSendLine className="mr-2" size={18} />
                 Send Message
@@ -204,16 +211,13 @@ const ContactForm = () => {
           className="space-y-8"
         >
           <div className="bg-white shadow-custom rounded-lg p-8 space-y-4">
-            <h3 className="text-2xl font-semibold text-primary">
-              Get in Touch
-            </h3>
+            <h3 className="text-2xl font-semibold text-primary">Get in Touch</h3>
             <p className="text-gray-600">
               Looking to boost your dropshipping success? Connect with us and
-              transform your business! Whether you're an experienced
-              entrepreneur or just getting started, we're here to offer expert
-              advice, premium products, and exceptional support every step of
-              the way. Reach out today, and let's make your dropshipping venture
-              a triumph!
+              transform your business! Whether you're an experienced entrepreneur
+              or just getting started, we're here to offer expert advice, premium
+              products, and exceptional support every step of the way. Reach out
+              today, and let's make your dropshipping venture a triumph!
             </p>
             <div className="space-y-2">
               <div className="flex items-center">
