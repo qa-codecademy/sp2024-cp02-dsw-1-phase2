@@ -1,5 +1,485 @@
 [
   {
+    "id": "01a768cd-0bf5-4a5c-a21e-e128c2d10c45",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$10 Gift Card - Cyan",
+    "description": "A perfect gift of $10.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 10,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "30acfd12-2e32-49ff-996a-5f7f55fcb38d",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$10 Gift Card - Green",
+    "description": "A perfect gift of $10.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 10,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "cb439d0d-13d4-4e84-9dbd-94f7a2e30429",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$10 Gift Card - Purple",
+    "description": "A perfect gift of $10.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 10,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "a19e732f-8e64-4bb3-8607-5a3623a8c312",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$10 Gift Card - Orange",
+    "description": "A perfect gift of $10.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 10,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "403b639f-2ac5-45e2-bc1b-f5b74b3f9da7",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$20 Gift Card - Cyan",
+    "description": "A perfect gift of $20.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 20,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "097134c2-460a-4cfb-8c91-dcc2fc7cfa04",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$20 Gift Card - Green",
+    "description": "A perfect gift of $20.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 20,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "6a6e24ab-f5a9-4d4c-8bb4-82f8e9d4e5c2",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$20 Gift Card - Purple",
+    "description": "A perfect gift of $20.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 20,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "1c23b7e1-f7db-4f83-b6e7-2b160cae9e8b",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$20 Gift Card - Orange",
+    "description": "A perfect gift of $20.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 20,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "52d3fbb8-6e92-4c31-bec2-5426e8f52112",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$30 Gift Card - Cyan",
+    "description": "A perfect gift of $30.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 30,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "6d1f4fcb-2ed3-4d1e-9e79-6a8f536ff314",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$30 Gift Card - Green",
+    "description": "A perfect gift of $30.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 30,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "c2c98f54-3d91-4b2e-a710-b22b54bb4149",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$30 Gift Card - Green",
+    "description": "A perfect gift of $30.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 30,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "b16e3421-e8b1-4fd3-80e1-653e11195e73",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$30 Gift Card - Purple",
+    "description": "A perfect gift of $30.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 30,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "d31d0e21-0b68-45f4-a548-84f22c5a5b94",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$40 Gift Card - Cyan",
+    "description": "A perfect gift of $40.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 40,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "69df80a1-9f83-495a-a33d-2e0de1e2e6c2",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$40 Gift Card - Green",
+    "description": "A perfect gift of $40.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 40,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "451b4f1e-e394-44c6-8a05-28c0f8d9b47d",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$40 Gift Card - Purple",
+    "description": "A perfect gift of $40.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 40,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "81809de8-3889-4cf3-bbb8-f9ea57f9cbe7",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$40 Gift Card - Orange",
+    "description": "A perfect gift of $40.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 40,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "2a1fd893-fc2a-4b22-b1e8-5de28d623ec7",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$50 Gift Card - Cyan",
+    "description": "A perfect gift of $50.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 50,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "8d10b0e4-c1ad-45b0-b4f1-ace116dff68a",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$50 Gift Card - Green",
+    "description": "A perfect gift of $50.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 50,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "524f5f85-d201-44d1-a7b3-8fe2690d8f20",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$50 Gift Card - Purple",
+    "description": "A perfect gift of $50.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 50,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "e84ebd94-8855-4e0f-b4c6-29f19b4c9f97",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$50 Gift Card - Orange",
+    "description": "A perfect gift of $50.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 50,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "514a8f1b-2f4b-47e2-a67a-bb74d5af2d9d",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$100 Gift Card - Cyan",
+    "description": "A perfect gift of $100.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 100,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "146fed53-e49f-4a7a-b676-70511d55f486",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$100 Gift Card - Green",
+    "description": "A perfect gift of $100.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 100,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "9f0c4764-301e-4f91-80d2-d2976abf0623",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$100 Gift Card - Purple",
+    "description": "A perfect gift of $100.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 100,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "ea4f55b8-9bcb-4d06-b198-993ef7cc8c0f",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$100 Gift Card - Orange",
+    "description": "A perfect gift of $100.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 100,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "d1b84df5-4429-4f3e-8fd3-96d2b7af8f9b",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$200 Gift Card - Cyan",
+    "description": "A perfect gift of $200.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 200,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "d4b9b10e-cff6-4b68-b56e-1b42abf9db53",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$200 Gift Card - Green",
+    "description": "A perfect gift of $200.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 200,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "da1f279e-9583-4c9b-8c3d-d67633ba7c3b",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$200 Gift Card - Purple",
+    "description": "A perfect gift of $200.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 200,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "05f8266b-996b-4655-bcc2-7bc942bf2e90",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$200 Gift Card - Orange",
+    "description": "A perfect gift of $200.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 200,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "324fbf6d-b5ef-45a4-8c04-e8fe84f4b927",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$500 Gift Card - Cyan",
+    "description": "A perfect gift of $500.",
+    "img": "/data/images/giftcards/gf-cyan.png",
+    "price": 500,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "e1b25cc1-784a-48eb-b453-6d12fdb578bc",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$500 Gift Card - Green",
+    "description": "A perfect gift of $500.",
+    "img": "/data/images/giftcards/gf-green.png",
+    "price": 500,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "fa03d32f-d68b-4855-a848-2b3f63bbbc8b",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$500 Gift Card - Purple",
+    "description": "A perfect gift of $500.",
+    "img": "/data/images/giftcards/gf-purple.png",
+    "price": 500,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
+    "id": "99e37cf7-bd7c-4ab3-9c7a-90a0d4fa77ab",
+    "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "brand": "Gift Card",
+    "name": "$500 Gift Card - Orange",
+    "description": "A perfect gift of $500.",
+    "img": "/data/images/giftcards/gf-orange.png",
+    "price": 500,
+    "specifications": {
+      "validity": "3 years"
+    },
+    "warranty": "N/A",
+    "availability": 50,
+    "discount": 0
+  },
+  {
     "id": "5f30eadf-7840-4899-ba00-d987b79a2689",
     "categoryId": "fb767117-e139-4283-8580-01f8138a4ae7",
     "brand": "Lenovo",
