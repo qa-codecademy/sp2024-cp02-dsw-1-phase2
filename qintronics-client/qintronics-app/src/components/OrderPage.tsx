@@ -426,6 +426,7 @@ const CheckoutForm: React.FC = () => {
                       name="deliveryDay"
                       value={formData.deliveryDay}
                       onChange={handleChange}
+                      min={new Date().toISOString().split("T")[0]} // Set min to today's date
                       className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
                       disabled={isSubmitted}
                     />
