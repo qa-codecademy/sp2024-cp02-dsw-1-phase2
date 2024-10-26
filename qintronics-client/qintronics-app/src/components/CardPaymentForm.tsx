@@ -34,8 +34,7 @@ import Swal from "sweetalert2";
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [showPayWithSavedCardButton, setShowPayWithSavedCardButton] =
-    useState(false);
+  const [showPayWithSavedCardButton, setShowPayWithSavedCardButton] = useState(false);
   const [cardType, setCardType] = useState<string>("");
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [cardData, setCardData] = useState({
@@ -53,7 +52,7 @@ const CardPaymentForm: React.FC = () => {
       const res = await axiosInstance.get("/users/me");
       if (res.data.userInfo.ccNum) {
         setSavedCard(res.data.userInfo);
-        setSelectedCardId(null); // Ensure the card is not selected by default
+        setSelectedCardId(null);
       } else {
         setSavedCard(null);
       }
@@ -69,17 +68,14 @@ const CardPaymentForm: React.FC = () => {
   const detectCardType = (cardNumber: string) => {
     const firstDigit = cardNumber[0];
     const firstTwoDigits = cardNumber.slice(0, 2);
-
     if (firstDigit === "4") return "Visa";
     if (firstTwoDigits >= "51" && firstTwoDigits <= "55") return "MasterCard";
-    if (firstTwoDigits === "34" || firstTwoDigits === "37")
-      return "AmericanExpress";
+    if (firstTwoDigits === "34" || firstTwoDigits === "37") return "AmericanExpress";
     return "";
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     if (name === "cardNumber") {
       const cleaned = value.replace(/\D/g, "");
       const formattedValue = cleaned.replace(/(.{4})/g, "$1 ").trim();
@@ -87,20 +83,19 @@ const CardPaymentForm: React.FC = () => {
         ...prevData,
         cardNumber: formattedValue,
       }));
-
       const detectedType = detectCardType(cleaned);
       setCardType(detectedType);
     } else if (name === "expiryMonth" || name === "expiryYear") {
-      const cleaned = value.replace(/\D/g, "");
+      const cleaned = value.replace(/\D/g, "").slice(0, 2);
       setCardData((prevData) => ({
         ...prevData,
-        [name]: cleaned.slice(0, 2),
+        [name]: cleaned,
       }));
     } else if (name === "cvv") {
-      const cleaned = value.replace(/\D/g, "");
+      const cleaned = value.replace(/\D/g, "").slice(0, 4);
       setCardData((prevData) => ({
         ...prevData,
-        cvv: cleaned.slice(0, 4),
+        cvv: cleaned,
       }));
     } else {
       setCardData((prevData) => ({
@@ -119,21 +114,14 @@ const CardPaymentForm: React.FC = () => {
       await axiosInstance.patch("/user-info/update", cardDataPayload);
       return true;
     } catch (error) {
-      Swal.fire(
-        "Error Saving Card",
-        "An error occurred while saving the card. Please try again.",
-        "error"
-      );
+      Swal.fire("Error Saving Card", "An error occurred while saving the card. Please try again.", "error");
       return false;
     }
   };
-  const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
+
   const prepareCardDataPayload = () => {
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
-    const expiryDate = new Date(
-      `20${cardData.expiryYear}-${cardData.expiryMonth}-01`
-    ).toISOString();
-
+    const expiryDate = new Date(`20${cardData.expiryYear}-${cardData.expiryMonth}-01`).toISOString();
     return {
       ccFullName: cardData.cardHolderName,
       ccNum: cardNumberWithoutSpaces,
@@ -141,99 +129,77 @@ const CardPaymentForm: React.FC = () => {
       cvv: parseInt(cardData.cvv, 10),
     };
   };
+
+  const validateInputs = () => {
+    const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
     const currentYear = new Date().getFullYear() % 100;
     const currentMonth = new Date().getMonth() + 1;
 
-    if (
-      cardNumberWithoutSpaces.length !== 16 ||
-      isNaN(Number(cardNumberWithoutSpaces))
-    ) {
+    if (cardNumberWithoutSpaces.length !== 16 || isNaN(Number(cardNumberWithoutSpaces))) {
       invalidCardNumber();
-      return;
+      return false;
     }
-
-    if (
-      parseInt(cardData.expiryMonth) < 1 ||
-      parseInt(cardData.expiryMonth) > 12 ||
-      cardData.expiryMonth.length !== 2
-    ) {
+    if (parseInt(cardData.expiryMonth) < 1 || parseInt(cardData.expiryMonth) > 12 || cardData.expiryMonth.length !== 2) {
       invalidExpiryMonth();
-      return;
+      return false;
     }
-
-    if (
-      parseInt(cardData.expiryYear) < currentYear ||
-      (parseInt(cardData.expiryYear) === currentYear &&
-        parseInt(cardData.expiryMonth) < currentMonth)
-    ) {
+    if (parseInt(cardData.expiryYear) < currentYear || (parseInt(cardData.expiryYear) === currentYear && parseInt(cardData.expiryMonth) < currentMonth)) {
       invalidExpiryDate();
-      return;
+      return false;
     }
-
     if (cardData.expiryYear.length !== 2) {
       invalidExpiryYear();
-      return;
+      return false;
     }
-    
-    const handlePaymentSubmit = async (e: FormEvent) => {
-      e.preventDefault();
-     
-  
-      try {
-        // Save the order first
-        await handleSaveOrder();
-  
-        // Check if there is no saved card, prompt to save the new card
-        if (!savedCard) {
-          const result = await Swal.fire({
-            title: "Save Card?",
-            text: "Would you like to save this card for future use?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes, save it",
-          });
-  
-          if (result.isConfirmed) {
-            // Prepare the card data payload
-            const cardDataPayload = prepareCardDataPayload();
-            const saveSuccess = await handleSaveCardRequest(cardDataPayload);
-  
-            if (saveSuccess) {
-              await loadSavedCard(); // Reload saved card if save was successful
-            }
+    return true;
+  };
+
+  const handlePaymentSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!validateInputs()) return;
+    try {
+      await handleSaveOrder();
+      if (!savedCard) {
+        const result = await Swal.fire({
+          title: "Save Card?",
+          text: "Would you like to save this card for future use?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, save it",
+        });
+        if (result.isConfirmed) {
+          const cardDataPayload = prepareCardDataPayload();
+          const saveSuccess = await handleSaveCardRequest(cardDataPayload);
+          if (saveSuccess) {
+            await loadSavedCard();
           }
         }
-  
-        // Show success payment message after handling save card prompt
-        Swal.fire({
-          icon: "success",
-          title: "Payment Successful!",
-          text: "Your payment has been processed successfully. Thank you!",
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        }).then(() => {
-          clearCart();
-          navigate("/");
-        });
-      } catch (paymentError) {
-        Swal.fire(
-          "Payment Error",
-          "An error occurred while processing the payment. Please try again.",
-          "error"
-        );
       }
-    };
+      Swal.fire({
+        icon: "success",
+        title: "Payment Successful!",
+        text: "Your payment has been processed successfully. Thank you!",
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        clearCart();
+        navigate("/");
+      });
+    } catch (paymentError) {
+      Swal.fire("Payment Error", "An error occurred while processing the payment. Please try again.", "error");
+    }
+  };
 
   const handleSaveOrder = async () => {
     if (orderDetails) {
-      axiosInstance
-        .post("/orders", { ...orderDetails, isPaid: true })
-        .then(() => {
-          clearCart();
-          paymentSuccessful(navigate);
-        })
-        .catch((err) => console.log(err));
+      try {
+        await axiosInstance.post("/orders", { ...orderDetails, isPaid: true });
+        clearCart();
+        paymentSuccessful(navigate);
+      } catch (error) {
+        console.error("Error saving order:", error);
+      }
     }
   };
 
@@ -248,64 +214,59 @@ const CardPaymentForm: React.FC = () => {
         Card Payment
         <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
       </h2>
-
       {savedCard && (
         <>
           <h3 className="text-xl font-semibold mb-6 flex items-center">
             <GrCheckboxSelected className="mr-2 text-secondary text-lg" />
             Select your saved card, or pay with another.
           </h3>
-
           <ul className="space-y-6">
-      <li>
-        <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
-          <FaCreditCard className="mr-4 text-indigo-600 text-3xl" />
-          <input
-            type="radio"
-            name="savedCard"
-            id={`card-${savedCard.id}`}
-            className="mr-4 cursor-pointer accent-indigo-600"
-            onChange={() => {
-              setSelectedCardId(savedCard.id ?? null);
-              setShowPayWithSavedCardButton(true);
-            }}
-            checked={selectedCardId === savedCard.id}
-          />
-          <label
-            htmlFor={`card-${savedCard.id}`}
-            className="flex flex-col space-y-1 text-gray-800"
-          >
-            <span className="font-semibold text-lg tracking-wide">
-              {savedCard?.ccNum ? `************${savedCard.ccNum.slice(-4)}` : "xxxx xxxx xxxx xxxx"} — {savedCard?.firstName || "Customer"} {savedCard?.lastName || "Name"}
-            </span>
-            {savedCard.expDate ? (
-              !isNaN(Date.parse(savedCard.expDate)) ? (
-                new Date(savedCard.expDate) > new Date() ? (
-                  <span className="text-sm text-gray-500 font-medium">
-                    Valid until{" "}
-                    {new Date(savedCard.expDate).toLocaleDateString("en-US", {
-                      month: "2-digit",
-                      year: "2-digit",
-                    })}
+            <li>
+              <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
+                <FaCreditCard className="mr-4 text-indigo-600 text-3xl" />
+                <input
+                  type="radio"
+                  name="savedCard"
+                  id={`card-${savedCard.id}`}
+                  className="mr-4 cursor-pointer accent-indigo-600"
+                  onChange={() => {
+                    setSelectedCardId(savedCard.id ?? null);
+                    setShowPayWithSavedCardButton(true);
+                  }}
+                  checked={selectedCardId === savedCard.id}
+                />
+                <label htmlFor={`card-${savedCard.id}`} className="flex flex-col space-y-1 text-gray-800">
+                  <span className="font-semibold text-lg tracking-wide">
+                    {savedCard?.ccNum ? `************${savedCard.ccNum.slice(-4)}` : "xxxx xxxx xxxx xxxx"} — {savedCard?.firstName || "Customer"} {savedCard?.lastName || "Name"}
                   </span>
-                ) : (
-                  <span className="text-sm text-red-500 flex items-center font-medium">
-                    <FaExclamationCircle className="mr-2 text-lg" />
-                    Expired
-                  </span>
-                )
-              ) : (
-                <span className="text-sm text-gray-500 font-medium">
-                  Invalid expiry date
-                </span>
-              )
-            ) : (
-              <span className="text-sm text-gray-500 font-medium">N/A</span>
-            )}
-          </label>
-        </div>
-      </li>
-    </ul>
+                  {savedCard.expDate ? (
+                    !isNaN(Date.parse(savedCard.expDate)) ? (
+                      new Date(savedCard.expDate) > new Date() ? (
+                        <span className="text-sm text-gray-500 font-medium">
+                          Valid until{" "}
+                          {new Date(savedCard.expDate).toLocaleDateString("en-US", {
+                            month: "2-digit",
+                            year: "2-digit",
+                          })}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-red-500 flex items-center font-medium">
+                          <FaExclamationCircle className="mr-2 text-lg" />
+                          Expired
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-sm text-gray-500 font-medium">
+                        Invalid expiry date
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-sm text-gray-500 font-medium">N/A</span>
+                  )}
+                </label>
+              </div>
+            </li>
+          </ul>
           {showPayWithSavedCardButton && (
             <div className="mt-6 flex justify-center">
               <button
@@ -319,7 +280,6 @@ const CardPaymentForm: React.FC = () => {
           )}
         </>
       )}
-
       {/* Form to add a new card, visible even if there's a saved card */}
       <div className="mt-10">
         <h3 className="text-xl font-semibold mb-6 flex items-center">
@@ -327,44 +287,15 @@ const CardPaymentForm: React.FC = () => {
           Add a New Card
         </h3>
         <div className="card-container">
-          <div
-            className="card"
-            onClick={() => setIsCardFlipped(!isCardFlipped)}
-          >
+          <div className="card" onClick={() => setIsCardFlipped(!isCardFlipped)}>
             <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
               <div className="front">
-                <img
-                  src="https://i.ibb.co/PYss3yv/map.png"
-                  className="map-img"
-                  alt="map"
-                />
+                <img src="https://i.ibb.co/PYss3yv/map.png" className="map-img" alt="map" />
                 <div className="row">
-                  <img
-                    src="https://i.ibb.co/G9pDnYJ/chip.png"
-                    width="60px"
-                    alt="chip"
-                  />
-                  {cardType === "Visa" && (
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
-                      width="60px"
-                      alt="Visa"
-                    />
-                  )}
-                  {cardType === "MasterCard" && (
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
-                      width="60px"
-                      alt="MasterCard"
-                    />
-                  )}
-                  {cardType === "AmericanExpress" && (
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
-                      width="60px"
-                      alt="American Express"
-                    />
-                  )}
+                  <img src="https://i.ibb.co/G9pDnYJ/chip.png" width="60px" alt="chip" />
+                  {cardType === "Visa" && <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" width="60px" alt="Visa" />}
+                  {cardType === "MasterCard" && <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" width="60px" alt="MasterCard" />}
+                  {cardType === "AmericanExpress" && <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png" width="60px" alt="American Express" />}
                 </div>
                 <div className="row card-no">
                   <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
@@ -375,26 +306,15 @@ const CardPaymentForm: React.FC = () => {
                 </div>
                 <div className="row name">
                   <p>{cardData.cardHolderName || "Cardholder Name"}</p>
-                  <p>
-                    {cardData.expiryMonth && cardData.expiryYear
-                      ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
-                      : "MM/YY"}
-                  </p>
+                  <p>{cardData.expiryMonth && cardData.expiryYear ? `${cardData.expiryMonth} / ${cardData.expiryYear}` : "MM/YY"}</p>
                 </div>
               </div>
               <div className="back">
-                <img
-                  src="https://i.ibb.co/PYss3yv/map.png"
-                  className="map-img"
-                  alt="map"
-                />
+                <img src="https://i.ibb.co/PYss3yv/map.png" className="map-img" alt="map" />
                 <div className="bar"></div>
                 <div className="row card-cvv">
                   <div>
-                    <img
-                      src="https://i.ibb.co/S6JG8px/pattern.png"
-                      alt="pattern"
-                    />
+                    <img src="https://i.ibb.co/S6JG8px/pattern.png" alt="pattern" />
                   </div>
                   <p>{cardData.cvv || "****"}</p>
                 </div>
@@ -406,14 +326,11 @@ const CardPaymentForm: React.FC = () => {
             </div>
           </div>
         </div>
-
         <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
           <div className="relative">
             <div className="flex items-center">
               <FaUser className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">
-                Card Holder Name
-              </label>
+              <label className="block text-sm text-primary">Card Holder Name</label>
             </div>
             <input
               type="text"
@@ -426,7 +343,6 @@ const CardPaymentForm: React.FC = () => {
               maxLength={30}
             />
           </div>
-
           <div className="relative">
             <div className="flex items-center">
               <FaCreditCard className="mr-2 text-secondary text-lg" />
@@ -443,7 +359,6 @@ const CardPaymentForm: React.FC = () => {
               maxLength={19}
             />
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="relative">
               <FaCalendarAlt className="mr-2 text-secondary text-lg" />
@@ -459,7 +374,6 @@ const CardPaymentForm: React.FC = () => {
                 maxLength={2}
               />
             </div>
-
             <div className="relative">
               <FaCalendarAlt className="mr-2 text-secondary text-lg" />
               <label className="block text-sm text-primary">Expiry Year</label>
@@ -475,7 +389,6 @@ const CardPaymentForm: React.FC = () => {
               />
             </div>
           </div>
-
           <div className="relative">
             <div className="flex items-center">
               <FaLock className="mr-2 text-secondary text-lg" />
@@ -497,7 +410,6 @@ const CardPaymentForm: React.FC = () => {
               maxLength={4}
             />
           </div>
-
           <div className="mt-6 flex justify-center">
             <button
               type="submit"
@@ -512,4 +424,5 @@ const CardPaymentForm: React.FC = () => {
     </div>
   );
 };
+
 export default CardPaymentForm;
