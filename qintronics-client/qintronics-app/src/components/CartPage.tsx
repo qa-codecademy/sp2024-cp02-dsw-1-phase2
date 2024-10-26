@@ -82,7 +82,7 @@ const CartPage: React.FC = () => {
             Time to start your shopping
           </p>
           <button
-            className="bg-blue-600 text-white flex justify-center items-center px-8 py-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform hover:scale-105"
+           className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
             onClick={() => navigate("/")}
           >
             <MdShoppingCartCheckout className="mr-2" size={18} />
