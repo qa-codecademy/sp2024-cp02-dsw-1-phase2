@@ -1,12 +1,13 @@
 export interface SavedCard {
     id: string;
     ccNum?: string;
-    firstName: string;
+    firstName?: string;
     lastName?: string;
     phone?: string;
     address?: string;
     city?: string;
-    postalCode?: string;
+    postalCode?: number;
     country?: string;
     expDate: string;
-    }
+  }
+  

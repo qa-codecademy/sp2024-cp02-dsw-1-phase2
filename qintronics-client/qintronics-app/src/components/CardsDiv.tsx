@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/Product-interface";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+
+// Promeni na Filip
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+// 
+
 
 const CardsDiv: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -134,6 +138,8 @@ const CardsDiv: React.FC = () => {
                           whileHover="hover"
                           whileTap="tap"
                           variants={buttonVariants}
+                          
+                          // Proimeni na Filip
                           onClick={() => {
                             const cartItem: CartItem = {
                               id: product.id,

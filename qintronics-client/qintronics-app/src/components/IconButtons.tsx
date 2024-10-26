@@ -17,7 +17,7 @@ const IconButtons = ({
 }: IconButtonsProps) => {
   const [cartItemCount, setCartItemCount] = useState(0);
 
-  // Fetch the cart items from local storage and update the count
+  // Promeni na Filip
   const updateCartItemCount = (cartItems: any[]) => {
     const count = cartItems.reduce(
       (total: number, item: { quantity: number }) => total + item.quantity,
@@ -44,6 +44,8 @@ const IconButtons = ({
       window.removeEventListener("cartUpdated", handleCartUpdate);
     };
   }, []);
+//  Promeni na Filip
+
 
   return (
     <div className="flex items-center space-x-4 flex-shrink-0 z-20">
@@ -51,13 +53,17 @@ const IconButtons = ({
         <button className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800">
           <ShoppingCart size={20} />
         </button>
+
+        {/* Promeni na Filip */}
         {/* Badge showing cart item count */}
         {cartItemCount > 0 && (
           <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
             {cartItemCount}
           </span>
         )}
+        {/* Promeni na Filip */}
       </Link>
+      
 
       {/* Other icons */}
       <Link to="/favorites">

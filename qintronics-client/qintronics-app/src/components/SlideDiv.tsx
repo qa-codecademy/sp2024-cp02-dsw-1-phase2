@@ -6,7 +6,7 @@ import { Product } from "../common/types/Product-interface"; // Adjust path as n
 import "./SlideDiv.css"; // Import the separate CSS file
 
 
-// Promeni na Filip
+// Promeni na Filipo 
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 

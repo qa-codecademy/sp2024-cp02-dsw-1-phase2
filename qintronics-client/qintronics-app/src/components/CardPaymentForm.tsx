@@ -26,6 +26,8 @@ import { CardPaymentContext } from "../context/card-payment.context";
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [showPayWithSavedCardButton, setShowPayWithSavedCardButton] =
+    useState(false);
   const [cardType, setCardType] = useState<string>("");
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [cardData, setCardData] = useState({
@@ -38,19 +40,22 @@ const CardPaymentForm: React.FC = () => {
   const [savedCard, setSavedCard] = useState<SavedCard | null>(null);
   const { orderDetails } = useContext(CardPaymentContext);
 
+  const loadSavedCard = async () => {
+    try {
+      const res = await axiosInstance.get("/users/me");
+      if (res.data.userInfo.ccNum) {
+        setSavedCard(res.data.userInfo);
+        setSelectedCardId(null); // Ensure the card is not selected by default
+      } else {
+        setSavedCard(null);
+      }
+    } catch (err) {
+      console.error("Error loading saved card:", err);
+    }
+  };
+
   useEffect(() => {
-    axiosInstance
-      .get("/users/me")
-      .then((res) => {
-        if (res.data.userInfo.ccNum) {
-          setSavedCard(res.data.userInfo);
-        } else {
-          setSavedCard(null);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    loadSavedCard();
   }, []);
 
   const detectCardType = (cardNumber: string) => {
@@ -98,95 +103,114 @@ const CardPaymentForm: React.FC = () => {
   };
 
   const clearCart = () => {
-    localStorage.removeItem("cart"); // Remove cart data from localStorage
+    localStorage.removeItem("cart");
   };
 
-  const handlePaymentSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSaveCardRequest = async (cardDataPayload: any) => {
+    try {
+      await axiosInstance.patch("/user-info/update", cardDataPayload);
+      return true;
+    } catch (error) {
+      Swal.fire(
+        "Error Saving Card",
+        "An error occurred while saving the card. Please try again.",
+        "error"
+      );
+      return false;
+    }
+  };
+
+  const prepareCardDataPayload = () => {
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
+    const expiryDate = new Date(
+      `20${cardData.expiryYear}-${cardData.expiryMonth}-01`
+    ).toISOString();
 
-    const currentYear = new Date().getFullYear() % 100;
-    const currentMonth = new Date().getMonth() + 1;
+    return {
+      ccFullName: cardData.cardHolderName,
+      ccNum: cardNumberWithoutSpaces,
+      expDate: expiryDate,
+      cvv: parseInt(cardData.cvv, 10),
+    };
+  };
 
-    if (
-      cardNumberWithoutSpaces.length !== 16 ||
-      isNaN(Number(cardNumberWithoutSpaces))
-    ) {
-      Swal.fire(
-        "Invalid Card Number",
-        "Please enter a valid 16-digit card number.",
-        "error"
-      );
-      return;
-    }
-
-    if (
-      parseInt(cardData.expiryMonth) < 1 ||
-      parseInt(cardData.expiryMonth) > 12 ||
-      cardData.expiryMonth.length !== 2
-    ) {
-      Swal.fire(
-        "Invalid Expiry Month",
-        "Please enter a valid expiry month (01-12).",
-        "error"
-      );
-      return;
-    }
-
-    if (
-      parseInt(cardData.expiryYear) < currentYear ||
-      (parseInt(cardData.expiryYear) === currentYear &&
-        parseInt(cardData.expiryMonth) < currentMonth)
-    ) {
-      Swal.fire(
-        "Invalid Expiry Date",
-        "The expiry date cannot be in the past.",
-        "error"
-      );
-      return;
-    }
-
-    if (cardData.expiryYear.length !== 2) {
-      Swal.fire(
-        "Invalid Expiry Year",
-        "Please enter a valid 2-digit expiry year.",
-        "error"
-      );
-      return;
-    }
-
+  const handleSaveOrder = async () => {
     if (orderDetails) {
-      axiosInstance
-        .post("/orders", { ...orderDetails, isPaid: true })
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Payment Successful!",
-            text: "Your payment has been processed successfully. Thank you!",
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-          }).then(() => {
-            clearCart(); // Clear cart after successful payment
-            navigate("/");
-          });
-        })
-        .catch((err) => console.log(err));
+      await axiosInstance.post("/orders", { ...orderDetails, isPaid: true });
     }
   };
 
-  const handleUseSelectedCard = () => {
-    Swal.fire({
-      icon: "success",
-      title: "Payment Successful!",
-      text: "Your payment has been processed successfully. Thank you!",
-      timer: 3000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-    }).then(() => {
-      clearCart(); // Clear cart after successful payment
-      navigate("/");
-    });
+  const handlePaymentSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      // Save the order first
+      await handleSaveOrder();
+
+      // Check if there is no saved card, prompt to save the new card
+      if (!savedCard) {
+        const result = await Swal.fire({
+          title: "Save Card?",
+          text: "Would you like to save this card for future use?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, save it",
+        });
+
+        if (result.isConfirmed) {
+          // Prepare the card data payload
+          const cardDataPayload = prepareCardDataPayload();
+          const saveSuccess = await handleSaveCardRequest(cardDataPayload);
+
+          if (saveSuccess) {
+            await loadSavedCard(); // Reload saved card if save was successful
+          }
+        }
+      }
+
+      // Show success payment message after handling save card prompt
+      Swal.fire({
+        icon: "success",
+        title: "Payment Successful!",
+        text: "Your payment has been processed successfully. Thank you!",
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        clearCart();
+        navigate("/");
+      });
+    } catch (paymentError) {
+      Swal.fire(
+        "Payment Error",
+        "An error occurred while processing the payment. Please try again.",
+        "error"
+      );
+    }
+  };
+
+  const handleUseSelectedCard = async () => {
+    try {
+      await handleSaveOrder();
+
+      Swal.fire({
+        icon: "success",
+        title: "Payment Successful!",
+        text: "Your payment has been processed successfully. Thank you!",
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        clearCart();
+        navigate("/");
+      });
+    } catch (error) {
+      Swal.fire(
+        "Payment Error",
+        "An error occurred while processing the payment. Please try again.",
+        "error"
+      );
+    }
   };
 
   return (
@@ -196,7 +220,7 @@ const CardPaymentForm: React.FC = () => {
         <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
       </h2>
 
-      {savedCard ? (
+      {savedCard && (
         <>
           <h3 className="text-xl font-semibold mb-6 flex items-center">
             <GrCheckboxSelected className="mr-2 text-secondary text-lg" />
@@ -204,56 +228,56 @@ const CardPaymentForm: React.FC = () => {
           </h3>
 
           <ul className="space-y-6">
-            <li>
-              <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
-                <FaCreditCard className="mr-4 text-indigo-600 text-3xl" />
-                <input
-                  type="radio"
-                  name="savedCard"
-                  id={`card-${savedCard?.id}`}
-                  className="mr-4 cursor-pointer accent-indigo-600"
-                  onChange={() => setSelectedCardId(savedCard?.id ?? null)}
-                />
-                <label
-                  htmlFor={`card-${savedCard?.id}`}
-                  className="flex flex-col space-y-1 text-gray-800"
-                >
-                  <span className="font-semibold text-lg tracking-wide">
-                    {savedCard?.ccNum} — {savedCard?.firstName}
+      <li>
+        <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105">
+          <FaCreditCard className="mr-4 text-indigo-600 text-3xl" />
+          <input
+            type="radio"
+            name="savedCard"
+            id={`card-${savedCard.id}`}
+            className="mr-4 cursor-pointer accent-indigo-600"
+            onChange={() => {
+              setSelectedCardId(savedCard.id ?? null);
+              setShowPayWithSavedCardButton(true);
+            }}
+            checked={selectedCardId === savedCard.id}
+          />
+          <label
+            htmlFor={`card-${savedCard.id}`}
+            className="flex flex-col space-y-1 text-gray-800"
+          >
+            <span className="font-semibold text-lg tracking-wide">
+              {savedCard?.ccNum ? `************${savedCard.ccNum.slice(-4)}` : "xxxx xxxx xxxx xxxx"} — {savedCard?.firstName || "Customer"} {savedCard?.lastName || "Name"}
+            </span>
+            {savedCard.expDate ? (
+              !isNaN(Date.parse(savedCard.expDate)) ? (
+                new Date(savedCard.expDate) > new Date() ? (
+                  <span className="text-sm text-gray-500 font-medium">
+                    Valid until{" "}
+                    {new Date(savedCard.expDate).toLocaleDateString("en-US", {
+                      month: "2-digit",
+                      year: "2-digit",
+                    })}
                   </span>
-                  {savedCard && savedCard.expDate ? (
-                    !isNaN(Date.parse(savedCard.expDate)) ? (
-                      new Date(savedCard.expDate) > new Date() ? (
-                        <span className="text-sm text-gray-500 font-medium">
-                          Valid until{" "}
-                          {new Date(
-                            savedCard.expDate as string
-                          ).toLocaleDateString("en-US", {
-                            month: "2-digit",
-                            year: "2-digit",
-                          })}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-red-500 flex items-center font-medium">
-                          <FaExclamationCircle className="mr-2 text-lg" />
-                          Expired
-                        </span>
-                      )
-                    ) : (
-                      <span className="text-sm text-gray-500 font-medium">
-                        Invalid expiry date
-                      </span>
-                    )
-                  ) : (
-                    <span className="text-sm text-gray-500 font-medium">
-                      N/A
-                    </span>
-                  )}
-                </label>
-              </div>
-            </li>
-          </ul>
-          {selectedCardId && (
+                ) : (
+                  <span className="text-sm text-red-500 flex items-center font-medium">
+                    <FaExclamationCircle className="mr-2 text-lg" />
+                    Expired
+                  </span>
+                )
+              ) : (
+                <span className="text-sm text-gray-500 font-medium">
+                  Invalid expiry date
+                </span>
+              )
+            ) : (
+              <span className="text-sm text-gray-500 font-medium">N/A</span>
+            )}
+          </label>
+        </div>
+      </li>
+    </ul>
+          {showPayWithSavedCardButton && (
             <div className="mt-6 flex justify-center">
               <button
                 onClick={handleUseSelectedCard}
@@ -265,207 +289,198 @@ const CardPaymentForm: React.FC = () => {
             </div>
           )}
         </>
-      ) : null}
+      )}
 
-      {/* Conditionally render Add a New Card form when no card is selected */}
-      {!selectedCardId && (
-        <div className="mt-10">
-          <h3 className="text-xl font-semibold mb-6 flex items-center">
-            <AiOutlinePlus className="mr-2 text-secondary text-lg" />
-            Add a New Card
-          </h3>
-          <div className="card-container">
-            <div
-              className="card"
-              onClick={() => setIsCardFlipped(!isCardFlipped)}
-            >
-              <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
-                <div className="front">
+      {/* Form to add a new card, visible even if there's a saved card */}
+      <div className="mt-10">
+        <h3 className="text-xl font-semibold mb-6 flex items-center">
+          <AiOutlinePlus className="mr-2 text-secondary text-lg" />
+          Add a New Card
+        </h3>
+        <div className="card-container">
+          <div
+            className="card"
+            onClick={() => setIsCardFlipped(!isCardFlipped)}
+          >
+            <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
+              <div className="front">
+                <img
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
+                />
+                <div className="row">
                   <img
-                    src="https://i.ibb.co/PYss3yv/map.png"
-                    className="map-img"
-                    alt="map"
+                    src="https://i.ibb.co/G9pDnYJ/chip.png"
+                    width="60px"
+                    alt="chip"
                   />
-                  <div className="row">
+                  {cardType === "Visa" && (
                     <img
-                      src="https://i.ibb.co/G9pDnYJ/chip.png"
+                      src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
                       width="60px"
-                      alt="chip"
+                      alt="Visa"
                     />
-                    {cardType === "Visa" && (
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
-                        width="60px"
-                        alt="Visa"
-                      />
-                    )}
-                    {cardType === "MasterCard" && (
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
-                        width="60px"
-                        alt="MasterCard"
-                      />
-                    )}
-                    {cardType === "AmericanExpress" && (
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
-                        width="60px"
-                        alt="American Express"
-                      />
-                    )}
-                  </div>
-                  <div className="row card-no">
-                    <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
-                  </div>
-                  <div className="row card-holder">
-                    <p>CARD HOLDER</p>
-                    <p>VALID TILL</p>
-                  </div>
-                  <div className="row name">
-                    <p>{cardData.cardHolderName || "Cardholder Name"}</p>
-                    <p>
-                      {cardData.expiryMonth && cardData.expiryYear
-                        ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
-                        : "MM/YY"}
-                    </p>
-                  </div>
+                  )}
+                  {cardType === "MasterCard" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
+                      width="60px"
+                      alt="MasterCard"
+                    />
+                  )}
+                  {cardType === "AmericanExpress" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
+                      width="60px"
+                      alt="American Express"
+                    />
+                  )}
                 </div>
-                <div className="back">
-                  <img
-                    src="https://i.ibb.co/PYss3yv/map.png"
-                    className="map-img"
-                    alt="map"
-                  />
-                  <div className="bar"></div>
-                  <div className="row card-cvv">
-                    <div>
-                      <img
-                        src="https://i.ibb.co/S6JG8px/pattern.png"
-                        alt="pattern"
-                      />
-                    </div>
-                    <p>{cardData.cvv || "****"}</p>
+                <div className="row card-no">
+                  <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
+                </div>
+                <div className="row card-holder">
+                  <p>CARD HOLDER</p>
+                  <p>VALID TILL</p>
+                </div>
+                <div className="row name">
+                  <p>{cardData.cardHolderName || "Cardholder Name"}</p>
+                  <p>
+                    {cardData.expiryMonth && cardData.expiryYear
+                      ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
+                      : "MM/YY"}
+                  </p>
+                </div>
+              </div>
+              <div className="back">
+                <img
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
+                />
+                <div className="bar"></div>
+                <div className="row card-cvv">
+                  <div>
+                    <img
+                      src="https://i.ibb.co/S6JG8px/pattern.png"
+                      alt="pattern"
+                    />
                   </div>
-                  <div className="row card-text"></div>
-                  <div className="row signature">
-                    <p>CUSTOMER SIGNATURE</p>
-                  </div>
+                  <p>{cardData.cvv || "****"}</p>
+                </div>
+                <div className="row card-text"></div>
+                <div className="row signature">
+                  <p>CUSTOMER SIGNATURE</p>
                 </div>
               </div>
             </div>
           </div>
-
-          <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
-            <div className="relative">
-              <div className="flex items-center">
-                <FaUser className="mr-2 text-secondary text-lg" />
-                <label className="block text-sm text-primary">
-                  Card Holder Name
-                </label>
-              </div>
-              <input
-                type="text"
-                name="cardHolderName"
-                value={cardData.cardHolderName}
-                onChange={handleInputChange}
-                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-                required
-                placeholder="Cardholder Name"
-                maxLength={30}
-              />
-            </div>
-
-            <div className="relative">
-              <div className="flex items-center">
-                <FaCreditCard className="mr-2 text-secondary text-lg" />
-                <label className="block text-sm text-primary">
-                  Card Number
-                </label>
-              </div>
-              <input
-                type="tel"
-                name="cardNumber"
-                value={cardData.cardNumber}
-                onChange={handleInputChange}
-                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-                required
-                placeholder="xxxx xxxx xxxx xxxx"
-                maxLength={19}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
-                <FaCalendarAlt className="mr-2 text-secondary text-lg" />
-                <label className="block text-sm text-primary">
-                  Expiry Month
-                </label>
-                <input
-                  type="text"
-                  name="expiryMonth"
-                  value={cardData.expiryMonth}
-                  onChange={handleInputChange}
-                  className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-                  required
-                  placeholder="MM"
-                  maxLength={2}
-                />
-              </div>
-
-              <div className="relative">
-                <FaCalendarAlt className="mr-2 text-secondary text-lg" />
-                <label className="block text-sm text-primary">
-                  Expiry Year
-                </label>
-                <input
-                  type="text"
-                  name="expiryYear"
-                  value={cardData.expiryYear}
-                  onChange={handleInputChange}
-                  className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-                  required
-                  placeholder="YY"
-                  maxLength={2}
-                />
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="flex items-center">
-                <FaLock className="mr-2 text-secondary text-lg" />
-                <label className="block text-sm text-primary">CVV / CVC</label>
-              </div>
-              <input
-                type="text"
-                name="cvv"
-                value={cardData.cvv}
-                onChange={(e) => {
-                  handleInputChange(e);
-                  setIsCardFlipped(true);
-                }}
-                onFocus={() => setIsCardFlipped(true)}
-                onBlur={() => setIsCardFlipped(false)}
-                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-                required
-                placeholder="* * * *"
-                maxLength={4}
-              />
-            </div>
-
-            <div className="mt-6 flex justify-center">
-              <button
-                type="submit"
-                className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
-              >
-                <TbCreditCardPay className="mr-2" size={18} />
-                Pay Now
-              </button>
-            </div>
-          </form>
         </div>
-      )}
+
+        <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
+          <div className="relative">
+            <div className="flex items-center">
+              <FaUser className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">
+                Card Holder Name
+              </label>
+            </div>
+            <input
+              type="text"
+              name="cardHolderName"
+              value={cardData.cardHolderName}
+              onChange={handleInputChange}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="Cardholder Name"
+              maxLength={30}
+            />
+          </div>
+
+          <div className="relative">
+            <div className="flex items-center">
+              <FaCreditCard className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Card Number</label>
+            </div>
+            <input
+              type="tel"
+              name="cardNumber"
+              value={cardData.cardNumber}
+              onChange={handleInputChange}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="xxxx xxxx xxxx xxxx"
+              maxLength={19}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative">
+              <FaCalendarAlt className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Expiry Month</label>
+              <input
+                type="text"
+                name="expiryMonth"
+                value={cardData.expiryMonth}
+                onChange={handleInputChange}
+                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                required
+                placeholder="MM"
+                maxLength={2}
+              />
+            </div>
+
+            <div className="relative">
+              <FaCalendarAlt className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Expiry Year</label>
+              <input
+                type="text"
+                name="expiryYear"
+                value={cardData.expiryYear}
+                onChange={handleInputChange}
+                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                required
+                placeholder="YY"
+                maxLength={2}
+              />
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="flex items-center">
+              <FaLock className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">CVV / CVC</label>
+            </div>
+            <input
+              type="text"
+              name="cvv"
+              value={cardData.cvv}
+              onChange={(e) => {
+                handleInputChange(e);
+                setIsCardFlipped(true);
+              }}
+              onFocus={() => setIsCardFlipped(true)}
+              onBlur={() => setIsCardFlipped(false)}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="* * * *"
+              maxLength={4}
+            />
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <button
+              type="submit"
+              className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+            >
+              <TbCreditCardPay className="mr-2" size={18} />
+              Pay Now
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
-
 export default CardPaymentForm;
