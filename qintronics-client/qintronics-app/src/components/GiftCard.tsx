@@ -404,7 +404,7 @@ const GiftCard = () => {
                 className="w-full sm:w-auto mt-4 bg-[#1A3F6B] text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-lg shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex justify-center items-center"
               >
                 <FaShoppingCart className="mr-1 sm:mr-2" />
-                Add to Cart
+                ADD TO CART
               </button>
             </div>
           </div>
