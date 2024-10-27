@@ -35,6 +35,39 @@ export class OrderCreateDto {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
+    description: 'Email of the order',
+    example: 'john.doe@gmail.com',
+    maxLength: 255,
+    minLength: 1,
+  })
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    description: 'First name of the recepient',
+    example: 'John',
+    maxLength: 255,
+    minLength: 1,
+  })
+  firstName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    description: 'Last name of the recepient',
+    example: 'Doe',
+    maxLength: 255,
+    minLength: 1,
+  })
+  lastName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
     description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })

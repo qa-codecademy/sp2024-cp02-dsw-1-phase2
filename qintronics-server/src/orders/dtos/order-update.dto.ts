@@ -13,6 +13,14 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: String,
+    description: 'Email of the order',
+    example: 'john.doe@gmail.com',
+  })
+  email?: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
     description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })

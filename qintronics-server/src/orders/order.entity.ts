@@ -88,6 +88,37 @@ export class Order {
   })
   isPaid: boolean;
 
+  // * ORDER EMAIL
+  @Column()
+  @ApiProperty({
+    type: String,
+    description: 'Email of the order',
+    example: 'john.doe@gmail.com',
+  })
+  email: string;
+
+  // * ORDER FIRST NAME
+  @Column({
+    name: 'first_name',
+  })
+  @ApiProperty({
+    type: String,
+    description: 'First name of the recipient',
+    example: 'John',
+  })
+  firstName: string;
+
+  // * ORDER LAST NAME
+  @Column({
+    name: 'last_name',
+  })
+  @ApiProperty({
+    type: String,
+    description: 'Last name of the recipient',
+    example: 'Doe',
+  })
+  lastName: string;
+
   // * ORDER ADDRESS
   @Column()
   @ApiProperty({

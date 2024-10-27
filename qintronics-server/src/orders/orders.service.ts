@@ -72,8 +72,8 @@ export class OrdersService {
       });
     }
     await this.emailService.sendOrderConfirmationEmail(
-      user.email,
-      user.userInfo?.firstName,
+      orderDetails.email,
+      orderDetails?.firstName,
       orderDetails,
       productDetails,
     );
