@@ -204,6 +204,7 @@ export class OrdersService {
         },
         user: true,
       },
+      withDeleted: true,
       skip: paginationQueries.skip,
       take: paginationQueries.perPage,
     });

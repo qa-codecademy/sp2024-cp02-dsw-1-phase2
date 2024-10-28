@@ -182,6 +182,10 @@ export class ProductsService {
   }
 
   async deleteProduct(id: string): Promise<void> {
-    await this.productRepository.delete(id);
+    const deletedAnswer = await this.productRepository.softDelete(id);
+
+    if (!deletedAnswer.affected) {
+      throw new NotFoundException('Product not found!');
+    }
   }
 }

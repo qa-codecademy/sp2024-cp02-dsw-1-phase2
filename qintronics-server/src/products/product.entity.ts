@@ -6,6 +6,7 @@ import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -149,4 +150,14 @@ export class Product {
     example: '2023-01-01T00:00:00.000Z',
   })
   updatedAt: Date;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+  })
+  @ApiProperty({
+    type: Date,
+    example: '2024-04-21 11:13:15.61689',
+    nullable: true,
+  })
+  deletedAt: Date;
 }
