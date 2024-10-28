@@ -37,6 +37,8 @@ const Header = ({ onLoginClick }: HeaderProps) => {
     setUser(null);
     setIsUserPanelOpen(false);
     axiosInstance.post("/auth/logout");
+    localStorage.removeItem("cart");
+    window.dispatchEvent(new CustomEvent("cartUpdated", { detail: [] }));
     navigate("/");
   };
 

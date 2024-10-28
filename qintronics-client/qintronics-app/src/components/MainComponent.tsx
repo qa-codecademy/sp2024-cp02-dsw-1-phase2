@@ -1,19 +1,17 @@
 // src/components/MainComponent.tsx
-import SliderDiv from "./SliderDiv";
-import CardsDiv from "./CardsDiv";
-import SlideDiv from "./SlideDiv";
-import Newsletter from "./Newsletter";
 import AdBanner from "./AdBanner";
-import FeaturedCategories from "./FeaturedCategories";
-import Testimonials from "./Testimonials";
-import LatestBlogPosts from "./LatestBlogPosts";
 import BrandsShowcase from "./BrandsShowcase";
-import Sidebar from "./Sidebar";
+import CardsDiv from "./CardsDiv";
+import FeaturedCategories from "./FeaturedCategories";
+import LatestBlogPosts from "./LatestBlogPosts";
+import Newsletter from "./Newsletter";
+import SlideDiv from "./SlideDiv";
+import SliderDiv from "./SliderDiv";
+import Testimonials from "./Testimonials";
 
 const MainComponent = () => {
   return (
     <div className="flex flex-row min-h-screen bg-gray-50">
-      <Sidebar />
       <div className="flex-grow flex flex-col justify-center items-center w-full">
         {/* Hero Section */}
         <section className="w-full bg-white py-12 flex justify-center items-center">

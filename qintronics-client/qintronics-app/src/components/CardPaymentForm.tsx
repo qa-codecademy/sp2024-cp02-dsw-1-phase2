@@ -151,7 +151,9 @@ const CardPaymentForm: React.FC = () => {
         .post("/orders", { ...orderDetails, isPaid: true })
         .then(() => {
           clearCart();
-          paymentSuccessful(navigate);
+          setTimeout(() => {
+            paymentSuccessful(navigate);
+          }, 1000);
         })
         .catch((err) => console.log(err));
     }

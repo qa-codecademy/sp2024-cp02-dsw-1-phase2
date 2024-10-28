@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import AboutUs from "./components/AboutUs";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
 import CategoryPage from "./components/CategoryPage";
@@ -8,25 +9,25 @@ import Chatbot from "./components/Chatbot";
 import CompareProducts from "./components/CompareProducts";
 import ContactForm from "./components/ContactPage";
 import Dashboard from "./components/Dashboard";
+import FAQ from "./components/FAQ";
+import Favorites from "./components/Favorites";
 import Footer from "./components/Footer";
 import GiftCard from "./components/GiftCard";
 import Header from "./components/Header";
+import Layout from "./components/Layout";
 import LoginPopup from "./components/LoginPopup";
 import MainComponent from "./components/MainComponent";
+import NotFound from "./components/NotFound";
 import OrderPage from "./components/OrderPage";
+import OurServices from "./components/OurServices";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
+import Returns from "./components/Returns";
 import SalesPage from "./components/SalesPage";
+import Shipping from "./components/Shipping";
 import AuthContextProvider from "./context/auth.context";
 import CardPaymentProvider from "./context/card-payment.context";
-import AboutUs from "./components/AboutUs";
-import FAQ from "./components/FAQ";
-import Shipping from "./components/Shipping";
-import Favorites from "./components/Favorites";
-import Returns from "./components/Returns";
-import PrivacyPolicy from "./components/PrivacyPolicy";
-import OurServices from "./components/OurServices";
-import NotFound from "./components/NotFound";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -42,29 +43,31 @@ function App() {
 
         <div className="content grow">
           <CardPaymentProvider>
-            <Routes>
-              <Route path="/" element={<MainComponent />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route element={<PrivateRoute />}>
-                <Route path="/checkout" element={<OrderPage />} />
-                <Route path="/payment" element={<CardPaymentForm />} />
-                <Route path="/favorites" element={<Favorites />} />
-              </Route>
-              <Route path="/contact" element={<ContactForm />} />
-              <Route path="/compare" element={<CompareProducts />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/products/:id" element={<ProductDetailsPage />} />
-              <Route path="/sales" element={<SalesPage />} />
-              <Route path="/category/:category" element={<CategoryPage />} />
-              <Route path="/category/gift-cards" element={<GiftCard />} />
-              <Route path="/about-us" element={<AboutUs />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/shipping" element={<Shipping />} />
-              <Route path="/returns" element={<Returns />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/our-services" element={<OurServices />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<MainComponent />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/checkout" element={<OrderPage />} />
+                  <Route path="/payment" element={<CardPaymentForm />} />
+                  <Route path="/favorites" element={<Favorites />} />
+                </Route>
+                <Route path="/contact" element={<ContactForm />} />
+                <Route path="/compare" element={<CompareProducts />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/products/:id" element={<ProductDetailsPage />} />
+                <Route path="/sales" element={<SalesPage />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/category/gift-cards" element={<GiftCard />} />
+                <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/shipping" element={<Shipping />} />
+                <Route path="/returns" element={<Returns />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/our-services" element={<OurServices />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
           </CardPaymentProvider>
         </div>
 

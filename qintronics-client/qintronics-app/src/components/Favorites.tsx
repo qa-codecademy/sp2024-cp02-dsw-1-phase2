@@ -3,11 +3,10 @@ import { useContext, useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
-import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
-import axiosInstance from "../common/utils/axios-instance.util";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import addToCart from "../common/utils/addToCart";
-import Sidebar from "./Sidebar";
+import axiosInstance from "../common/utils/axios-instance.util";
 import { AuthContext } from "../context/auth.context";
 
 const Favorites = () => {
@@ -60,7 +59,6 @@ const Favorites = () => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
       <div className="flex-1 flex justify-center items-start p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col items-center w-full max-w-7xl">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6">

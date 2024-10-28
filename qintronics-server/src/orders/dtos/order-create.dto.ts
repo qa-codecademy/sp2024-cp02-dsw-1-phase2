@@ -68,6 +68,17 @@ export class OrderCreateDto {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
+    description: 'Phone number of the recipient',
+    example: '+38977777777',
+    maxLength: 15,
+    minLength: 1,
+  })
+  phoneNumber: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
     description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })

@@ -122,6 +122,14 @@ export class OrderReturnDto {
 
   @Expose()
   @ApiProperty({
+    type: String,
+    description: 'Phone number of the recipient',
+    example: '+38977777777',
+  })
+  phoneNumber: string;
+
+  @Expose()
+  @ApiProperty({
     type: Date,
     description: 'Preferred delivery date of the order',
     example: '2024-09-30',

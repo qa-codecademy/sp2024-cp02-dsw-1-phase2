@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import ProductList from "./ProductList";
-import { BaseProduct } from "../common/types/products-interface";
-import Loader from "./Loader";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import Loader from "./Loader";
+import ProductList from "./ProductList";
 
 const SalesPage = () => {
-  const [saleProducts, setSaleProducts] = useState<BaseProduct[]>([]);
+  const [saleProducts, setSaleProducts] = useState<ProductAndFavFlag[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
@@ -16,9 +16,11 @@ const SalesPage = () => {
   const fetchSaleProducts = (page: number, size: number) => {
     setLoading(true);
     axiosInstance
-      .get(
-        `/products?sort=ASC&sortBy=name&pageSize=${size}&page=${page}&discount=true`
-      )
+      .post("/products", {
+        page,
+        pageSize: size,
+        discount: true,
+      })
       .then((res) => {
         setSaleProducts(res.data.products);
         setTotal(res.data.total);

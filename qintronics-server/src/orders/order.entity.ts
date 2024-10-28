@@ -92,7 +92,7 @@ export class Order {
   @Column()
   @ApiProperty({
     type: String,
-    description: 'Email of the order',
+    description: 'Email of the recipient',
     example: 'john.doe@gmail.com',
   })
   email: string;
@@ -118,6 +118,15 @@ export class Order {
     example: 'Doe',
   })
   lastName: string;
+
+  // * ORDER PHONE NUMBER
+  @Column()
+  @ApiProperty({
+    type: String,
+    description: 'Phone number of the recipient',
+    example: '+38977777777',
+  })
+  phoneNumber: string;
 
   // * ORDER ADDRESS
   @Column()
