@@ -12,10 +12,11 @@ import Dashboard from "./components/Dashboard";
 import FAQ from "./components/FAQ";
 import Favorites from "./components/Favorites";
 import Footer from "./components/Footer";
+import ForgotPassword from "./components/ForgotPassword";
 import GiftCard from "./components/GiftCard";
 import Header from "./components/Header";
 import Layout from "./components/Layout";
-import LoginPopup from "./components/LoginPopup";
+import { Login } from "./components/Login";
 import MainComponent from "./components/MainComponent";
 import NotFound from "./components/NotFound";
 import OrderPage from "./components/OrderPage";
@@ -23,19 +24,13 @@ import OurServices from "./components/OurServices";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
+import Profile from "./components/Profile";
+import Register from "./components/Register";
+import ResetPassword from "./components/ResetPassword";
 import Returns from "./components/Returns";
 import SalesPage from "./components/SalesPage";
 import Shipping from "./components/Shipping";
 import AuthContextProvider from "./context/auth.context";
-import AboutUs from "./components/AboutUs";
-import FAQ from "./components/FAQ";
-import Shipping from "./components/Shipping";
-import Favorites from "./components/Favorites";
-import Profile from "./components/Profile";
-import Register from "./components/Register";
-import ForgotPassword from "./components/ForgotPassword";
-import ResetPassword from "./components/ResetPassword";
-import { Login } from "./components/Login";
 import CardPaymentProvider from "./context/card-payment.context";
 
 function App() {
@@ -61,11 +56,11 @@ function App() {
                   <Route path="/checkout" element={<OrderPage />} />
                   <Route path="/payment" element={<CardPaymentForm />} />
                   <Route path="/favorites" element={<Favorites />} />
-                <Route path="/profile" element={<Profile />} />
-              </Route>
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
                 <Route path="/contact" element={<ContactForm />} />
-              <Route path="/compare" element={<CompareProducts />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/compare" element={<CompareProducts />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/products/:id" element={<ProductDetailsPage />} />
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
@@ -77,11 +72,11 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/our-services" element={<OurServices />} />
                 <Route path="*" element={<NotFound />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-            </Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+              </Routes>
             </Layout>
           </CardPaymentProvider>
         </div>

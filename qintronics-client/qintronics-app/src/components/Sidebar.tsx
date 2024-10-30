@@ -34,6 +34,10 @@ interface Category {
 // Define Sidebar component
 const Sidebar = React.memo(() => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Define icons for each category
   const categoryIcons: { [key: string]: JSX.Element } = {
@@ -159,31 +163,19 @@ const Sidebar = React.memo(() => {
   }, [categories, selectedCategory]);
 
   return (
-    <div className="h-full w-64 backdrop-blur-lg bg-[rgba(173,216,230,0.3)] border-r border-white/10 shadow-lg rounded-3xl p-4">
-      {/* Categories */}
-      <div className="py-6">
-        <h2 className="px-6 mb-6 text-sm font-semibold text-gray-400 uppercase tracking-wide">
-          Categories
-        </h2>
-        <nav className="space-y-3">
-          {/* Main Categories */}
-          {mainCategories.map(({ id, name }) => (
-            <motion.button
-              key={id}
-              onClick={() => handleCategoryClick(name)} // Call the function on click
-              className={`flex items-center w-full px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-300 ${
-                activeCategory === name
-                  ? "text-white bg-gradient-to-r from-purple-600 to-indigo-600 shadow-md"
-                  : "text-gray-500 bg-white/20 hover:text-black hover:bg-white/30"
-              }`}
-              whileHover={{ x: 8 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {/* Add Lucide icon */}
-              <Home className="h-5 w-5 mr-2" />
-              {name}
-            </motion.button>
-          ))}
+    <>
+      {/* Mobile and tablet menu button */}
+      <button
+        className="md:hidden fixed top-5 left-5 z-50 bg-[#1BD8C4] text-white p-3 rounded-full shadow-lg"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+      >
+        {isOpen ? (
+          <FaTimes className="text-xl" />
+        ) : (
+          <FaBars className="text-xl" />
+        )}
+      </button>
 
       {/* Sidebar */}
       <div
@@ -201,7 +193,17 @@ const Sidebar = React.memo(() => {
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Overlay for mobile menu */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+          role="button"
+          aria-label="Close overlay"
+        ></div>
+      )}
+    </>
   );
 });
 

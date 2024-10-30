@@ -23,29 +23,18 @@ interface ProductsResponse {
 export const fetchProducts = async (
   params: FetchProductsParams = {}
 ): Promise<ProductsResponse> => {
-  const queryParams = new URLSearchParams();
+  try {
+    const response = await axiosInstance.post("/products", {
+      ...params, // Sending the parameters as the request body
+      page: 1, // Setting the default page to 1
+      pageSize: 12, // Setting the default page size to 12
+    });
 
-  // Add parameters to query string if they exist
-  if (params.page) queryParams.append("page", params.page.toString());
-  if (params.pageSize)
-    queryParams.append("pageSize", params.pageSize.toString());
-  if (params.sort) queryParams.append("sort", params.sort);
-  if (params.sortBy) queryParams.append("sortBy", params.sortBy);
-  if (params.categoryName)
-    queryParams.append("categoryName", params.categoryName);
-  if (params.brand) queryParams.append("brand", params.brand);
-  if (params.name) queryParams.append("name", params.name);
-  if (params.discount !== undefined)
-    queryParams.append("discount", params.discount.toString());
-
-  const url = `/products?${queryParams.toString()}`;
-  const response = await axiosInstance.get(url);
-
-  if (response.status !== 200) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    return response.data; // Return the data from the response
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error; // Rethrow the error for further handling
   }
-
-  return response.data;
 };
 
 export default fetchProducts;

@@ -1,27 +1,43 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 // import SliderDiv from "./SliderDiv";
 import CardsDiv from "./CardsDiv";
-import SlideDiv from "./SlideDiv";
 import Newsletter from "./Newsletter";
+import SlideDiv from "./SlideDiv";
 // import AdBanner from "./AdBanner";
+import { motion } from "framer-motion";
+import { ChevronDown, ChevronLeft } from "lucide-react";
+import { Product } from "../common/types/Product-interface";
+import axiosInstance from "../common/utils/axios-instance.util";
+import BrandsShowcase from "./BrandsShowcase";
 import FeaturedCategories from "./FeaturedCategories";
 import LatestBlogPosts from "./LatestBlogPosts";
-import BrandsShowcase from "./BrandsShowcase";
 import Sidebar from "./Sidebar";
-import { Product } from "../common/types/Product-interface";
-import { ChevronDown, ChevronLeft } from "lucide-react";
-import { motion } from "framer-motion";
+import Testimonials from "./Testimonials";
 
-// API fetch functions
-const fetchProducts = async (params = {}) => {
-  const queryParams = new URLSearchParams({
-    pageSize: "12",
-    page: "1",
-    ...params,
-  });
-  const response = await fetch(`/api/products?${queryParams}`);
-  if (!response.ok) throw new Error("Failed to fetch products");
-  return response.json();
+const fetchProducts = async (
+  params: Partial<{
+    discount?: boolean;
+    name?: string;
+    brand?: string;
+    categoryName?: string;
+    page?: number;
+    pageSize?: number;
+    sortBy?: string;
+    sort?: string;
+    userId?: string;
+  }> = {}
+) => {
+  try {
+    const response = await axiosInstance.post("/products", {
+      page: 1,
+      pageSize: 12,
+      ...params,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
 };
 
 const MainComponent = () => {
@@ -37,9 +53,20 @@ const MainComponent = () => {
       setIsLoading(true);
       try {
         const [featured, newProducts, discounted] = await Promise.all([
-          fetchProducts({ sortBy: "rating", sort: "DESC", pageSize: "8" }),
-          fetchProducts({ sortBy: "createdAt", sort: "DESC", pageSize: "12" }),
-          fetchProducts({ discount: true, pageSize: "10" }),
+          fetchProducts({
+            sortBy: "price",
+            sort: "DESC",
+            pageSize: 8,
+          }),
+          fetchProducts({
+            sortBy: "name",
+            sort: "DESC",
+            pageSize: 12,
+          }),
+          fetchProducts({
+            discount: true,
+            pageSize: 10,
+          }),
         ]);
 
         setFeaturedProducts(featured.products);
@@ -53,16 +80,6 @@ const MainComponent = () => {
     };
 
     loadAllData();
-
-    // Auto-scroll after hero section loads
-    const timer = setTimeout(() => {
-      exploreRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 900);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -144,8 +161,8 @@ const MainComponent = () => {
               <CardsDiv products={newArrivals} />
             </div>
           </section>
-        {/* Ad Banner */}
-        <section className="w-full bg-white py-12 flex justify-center items-center">
+          {/* Ad Banner */}
+          {/* <section className="w-full bg-white py-12 flex justify-center items-center">
           <div className="container mx-auto px-4 text-center">
             <AdBanner
               title="Summer Sale: Up to 50% Off!"
@@ -153,7 +170,7 @@ const MainComponent = () => {
               imageUrl="/api/placeholder/800/400"
             />
           </div>
-        </section>
+        </section> */}
 
           {/* Special Offers */}
           <section className="px-8">

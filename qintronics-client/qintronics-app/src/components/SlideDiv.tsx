@@ -1,38 +1,34 @@
-import { useState, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
-import { Product } from "../common/types/Product-interface"; // Adjust path as needed
-import fetchProducts from "../common/utils/fetchProducts"; // Import your fetchProducts function
-import "./SlideDiv.css"; // Import the separate CSS file
-
-
-// Promeni na Filip
+import { Product } from "../common/types/Product-interface";
+import fetchProducts from "../common/utils/fetchProducts";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import "./SlideDiv.css"; // Ensure correct usage of CSS or CSS modules
 
+interface SlideDivProps {
+  products: Product[];
+}
 
-const SlideDiv: React.FC = () => {
+const SlideDiv: FC<SlideDivProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Helper function to shuffle products for randomness
-  const shuffleArray = (array: Product[]) => {
-    return array.sort(() => Math.random() - 0.5);
-  };
+  const shuffleArray = (array: Product[]): Product[] =>
+    array.sort(() => Math.random() - 0.5);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch products from the backend
-        const response = await fetchProducts({ discount: true }); // Adjust parameters as needed
+        const response = await fetchProducts({ discount: true });
         const discountedProducts = shuffleArray(
           response.products.filter((product) => product.discount > 0)
-        ).slice(0, 10); // Select only 10 products with a discount
-
+        ).slice(0, 10);
         setProducts(discountedProducts);
       } catch (error) {
-        console.error("Error fetching products data:", error);
+        console.error("Error fetching products:", error);
       } finally {
         setIsLoading(false);
       }
@@ -41,10 +37,21 @@ const SlideDiv: React.FC = () => {
     fetchData();
   }, []);
 
+  const calculateDiscountedPrice = (price: number, discount: number) =>
+    (price * (1 - discount / 100)).toFixed(2);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>No discounted products available at the moment.</p>
       </div>
     );
   }
@@ -62,13 +69,14 @@ const SlideDiv: React.FC = () => {
             View All
           </motion.button>
         </div>
+
         <div className="products-scroll-container">
           <div className="products-wrapper">
             {products.map((product) => {
-              const discountedPrice = (
-                product.price *
-                (1 - product.discount / 100)
-              ).toFixed(2);
+              const discountedPrice = calculateDiscountedPrice(
+                product.price,
+                product.discount
+              );
 
               return (
                 <motion.div
@@ -82,13 +90,15 @@ const SlideDiv: React.FC = () => {
                       src={product.img}
                       alt={product.name}
                       className="product-image"
-                      whileHover={{ scale: 1 }} // Adjust scale of picture on hover
+                      whileHover={{ scale: 1 }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
+
                   <div className="product-details">
                     <h3 className="product-name">{product.name}</h3>
                     <p className="product-description">{product.description}</p>
+
                     <div className="product-price-add">
                       <div className="price-container">
                         <p className="product-price discounted-price">
@@ -98,26 +108,22 @@ const SlideDiv: React.FC = () => {
                           ${product.price.toFixed(2)}
                         </p>
                       </div>
+
                       <motion.button
                         className="add-to-cart-button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-
-                        // Promeni na Filip
                         onClick={() => {
                           const cartItem: CartItem = {
                             id: product.id,
                             name: product.name,
-                            description: product.description, // Example SKU
+                            description: product.description,
                             price: product.price,
-                            quantity: 1, // Set default quantity to 1
+                            quantity: 1,
                             image: product.img,
                           };
-                          addToCart(cartItem); // Add product to cart
+                          addToCart(cartItem);
                         }}
-                      
-                      
-                      
                       >
                         <ShoppingCart size={14} />
                         <span>Add</span>

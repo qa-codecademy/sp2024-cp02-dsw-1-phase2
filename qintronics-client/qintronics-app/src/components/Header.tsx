@@ -22,7 +22,6 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
-  const navigate = useNavigate();
 
   const { user, setUser, isLoading } = useContext(AuthContext);
 

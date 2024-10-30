@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/products-interface"; // Make sure the path is correct
 import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
@@ -6,7 +6,11 @@ import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 
-const CardsDiv = () => {
+interface SlideDivProps {
+  products: Product[];
+}
+
+const CardsDiv: FC<SlideDivProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
