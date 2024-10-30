@@ -153,9 +153,9 @@
     "id": "c2c98f54-3d91-4b2e-a710-b22b54bb4149",
     "categoryId": "1d1c30c8-0ae4-4760-bd12-153720a34214",
     "brand": "Gift Card",
-    "name": "$30 Gift Card - Green",
+    "name": "$30 Gift Card - Orange",
     "description": "A perfect gift of $30.",
-    "img": "/data/images/giftcards/gf-green.png",
+    "img": "/data/images/giftcards/gf-orange.png",
     "price": 30,
     "specifications": {
       "validity": "3 years"

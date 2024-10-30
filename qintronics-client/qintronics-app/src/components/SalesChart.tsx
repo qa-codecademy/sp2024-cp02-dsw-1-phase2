@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   AreaChart,
@@ -9,35 +9,80 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import axiosInstance from "../common/utils/axios-instance.util";
 
-const data = [
-  { name: "Jan", value: 400 },
-  { name: "Feb", value: 300 },
-  { name: "Mar", value: 200 },
-  { name: "Apr", value: 278 },
-  { name: "May", value: 189 },
-  { name: "Jun", value: 239 },
-  { name: "Jul", value: 349 },
-];
+// Types
+export interface MonthlyTotal {
+  month: string;
+  total_sum: number;
+}
 
-const SalesChart: React.FC = () => (
-  <motion.div
-    className="bg-white p-6 rounded-lg shadow-sm"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    <h3 className="text-lg font-medium text-gray-800 mb-4">Sales Overview</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Area type="monotone" dataKey="value" stroke="#3b82f6" fill="#93c5fd" />
-      </AreaChart>
-    </ResponsiveContainer>
-  </motion.div>
-);
+export interface Order {
+  total: number;
+  orderNumber: number;
+  isDelivered: boolean;
+  isCanceled: boolean;
+}
 
-export default SalesChart;
+export interface OrdersResponse {
+  data: Order[];
+  totalCount: number;
+}
+
+// SalesChart Component remains the same as it's working correctly
+export const SalesChart: React.FC = () => {
+  const [monthlyData, setMonthlyData] = useState<MonthlyTotal[]>([]);
+
+  useEffect(() => {
+    const fetchMonthlyTotals = async () => {
+      try {
+        const { data } = await axiosInstance.get<MonthlyTotal[]>(
+          "/orders/monthly-totals"
+        );
+        const sortedData = data.sort((a, b) => a.month.localeCompare(b.month));
+        setMonthlyData(sortedData);
+      } catch (error) {
+        console.error("Error fetching monthly totals:", error);
+      }
+    };
+
+    fetchMonthlyTotals();
+  }, []);
+
+  const formatMonthLabel = (month: string) => {
+    const date = new Date(month + "-01");
+    return date.toLocaleString("default", { month: "short" });
+  };
+
+  return (
+    <motion.div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h3 className="text-lg font-medium text-gray-800 mb-4">Sales Overview</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={monthlyData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" tickFormatter={formatMonthLabel} />
+          <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <Tooltip
+            formatter={(value: number) => [
+              `$${value.toLocaleString()}`,
+              "Sales",
+            ]}
+            labelFormatter={formatMonthLabel}
+          />
+          <Area
+            type="monotone"
+            dataKey="total_sum"
+            stroke="#3b82f6"
+            fill="#93c5fd"
+            name="Sales"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </motion.div>
+  );
+};

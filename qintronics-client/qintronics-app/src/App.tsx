@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AboutUs from "./components/AboutUs";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
@@ -12,10 +12,11 @@ import Dashboard from "./components/Dashboard";
 import FAQ from "./components/FAQ";
 import Favorites from "./components/Favorites";
 import Footer from "./components/Footer";
+import ForgotPassword from "./components/ForgotPassword";
 import GiftCard from "./components/GiftCard";
 import Header from "./components/Header";
 import Layout from "./components/Layout";
-import LoginPopup from "./components/LoginPopup";
+import { Login } from "./components/Login";
 import MainComponent from "./components/MainComponent";
 import NotFound from "./components/NotFound";
 import OrderPage from "./components/OrderPage";
@@ -23,6 +24,9 @@ import OurServices from "./components/OurServices";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
+import Profile from "./components/Profile";
+import Register from "./components/Register";
+import ResetPassword from "./components/ResetPassword";
 import Returns from "./components/Returns";
 import SalesPage from "./components/SalesPage";
 import Shipping from "./components/Shipping";
@@ -30,17 +34,18 @@ import AuthContextProvider from "./context/auth.context";
 import CardPaymentProvider from "./context/card-payment.context";
 
 function App() {
-  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleLoginPopup = () => setIsLoginPopupOpen(!isLoginPopupOpen);
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
   const toggleChat = () => setIsChatOpen(!isChatOpen);
 
   return (
     <AuthContextProvider>
       <div className="App flex flex-col">
-        <Header onLoginClick={toggleLoginPopup} />
-
+        <Header onLoginClick={handleLoginClick} />{" "}
         <div className="content grow">
           <CardPaymentProvider>
             <Layout>
@@ -51,6 +56,7 @@ function App() {
                   <Route path="/checkout" element={<OrderPage />} />
                   <Route path="/payment" element={<CardPaymentForm />} />
                   <Route path="/favorites" element={<Favorites />} />
+                  <Route path="/profile" element={<Profile />} />
                 </Route>
                 <Route path="/contact" element={<ContactForm />} />
                 <Route path="/compare" element={<CompareProducts />} />
@@ -66,14 +72,15 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/our-services" element={<OurServices />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
               </Routes>
             </Layout>
           </CardPaymentProvider>
         </div>
-
-        <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />
         <Footer />
-
         <div className="fixed bottom-4 right-4">
           <motion.button
             onClick={toggleChat}
@@ -84,7 +91,6 @@ function App() {
             💬 Chat
           </motion.button>
         </div>
-
         {isChatOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
