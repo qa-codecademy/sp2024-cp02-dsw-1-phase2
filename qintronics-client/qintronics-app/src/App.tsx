@@ -32,6 +32,8 @@ import SalesPage from "./components/SalesPage";
 import Shipping from "./components/Shipping";
 import AuthContextProvider from "./context/auth.context";
 import CardPaymentProvider from "./context/card-payment.context";
+import OrderOverview from "./components/OrderOverview";
+import CustomerOrders from "./components/CustomerOrders";
 
 function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -71,6 +73,8 @@ function App() {
                 <Route path="/returns" element={<Returns />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/our-services" element={<OurServices />} />
+                <Route path="/orders" element={<CustomerOrders />} />
+                <Route path="/order/:orderId" element={<OrderOverview />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
