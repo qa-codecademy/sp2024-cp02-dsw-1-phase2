@@ -11,35 +11,31 @@ import {
 } from "recharts";
 import axiosInstance from "../common/utils/axios-instance.util";
 
-// Types
-export interface MonthlyTotal {
+interface OrderTotal {
   month: string;
-  total_sum: number;
+  totalSum: number;
+  totalOrdersNumber: string;
+  averageOrderValue: number;
 }
 
-export interface Order {
-  total: number;
-  orderNumber: number;
-  isDelivered: boolean;
-  isCanceled: boolean;
+interface MonthlyTotalsResponse {
+  orderTotals: OrderTotal[];
 }
 
-export interface OrdersResponse {
-  data: Order[];
-  totalCount: number;
-}
-
-// SalesChart Component remains the same as it's working correctly
 export const SalesChart: React.FC = () => {
-  const [monthlyData, setMonthlyData] = useState<MonthlyTotal[]>([]);
+  const [monthlyData, setMonthlyData] = useState<OrderTotal[]>([]);
 
   useEffect(() => {
     const fetchMonthlyTotals = async () => {
       try {
-        const { data } = await axiosInstance.get<MonthlyTotal[]>(
+        const { data } = await axiosInstance.get<MonthlyTotalsResponse>(
           "/orders/monthly-totals"
         );
-        const sortedData = data.sort((a, b) => a.month.localeCompare(b.month));
+
+        const sortedData = data.orderTotals.sort((a, b) =>
+          a.month.localeCompare(b.month)
+        );
+
         setMonthlyData(sortedData);
       } catch (error) {
         console.error("Error fetching monthly totals:", error);
@@ -51,7 +47,7 @@ export const SalesChart: React.FC = () => {
 
   const formatMonthLabel = (month: string) => {
     const date = new Date(month + "-01");
-    return date.toLocaleString("default", { month: "short" });
+    return date.toLocaleString("default", { month: "short", year: "numeric" });
   };
 
   return (
@@ -65,8 +61,15 @@ export const SalesChart: React.FC = () => {
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={monthlyData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" tickFormatter={formatMonthLabel} />
-          <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <XAxis
+            dataKey="month"
+            tickFormatter={formatMonthLabel}
+            interval={0} // Ensure every month is displayed
+          />
+          <YAxis
+            tickFormatter={(value) => `$${value.toLocaleString()}`}
+            allowDecimals={false}
+          />
           <Tooltip
             formatter={(value: number) => [
               `$${value.toLocaleString()}`,
@@ -76,7 +79,7 @@ export const SalesChart: React.FC = () => {
           />
           <Area
             type="monotone"
-            dataKey="total_sum"
+            dataKey="totalSum"
             stroke="#3b82f6"
             fill="#93c5fd"
             name="Sales"

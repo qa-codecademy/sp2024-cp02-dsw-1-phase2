@@ -6,13 +6,15 @@ export const DashboardStats: React.FC = () => {
     totalSales,
     totalOrders,
     totalCustomers,
+    averageOrderValue,
     salesTrend,
     ordersTrend,
     customersTrend,
+    averageOrderValueTrend,
   } = useDashboardStats();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 gap-6">
       <StatCard
         title="Total Sales"
         value={totalSales ? `$${totalSales.toLocaleString()}` : "$0"}
@@ -27,6 +29,13 @@ export const DashboardStats: React.FC = () => {
         title="Customers"
         value={totalCustomers.toLocaleString()}
         trend={customersTrend}
+      />
+      <StatCard
+        title="Average Order Value"
+        value={`$${averageOrderValue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+        })}`}
+        trend={averageOrderValueTrend}
       />
     </div>
   );

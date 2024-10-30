@@ -1,87 +1,108 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../common/utils/axios-instance.util";
-import { OrdersResponse, MonthlyTotal } from "../components/SalesChart";
+
+// Define the structure of the response from the API
+interface OrderTotal {
+  month: string;
+  totalSum: number;
+  totalOrdersNumber: string; // Stored as a string in the response
+}
+
+interface UserTotal {
+  month: string;
+  newCustomers: string; // Stored as a string in the response
+}
+
+interface MonthlyTotalsResponse {
+  orderTotals: OrderTotal[];
+  userTotals: UserTotal[];
+}
 
 export const useDashboardStats = () => {
   const [totalSales, setTotalSales] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
+  const [averageOrderValue, setAverageOrderValue] = useState<number>(0);
+
   const [salesTrend, setSalesTrend] = useState<number>(0);
   const [ordersTrend, setOrdersTrend] = useState<number>(0);
   const [customersTrend, setCustomersTrend] = useState<number>(0);
+  const [averageOrderValueTrend, setAverageOrderValueTrend] =
+    useState<number>(0);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch orders with correct request body
-        const ordersResponse = await axiosInstance.post<OrdersResponse>(
-          "/orders/get",
-          {
-            paginationQueries: {
-              page: 1,
-              perPage: 1000,
-            },
-            queryParams: {
-              // Include only non-canceled orders
-              isCanceled: false,
-            },
-          }
-        );
-
-        // Fetch monthly totals for sales data
-        const monthlyTotalsResponse = await axiosInstance.get<MonthlyTotal[]>(
+        const { data } = await axiosInstance.get<MonthlyTotalsResponse>(
           "/orders/monthly-totals"
         );
 
-        // Calculate total orders (excluding canceled orders)
-        const activeOrders = ordersResponse.data.data.filter(
-          (order) => !order.isCanceled
-        );
-        setTotalOrders(activeOrders.length);
+        const { orderTotals, userTotals } = data;
 
-        // Calculate total sales from monthly totals
-        const monthlyTotals = monthlyTotalsResponse.data;
-        const totalSalesAmount = monthlyTotals.reduce(
-          (sum, month) => sum + month.total_sum,
+        const totalSalesAmount = orderTotals.reduce(
+          (sum, month) => sum + month.totalSum,
           0
         );
         setTotalSales(totalSalesAmount);
 
-        // Calculate trends from monthly totals
-        if (monthlyTotals.length >= 2) {
-          const lastMonth = monthlyTotals[monthlyTotals.length - 1].total_sum;
-          const previousMonth =
-            monthlyTotals[monthlyTotals.length - 2].total_sum;
+        const totalOrdersCount = orderTotals.reduce(
+          (count, month) => count + Number(month.totalOrdersNumber),
+          0
+        );
+        setTotalOrders(totalOrdersCount);
+
+        const avgOrderValue =
+          totalOrdersCount > 0 ? totalSalesAmount / totalOrdersCount : 0;
+        setAverageOrderValue(Number(avgOrderValue.toFixed(2)));
+
+        if (orderTotals.length >= 2) {
+          const lastMonth = orderTotals[orderTotals.length - 1];
+          const previousMonth = orderTotals[orderTotals.length - 2];
+
           const salesTrendCalc =
-            ((lastMonth - previousMonth) / previousMonth) * 100;
+            ((lastMonth.totalSum - previousMonth.totalSum) /
+              previousMonth.totalSum) *
+            100;
           setSalesTrend(Number(salesTrendCalc.toFixed(1)));
 
-          // Calculate orders trend
-          const currentMonthOrders = activeOrders.length;
-          const previousMonthOrders = Math.floor(currentMonthOrders * 0.9); // Estimate if not available
           const ordersTrendCalc =
-            ((currentMonthOrders - previousMonthOrders) / previousMonthOrders) *
+            ((Number(lastMonth.totalOrdersNumber) -
+              Number(previousMonth.totalOrdersNumber)) /
+              Number(previousMonth.totalOrdersNumber)) *
             100;
           setOrdersTrend(Number(ordersTrendCalc.toFixed(1)));
+
+          const lastMonthAvgOrderValue =
+            Number(lastMonth.totalSum) / Number(lastMonth.totalOrdersNumber);
+          const prevMonthAvgOrderValue =
+            Number(previousMonth.totalSum) /
+            Number(previousMonth.totalOrdersNumber);
+
+          const avgOrderValueTrendCalc =
+            ((lastMonthAvgOrderValue - prevMonthAvgOrderValue) /
+              prevMonthAvgOrderValue) *
+            100;
+          setAverageOrderValueTrend(Number(avgOrderValueTrendCalc.toFixed(1)));
         }
 
-        // Set customers count and trend
-        // Since we don't have a direct endpoint for customer count,
-        // we can estimate it from unique order users or set a reasonable number
-        const uniqueCustomers = new Set(
-          activeOrders.map((order) => order.orderNumber)
-        ).size;
-        setTotalCustomers(uniqueCustomers);
-        setCustomersTrend(5); // Default positive trend
+        const currentMonthCustomers = userTotals.reduce(
+          (sum, month) => sum + Number(month.newCustomers),
+          0
+        );
+        setTotalCustomers(currentMonthCustomers);
+
+        const customersTrendCalc = userTotals.length ? 5 : 0;
+        setCustomersTrend(customersTrendCalc);
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
-        // Set default values in case of error
         setTotalSales(0);
         setTotalOrders(0);
         setTotalCustomers(0);
+        setAverageOrderValue(0);
         setSalesTrend(0);
         setOrdersTrend(0);
         setCustomersTrend(0);
+        setAverageOrderValueTrend(0);
       }
     };
 
@@ -92,8 +113,10 @@ export const useDashboardStats = () => {
     totalSales,
     totalOrders,
     totalCustomers,
+    averageOrderValue,
     salesTrend,
     ordersTrend,
     customersTrend,
+    averageOrderValueTrend,
   };
 };

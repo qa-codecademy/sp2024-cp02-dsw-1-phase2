@@ -102,17 +102,12 @@ const UserManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axiosInstance.get("/users", {
-        params: {
-          page,
-          perPage,
-        },
-      });
-
-      // The API returns an array directly, based on the schema
-      const fetchedUsers = Array.isArray(response.data) ? response.data : [];
-      setUsers(fetchedUsers);
-      setTotalUsers(fetchedUsers.length);
+      const response = await axiosInstance.get(
+        `/users?page=${page}&perPage=${perPage}`
+      );
+      const fetchedUsers = response.data || [];
+      setUsers(fetchedUsers.data);
+      setTotalUsers(fetchedUsers.data.length || 0);
     } catch (err) {
       setError("Failed to fetch users. Please try again later.");
       console.error("Error fetching users:", err);
