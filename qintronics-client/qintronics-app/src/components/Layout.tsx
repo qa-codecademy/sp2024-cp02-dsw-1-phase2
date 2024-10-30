@@ -6,7 +6,7 @@ const Layout = ({ children }: any) => {
   const location = useLocation();
 
   const sidebarPaths = [
-    "/",
+    // "/",
     "/products/*",
     "/category/*",
     "/sales",

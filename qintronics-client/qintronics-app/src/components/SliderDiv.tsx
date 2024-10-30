@@ -1,5 +1,5 @@
 // SliderDiv.tsx
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/Product-interface";
 import fetchProducts from "../common/utils/fetchProducts"; // Adjust the path as needed

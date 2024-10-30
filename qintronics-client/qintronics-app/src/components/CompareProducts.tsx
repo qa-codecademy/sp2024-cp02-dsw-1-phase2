@@ -1,22 +1,27 @@
-import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
-  Search,
-  X,
   ArrowLeft,
-  Plus,
   Check,
   ChevronLeft,
   ChevronRight,
+  Plus,
+  Search,
+  X,
 } from "lucide-react";
-import { Product } from "../common/types/products-interface";
+import { useCallback, useEffect, useState } from "react";
+import { BaseProduct, Product } from "../common/types/products-interface";
+import axiosInstance from "../common/utils/axios-instance.util";
 
+interface Category {
+  id: string;
+  name: string;
+}
 const ITEMS_PER_PAGE = 9;
 
 const CompareProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState<BaseProduct[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isComparing, setIsComparing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -27,9 +32,8 @@ const CompareProducts = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/categories");
-      const data = await response.json();
-      setCategories(data || []);
+      const response = await axiosInstance.get("/categories");
+      setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
       setCategories([]);
@@ -51,10 +55,11 @@ const CompareProducts = () => {
         queryParams.append("name", searchQuery);
       }
 
-      const response = await fetch(
-        `http://localhost:3000/api/products?${queryParams}`
-      );
-      const data = await response.json();
+      const response = await axiosInstance.post("/products", {
+        pageSize: ITEMS_PER_PAGE,
+        page: currentPage,
+      });
+      const data = response.data;
 
       setProducts(data.products || []);
       setTotalProducts(data.total || 0);

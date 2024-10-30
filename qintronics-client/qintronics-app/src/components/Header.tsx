@@ -1,10 +1,4 @@
-import {
-  LayoutDashboard,
-  LogOut,
-  Settings,
-  ShoppingBag,
-  User,
-} from "lucide-react";
+import { LayoutDashboard, LogOut, ShoppingBag, User } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../common/utils/axios-instance.util";
