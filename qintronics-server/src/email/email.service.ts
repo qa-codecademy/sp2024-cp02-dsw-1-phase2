@@ -46,4 +46,18 @@ export class EmailService {
       context: contextObj,
     });
   }
+
+  async sendContactEmail(
+    name: string,
+    email: string,
+    phone: string,
+    message: string,
+  ) {
+    await this.mailerService.sendMail({
+      subject: `New Message from: ${name}`,
+      to: process.env.EMAIL_USER,
+      template: './contact-email',
+      context: { name, phone, message, email },
+    });
+  }
 }

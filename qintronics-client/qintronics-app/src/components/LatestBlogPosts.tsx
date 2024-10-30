@@ -16,7 +16,7 @@ const blogPosts = [
   {
     title: "Sustainable Tech: Eco-Friendly Gadgets for a Greener Future",
     excerpt:
-      "Discover the latest sustainable tech innovations reducing environmental impact.",
+      "Learn about the latest innovations in sustainable technology and how they're helping to reduce environmental impact.",
     image: "../../public/images/blog-posts-images/eco-blog.png",
   },
 ];

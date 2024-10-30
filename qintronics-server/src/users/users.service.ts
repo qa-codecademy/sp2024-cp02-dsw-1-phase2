@@ -128,10 +128,13 @@ export class UsersService {
     // Relations must be loaded here, or else there won't be cascade delete
     const userToBeDeleted = await this.userRepository.findOne({
       where: { id },
-      relations: { userInfo: true },
+      relations: { userInfo: true, favoriteProducts: true },
     });
 
     if (!userToBeDeleted) return;
+
+    userToBeDeleted.favoriteProducts = [];
+    await this.userRepository.save(userToBeDeleted);
 
     // Soft remove must receive an entity or there will be an internal error
     await this.userRepository.softRemove(userToBeDeleted);

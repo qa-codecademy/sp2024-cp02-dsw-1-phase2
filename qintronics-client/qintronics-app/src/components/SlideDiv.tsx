@@ -5,7 +5,13 @@ import { Product } from "../common/types/Product-interface"; // Adjust path as n
 import fetchProducts from "../common/utils/fetchProducts"; // Import your fetchProducts function
 import "./SlideDiv.css"; // Import the separate CSS file
 
-const SlideDiv = () => {
+
+// Promeni na Filip
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+
+
+const SlideDiv: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -96,6 +102,22 @@ const SlideDiv = () => {
                         className="add-to-cart-button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+
+                        // Promeni na Filip
+                        onClick={() => {
+                          const cartItem: CartItem = {
+                            id: product.id,
+                            name: product.name,
+                            description: product.description, // Example SKU
+                            price: product.price,
+                            quantity: 1, // Set default quantity to 1
+                            image: product.img,
+                          };
+                          addToCart(cartItem); // Add product to cart
+                        }}
+                      
+                      
+                      
                       >
                         <ShoppingCart size={14} />
                         <span>Add</span>

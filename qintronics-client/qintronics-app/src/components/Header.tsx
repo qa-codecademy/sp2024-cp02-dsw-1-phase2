@@ -1,18 +1,25 @@
-import { useState, useContext } from "react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  ShoppingBag,
+  User,
+} from "lucide-react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LayoutDashboard, User, ShoppingBag, LogOut } from "lucide-react";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { AuthContext } from "../context/auth.context";
+import DropdownMenu from "./DropdownMenu";
+import IconButtons from "./IconButtons";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
-import IconButtons from "./IconButtons";
-import DropdownMenu from "./DropdownMenu";
-import { AuthContext } from "../context/auth.context";
-import axiosInstance from "../common/utils/axios-instance.util";
 
 interface HeaderProps {
   onLoginClick: () => void;
 }
 
 const Header = ({ onLoginClick }: HeaderProps) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
   const navigate = useNavigate();
@@ -26,6 +33,9 @@ const Header = ({ onLoginClick }: HeaderProps) => {
     setUser(null);
     setIsUserPanelOpen(false);
     axiosInstance.post("/auth/logout");
+    localStorage.removeItem("cart");
+    window.dispatchEvent(new CustomEvent("cartUpdated", { detail: [] }));
+    navigate("/");
   };
 
   const handleUserIconClick = () => {

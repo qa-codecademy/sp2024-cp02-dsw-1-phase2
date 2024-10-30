@@ -1,10 +1,13 @@
-import { useParams } from "react-router-dom";
-import { BaseProduct } from "../common/types/products-interface";
-import { useState, useRef, useEffect } from "react";
-import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
-import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
-import Sidebar from "./Sidebar";
+import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
+import { useContext, useEffect, useRef, useState } from "react";
+import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
+import addToCart from "../common/utils/addToCart";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
+import { AuthContext } from "../context/auth.context";
 
 const formatKey = (key: string) => {
   return key
@@ -14,19 +17,46 @@ const formatKey = (key: string) => {
 };
 
 const ProductDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [product, setProduct] = useState<ProductAndFavFlag | null>(null);
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
+  const handleToggleFavorite = () => {
+    if (user) {
+      axiosInstance
+        .post("/products/favorite", {
+          productId: product?.id,
+        })
+        .then(() => {
+          fetchProduct();
+          console.log("Favorite toggled");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      notLoggedFavoriteProduct(navigate);
+    }
+  };
+
+  const fetchProduct = () => {
     axiosInstance
-      .get(`/products/${id}`)
+      .post(`/products/id`, {
+        productId: id,
+        userId: user?.userId,
+      })
       .then((res) => {
         setProduct(res.data);
       })
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  useEffect(() => {
+    fetchProduct();
   }, []);
 
   const [quantity, setQuantity] = useState(1);
@@ -96,8 +126,7 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="min-h-screen flex flex-1 justify-center items-center p-4 md:p-8">
+      <div className="min-h-screen flex flex-1 justify-center items-start p-4 md:p-8">
         <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[80vh] relative">
           {/* For larger screens, show the discount badge in the top-left corner */}
           {product.discount > 0 && (
@@ -164,11 +193,39 @@ const ProductDetailsPage = () => {
 
               {/* Favorites (Wishlist) and Compare Buttons */}
               <div className="flex space-x-4 mb-4">
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <Heart size={20} className="mr-2" /> Wishlist
-                </button>
-                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
-                  <ArrowRightLeft size={20} className="mr-2" /> Compare
+                {product.isFavorite ? (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={`flex items-center justify-center w-12 h-12 text-[#1A3F6B] rounded-full border border-[#1A3F6B] transition-all duration-300 ${
+                      product.isFavorite
+                        ? "bg-white"
+                        : "hover:bg-[#1A3F6B] hover:text-white"
+                    }`}
+                    title="Remove from Favorites" // Tooltip for removing favorite
+                  >
+                    <Heart
+                      size={28} // Same size in both states
+                      className={`transition-all duration-300 ${
+                        product.isFavorite
+                          ? "fill-[#1A3F6B] stroke-[#1A3F6B]"
+                          : "fill-none stroke-white"
+                      }`}
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                    title="Add to Favorites" // Tooltip for adding favorite
+                  >
+                    <Heart size={24} className="transition-all" />
+                  </button>
+                )}
+                <button
+                  className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
+                  title="Compare Products" // Tooltip for comparing products
+                >
+                  <ArrowRightLeft size={24} className="transition-all" />
                 </button>
               </div>
 
@@ -263,7 +320,20 @@ const ProductDetailsPage = () => {
                     <FaPlus />
                   </button>
                 </div>
-                <button className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center uppercase">
+                <button
+                  className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center uppercase"
+                  onClick={() => {
+                    const cartItem: CartItem = {
+                      id: product.id,
+                      name: product.name,
+                      description: product.description,
+                      price: product.price,
+                      quantity: Number(quantity),
+                      image: product.img,
+                    };
+                    addToCart(cartItem); // Add product to cart
+                  }}
+                >
                   <FaShoppingCart className="mr-2" />
                   Add to Cart
                 </button>

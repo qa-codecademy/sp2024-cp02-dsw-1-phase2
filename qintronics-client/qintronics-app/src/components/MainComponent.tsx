@@ -5,7 +5,6 @@ import SlideDiv from "./SlideDiv";
 import Newsletter from "./Newsletter";
 // import AdBanner from "./AdBanner";
 import FeaturedCategories from "./FeaturedCategories";
-import Testimonials from "./Testimonials";
 import LatestBlogPosts from "./LatestBlogPosts";
 import BrandsShowcase from "./BrandsShowcase";
 import Sidebar from "./Sidebar";
@@ -145,6 +144,16 @@ const MainComponent = () => {
               <CardsDiv products={newArrivals} />
             </div>
           </section>
+        {/* Ad Banner */}
+        <section className="w-full bg-white py-12 flex justify-center items-center">
+          <div className="container mx-auto px-4 text-center">
+            <AdBanner
+              title="Summer Sale: Up to 50% Off!"
+              description="Get amazing deals on the latest tech gadgets and accessories."
+              imageUrl="/api/placeholder/800/400"
+            />
+          </div>
+        </section>
 
           {/* Special Offers */}
           <section className="px-8">

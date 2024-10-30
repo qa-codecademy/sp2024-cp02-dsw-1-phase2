@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  FaGamepad,
-  FaMouse,
   FaCamera,
-  FaKeyboard,
-  FaMobileAlt,
-  FaShoppingCart,
-  FaVideo,
-  FaMicrophone,
-  FaTv,
+  FaGamepad,
   FaGift,
+  FaKeyboard,
+  FaMicrophone,
+  FaMobileAlt,
+  FaMouse,
+  FaShoppingCart,
+  FaTv,
+  FaVideo,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BaseProduct } from "../common/types/products-interface";
+import addToCart from "../common/utils/addToCart";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { giftCardComplete } from "../common/utils/swalUtils";
 import Loader from "./Loader";
-import giftImage from "/images/gift-bow-removebg-preview.png";
 import barcodeImage from "/images/barcode.png"; // Static barcode image
-import Sidebar from "./Sidebar";
+import giftImage from "/images/gift-bow-removebg-preview.png";
 
 const colorOptions = [
   {
@@ -22,24 +27,28 @@ const colorOptions = [
     gradient: "linear-gradient(135deg, #1a3f6b, #1bd8c4)",
     borderColor: "#1a3f6b",
     backColor: "#1bd8c4",
+    backColorName: "cyan",
   },
   {
     id: 2,
     gradient: "linear-gradient(135deg, #ff0080, #ff8c00)",
     borderColor: "#ff0080",
     backColor: "#ff8c00",
+    backColorName: "orange",
   },
   {
     id: 3,
     gradient: "linear-gradient(135deg, #8e44ad, #3498db)",
     borderColor: "#8e44ad",
     backColor: "#3498db",
+    backColorName: "purple",
   },
   {
     id: 4,
     gradient: "linear-gradient(135deg, #2ecc71, #16a085)",
     borderColor: "#2ecc71",
     backColor: "#16a085",
+    backColorName: "green",
   },
 ];
 
@@ -47,9 +56,7 @@ const GiftCard = () => {
   const [toName, setToName] = useState("");
   const [toNameError, setToNameError] = useState<string>("");
 
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [customAmount, setCustomAmount] = useState<string>("");
-  const [customAmountError, setCustomAmountError] = useState<string>("");
+  const [selectedAmount, setSelectedAmount] = useState<number>(10);
 
   const [message, setMessage] = useState("");
   const [charCount, setCharCount] = useState(0);
@@ -58,6 +65,9 @@ const GiftCard = () => {
   const [selectedColor, setSelectedColor] = useState(colorOptions[0].gradient);
   const [borderColor, setBorderColor] = useState(colorOptions[0].borderColor);
   const [backColor, setBackColor] = useState(colorOptions[0].backColor);
+  const [backColorName, setBackColorName] = useState(
+    colorOptions[0].backColorName
+  );
 
   const expirationDate = "01/25/2025";
 
@@ -83,26 +93,8 @@ const GiftCard = () => {
     if (isFlipped) setIsFlipped(false); // Flip to front
   };
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    // Limit input to 4 digits
-    if (/^\d{0,4}$/.test(value)) {
-      setCustomAmount(value);
-      if (parseInt(value) < 30 || parseInt(value) > 1000) {
-        setCustomAmountError("Please enter a value between $30 and $1000");
-      } else {
-        setCustomAmountError(""); // Clear error when valid value is entered
-        setSelectedAmount(null);
-        if (isFlipped) setIsFlipped(false); // Flip to front
-      }
-    }
-  };
-
   const handleAmountChange = (amount: number) => {
     setSelectedAmount(amount);
-    setCustomAmount(""); // Clear custom amount when selecting a predefined amount
-    setCustomAmountError(""); // Clear custom amount error
     if (isFlipped) setIsFlipped(false); // Flip to front
   };
 
@@ -123,31 +115,57 @@ const GiftCard = () => {
   const handleColorChange = (
     gradient: string,
     borderColor: string,
-    backColor: string
+    backColor: string,
+    backColorName: string
   ) => {
     setSelectedColor(gradient);
     setBorderColor(borderColor);
     setBackColor(backColor);
+    setBackColorName(backColorName);
   };
 
-  const handleAddToCart = () => {
+  const navigate = useNavigate();
+
+  const findAppropriateGiftCard = (color: string, amount: string) => {
+    axiosInstance
+      .post("/products", {
+        name: `${amount} Gift Card - ${color}`,
+        categoryName: "Gift Cards",
+        page: 1,
+        pageSize: 1,
+      })
+      .then((res) => {
+        console.log(res.data.products[0].id);
+        handleAddToCart(res.data.products[0]);
+      });
+  };
+
+  const handleAddToCart = (product: BaseProduct) => {
     if (toNameError || !toName) {
       setToNameError("Recipient's name is required.");
       return;
     }
 
-    if (!selectedAmount && !customAmount) {
-      setCustomAmountError("Please select or enter a gift card amount.");
+    if (!selectedAmount) {
+      console.log("Please select a gift card amount.");
       return;
     }
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
 
-    console.log("Item added to cart");
+    giftCardComplete(navigate);
   };
 
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="flex justify-center items-center min-h-screen flex-1 bg-gray-50">
+      <div className="flex justify-center items-start pt-2 min-h-screen flex-1 bg-gray-50">
         {loading ? (
           <Loader />
         ) : (
@@ -163,7 +181,7 @@ const GiftCard = () => {
             </div>
 
             {/* Gift Card Display */}
-            <div className="gift-card-container w-full h-48 sm:h-60 mx-auto relative">
+            <div className="gift-card-container w-full h-48 sm:h-60 mx-auto relative mt-4">
               <div
                 className={`gift-card transition-transform transform-gpu ${
                   isFlipped ? "rotate-y-180" : ""
@@ -242,7 +260,7 @@ const GiftCard = () => {
                     {toName || "To: Recipient's Name"}
                   </h3>
                   <p className="mt-2 text-lg sm:text-2xl font-bold truncate">
-                    ${selectedAmount || customAmount || "Amount"}
+                    ${selectedAmount || "Amount"}
                   </p>
                 </div>
 
@@ -285,7 +303,8 @@ const GiftCard = () => {
                       handleColorChange(
                         color.gradient,
                         color.borderColor,
-                        color.backColor
+                        color.backColor,
+                        color.backColorName
                       )
                     }
                   >
@@ -297,82 +316,59 @@ const GiftCard = () => {
               </div>
             </div>
 
-            {/* Form Fields */}
-            <div className="mt-4 sm:mt-6">
-              <label className="block font-semibold mb-1 text-xs sm:text-sm">
-                To:
-              </label>
+            <div className="mt-4 mb-4">
+              <label className="block text-sm font-semibold mb-2">To:</label>
               <input
                 type="text"
-                className={`w-full border p-1 sm:p-2 rounded-lg mb-2 ${
+                className={`w-full border p-2 rounded-lg ${
                   toNameError ? "border-red-500" : ""
                 }`}
                 value={toName}
                 onChange={handleToNameChange}
-                placeholder="Recipient's name"
-                maxLength={40} // Limit name to 40 characters
+                placeholder="Enter recipient's name"
+                maxLength={40} // Limit to 40 characters
               />
               {toNameError && (
-                <p className="text-xs sm:text-sm text-red-500 mb-2">
-                  {toNameError}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{toNameError}</p>
               )}
+            </div>
 
-              {/* Amount Selection */}
-              <h2 className="font-semibold mb-4 text-center text-sm sm:text-base">
-                Select Gift Card Amount:
-              </h2>
-              <div className="grid grid-cols-2 gap-4 sm:flex sm:justify-center sm:space-x-4 mb-4">
-                {[30, 40, 50, 100].map((amount) => (
-                  <label
-                    key={amount}
-                    className={`cursor-pointer flex justify-center items-center h-20 w-full sm:h-24 sm:w-24 border-2 rounded-lg transition-all duration-300 ${
-                      selectedAmount === amount
-                        ? "border-blue-500 bg-blue-100 shadow-lg"
-                        : "border-gray-300 bg-gray-100"
-                    } hover:bg-blue-50 hover:shadow-md hover:border-blue-500`}
-                  >
-                    <input
-                      type="radio"
-                      name="amount"
-                      value={amount}
-                      checked={selectedAmount === amount}
-                      onChange={() => handleAmountChange(amount)}
-                      className="hidden"
-                    />
-                    <span className="text-sm sm:text-md font-semibold text-center">
-                      ${amount}
+            {/* Amount Selection */}
+            <h2 className="font-semibold mb-4 text-center text-sm sm:text-base">
+              Select Gift Card Amount:
+            </h2>
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              {[10, 20, 30, 40, 50, 100, 200, 500].map((amount) => (
+                <label
+                  key={amount}
+                  className={`cursor-pointer flex justify-center items-center h-20 w-full sm:h-24 sm:w-24 border-2 rounded-lg transition-all duration-300 ${
+                    selectedAmount === amount
+                      ? "border-blue-500 bg-blue-100 shadow-lg"
+                      : "border-gray-300 bg-gray-100"
+                  } hover:bg-blue-50 hover:shadow-md hover:border-blue-500`}
+                >
+                  <input
+                    type="radio"
+                    name="amount"
+                    value={amount}
+                    checked={selectedAmount === amount}
+                    onChange={() => handleAmountChange(amount)}
+                    className="hidden"
+                  />
+                  <span className="text-sm sm:text-md font-semibold text-center">
+                    ${amount}
+                  </span>
+                  {selectedAmount === amount && (
+                    <span className="absolute top-2 right-2 text-blue-500">
+                      ✓
                     </span>
-                    {selectedAmount === amount && (
-                      <span className="absolute top-2 right-2 text-blue-500">
-                        ✓
-                      </span>
-                    )}
-                  </label>
-                ))}
-              </div>
+                  )}
+                </label>
+              ))}
+            </div>
 
-              {/* Custom Amount */}
-              <label className="block font-semibold mb-1 text-xs sm:text-sm">
-                Or Enter a Custom Amount (between $30 and $1000):
-              </label>
-              <input
-                type="text"
-                className={`w-full border p-1 sm:p-2 rounded-lg mb-2 ${
-                  customAmountError ? "border-red-500" : ""
-                }`}
-                value={customAmount}
-                onChange={handleCustomAmountChange}
-                placeholder="Enter custom amount"
-                maxLength={4} // Max length of 4 digits
-              />
-              {customAmountError && (
-                <p className="text-xs sm:text-sm text-red-500 mb-2">
-                  {customAmountError}
-                </p>
-              )}
-
-              {/* Message Field */}
+            {/* Message Field */}
+            <div className="mt-4 sm:mt-6">
               <label className="block font-semibold mb-1 text-xs sm:text-sm">
                 Message:
               </label>
@@ -397,11 +393,16 @@ const GiftCard = () => {
             {/* Add to Cart Button */}
             <div className="flex justify-center mt-4 sm:mt-6">
               <button
-                onClick={handleAddToCart}
-                className="w-full sm:w-auto mt-4 bg-[#1A3F6B] text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-lg shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex justify-center items-center uppercase"
+                onClick={() =>
+                  findAppropriateGiftCard(
+                    backColorName,
+                    selectedAmount?.toString()
+                  )
+                }
+                className="w-full sm:w-auto mt-4 bg-[#1A3F6B] text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-lg shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex justify-center items-center"
               >
                 <FaShoppingCart className="mr-1 sm:mr-2" />
-                Add to Cart
+                ADD TO CART
               </button>
             </div>
           </div>

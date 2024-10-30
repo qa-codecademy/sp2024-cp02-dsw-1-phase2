@@ -1,18 +1,14 @@
-import {
-  Injectable,
-  MethodNotAllowedException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from './category.entity';
+import { Product } from 'src/products/product.entity';
 import { DeepPartial, FindOptionsWhere, ILike, Repository } from 'typeorm';
-import { CategoryCreateDto } from './dtos/category-create.dto';
-import { CategoryResponseDto } from './dtos/category-response.dto';
-import { CategoryUpdateDto } from './dtos/category-update.dto';
 import * as categoriesData from '../data/categories.json';
 import * as productsData from '../data/products.json';
-import { Product } from 'src/products/product.entity';
+import { Category } from './category.entity';
+import { CategoryCreateDto } from './dtos/category-create.dto';
 import { CategoryQueryDto } from './dtos/category-query.dto';
+import { CategoryResponseDto } from './dtos/category-response.dto';
+import { CategoryUpdateDto } from './dtos/category-update.dto';
 
 @Injectable()
 export class CategoriesService {

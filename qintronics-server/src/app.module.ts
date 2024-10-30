@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
 import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
 import { ResetPasswordModule } from './reset-password/reset-password.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ResetPasswordModule } from './reset-password/reset-password.module';
     EmailModule,
     RefreshTokensModule,
     ResetPasswordModule,
+    ContactModule,
   ],
   controllers: [],
   providers: [],

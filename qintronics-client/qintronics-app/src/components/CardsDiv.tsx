@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/products-interface"; // Make sure the path is correct
 import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
 
 const CardsDiv = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -132,6 +134,17 @@ const CardsDiv = () => {
                           whileHover="hover"
                           whileTap="tap"
                           variants={buttonVariants}
+                          onClick={() => {
+                            const cartItem: CartItem = {
+                              id: product.id,
+                              name: product.name,
+                              description: product.description,
+                              price: product.price,
+                              quantity: 1, // Set default quantity to 1
+                              image: product.img,
+                            };
+                            addToCart(cartItem); // Add product to cart
+                          }}
                         >
                           <ShoppingCart size={14} />
                           <span className="text-sm">Add</span>
