@@ -1,10 +1,11 @@
 import { useState, useEffect, FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Product } from "../common/types/products-interface"; // Make sure the path is correct
+import { BaseProduct, Product } from "../common/types/products-interface"; // Make sure the path is correct
 import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import { useNavigate } from "react-router-dom";
 
 interface SlideDivProps {
   products: Product[];
@@ -83,6 +84,29 @@ const CardsDiv: FC<SlideDivProps> = () => {
     tap: { scale: 0.95 },
   };
 
+  const navigate = useNavigate();
+
+  const handleNavigateClick = (id: string) => {
+    navigate(`/products/${id}`);
+  };
+
+  const handleAddToCart = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    product: BaseProduct
+  ) => {
+    event.stopPropagation();
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
+    console.log(`Added product ${product.id} to cart`);
+  };
+
   return (
     <div className="w-[90vw] max-w-7xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
       {isLoading ? (
@@ -109,9 +133,10 @@ const CardsDiv: FC<SlideDivProps> = () => {
                 {currentProducts.map((product) => (
                   <motion.div
                     key={product.id}
-                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 transition-all duration-300"
+                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 transition-all duration-300 hover:cursor-pointer"
                     variants={cardVariants}
                     whileHover="hover"
+                    onClick={() => handleNavigateClick(product.id)}
                   >
                     <div className="relative h-60 overflow-hidden">
                       <motion.img
@@ -138,17 +163,7 @@ const CardsDiv: FC<SlideDivProps> = () => {
                           whileHover="hover"
                           whileTap="tap"
                           variants={buttonVariants}
-                          onClick={() => {
-                            const cartItem: CartItem = {
-                              id: product.id,
-                              name: product.name,
-                              description: product.description,
-                              price: product.price,
-                              quantity: 1, // Set default quantity to 1
-                              image: product.img,
-                            };
-                            addToCart(cartItem); // Add product to cart
-                          }}
+                          onClick={(event) => handleAddToCart(event, product)}
                         >
                           <ShoppingCart size={14} />
                           <span className="text-sm">Add</span>

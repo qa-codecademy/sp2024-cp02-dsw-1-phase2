@@ -5,27 +5,28 @@ import { Product } from "../common/types/Product-interface";
 import fetchProducts from "../common/utils/fetchProducts";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
-import "./SlideDiv.css"; // Ensure correct usage of CSS or CSS modules
+import "./SlideDiv.css";
+import { useNavigate } from "react-router-dom";
+import { BaseProduct } from "../common/types/products-interface";
 
 interface SlideDivProps {
-  products: Product[];
+  products: Product[]; // this prop might be unnecessary if you're fetching products internally
 }
 
 const SlideDiv: FC<SlideDivProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const shuffleArray = (array: Product[]): Product[] =>
-    array.sort(() => Math.random() - 0.5);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await fetchProducts({ discount: true });
-        const discountedProducts = shuffleArray(
-          response.products.filter((product) => product.discount > 0)
-        ).slice(0, 10);
+        const discountedProducts = response.products
+          .filter((product) => product.discount > 0)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 10);
         setProducts(discountedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -36,6 +37,23 @@ const SlideDiv: FC<SlideDivProps> = () => {
 
     fetchData();
   }, []);
+
+  const handleAddToCart = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    product: BaseProduct
+  ) => {
+    event.stopPropagation();
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
+    console.log(`Added product ${product.id} to cart`);
+  };
 
   const calculateDiscountedPrice = (price: number, discount: number) =>
     (price * (1 - discount / 100)).toFixed(2);
@@ -84,6 +102,8 @@ const SlideDiv: FC<SlideDivProps> = () => {
                   className="product-card"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
+                  onClick={() => navigate(`/products/${product.id}`)}
+                  style={{ cursor: "pointer" }}
                 >
                   <div className="product-image-container">
                     <motion.img
@@ -113,17 +133,7 @@ const SlideDiv: FC<SlideDivProps> = () => {
                         className="add-to-cart-button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          const cartItem: CartItem = {
-                            id: product.id,
-                            name: product.name,
-                            description: product.description,
-                            price: product.price,
-                            quantity: 1,
-                            image: product.img,
-                          };
-                          addToCart(cartItem);
-                        }}
+                        onClick={(event) => handleAddToCart(event, product)}
                       >
                         <ShoppingCart size={14} />
                         <span>Add</span>

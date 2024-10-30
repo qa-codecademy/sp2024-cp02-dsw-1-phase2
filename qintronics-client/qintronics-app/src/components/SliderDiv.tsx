@@ -1,8 +1,8 @@
-// SliderDiv.tsx
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/Product-interface";
 import fetchProducts from "../common/utils/fetchProducts"; // Adjust the path as needed
+import { useNavigate } from "react-router-dom";
 
 const SliderDiv = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -41,6 +41,12 @@ const SliderDiv = () => {
     setCurrentIndex(index);
   };
 
+  const navigate = useNavigate();
+
+  const handleNavigateClick = (id: string) => {
+    navigate(`/products/${id}`);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -63,6 +69,8 @@ const SliderDiv = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
+              onClick={() => handleNavigateClick(products[currentIndex].id)}
+              style={{ cursor: "pointer" }}
             >
               <img
                 src={products[currentIndex].img}
