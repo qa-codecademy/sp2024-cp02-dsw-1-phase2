@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
 import CategoryPage from "./components/CategoryPage";
@@ -11,7 +11,6 @@ import Dashboard from "./components/Dashboard";
 import Footer from "./components/Footer";
 import GiftCard from "./components/GiftCard";
 import Header from "./components/Header";
-import LoginPopup from "./components/LoginPopup";
 import MainComponent from "./components/MainComponent";
 import OrderPage from "./components/OrderPage";
 import PrivateRoute from "./components/PrivateRoute";
@@ -23,19 +22,25 @@ import AboutUs from "./components/AboutUs";
 import FAQ from "./components/FAQ";
 import Shipping from "./components/Shipping";
 import Favorites from "./components/Favorites";
+import Profile from "./components/Profile";
+import Register from "./components/Register";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
+import { Login } from "./components/Login";
 
 function App() {
-  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleLoginPopup = () => setIsLoginPopupOpen(!isLoginPopupOpen);
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
   const toggleChat = () => setIsChatOpen(!isChatOpen);
 
   return (
     <AuthContextProvider>
       <div className="App flex flex-col">
-        <Header onLoginClick={toggleLoginPopup} />
-
+        <Header onLoginClick={handleLoginClick} />{" "}
         <div className="content grow">
           <CardPaymentProvider>
             <Routes>
@@ -45,7 +50,12 @@ function App() {
                 <Route path="/checkout" element={<OrderPage />} />
                 <Route path="/payment" element={<CardPaymentForm />} />
                 <Route path="/favorites" element={<Favorites />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/compare" element={<CompareProducts />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -59,10 +69,7 @@ function App() {
             </Routes>
           </CardPaymentProvider>
         </div>
-
-        <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />
         <Footer />
-
         <div className="fixed bottom-4 right-4">
           <motion.button
             onClick={toggleChat}
@@ -73,7 +80,6 @@ function App() {
             💬 Chat
           </motion.button>
         </div>
-
         {isChatOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0 }}

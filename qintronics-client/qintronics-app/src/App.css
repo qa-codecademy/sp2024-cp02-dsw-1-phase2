@@ -1,0 +1,38 @@
+/* index.css or App.css */
+body {
+  background-color: #f3f4f6; /* Light gray background for better contrast */
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Optional: Adjustments for the input field */
+input {
+  border: none;
+  outline: none;
+}
+
+input::placeholder {
+  color: #aaa; /* Light gray placeholder */
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 56px; /* Reduced width for mobile */
+  }
+
+  .sidebar input {
+    display: none; /* Hide search on mobile */
+  }
+
+  .sidebar button {
+    justify-content: center; /* Center icons in mobile view */
+  }
+
+  .sidebar .flex {
+    display: flex; /* Ensure icons and text align */
+  }
+}

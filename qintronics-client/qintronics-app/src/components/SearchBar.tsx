@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Product } from "../common/types/Product-interface";
 import { Search } from "lucide-react";
-import productsData from "../../public/products.json";
+import fetchProducts from "../common/utils/fetchProducts";
+import { useNavigate } from "react-router-dom";
 
-const SearchBarWithResults = () => {
+const SearchBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
+  // Debouncing the search query to reduce unnecessary API calls
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(searchQuery);
@@ -19,22 +23,33 @@ const SearchBarWithResults = () => {
     };
   }, [searchQuery]);
 
+  // Fetch products from backend based on debounced query
   useEffect(() => {
-    if (debouncedQuery) {
-      const lowerCaseQuery = debouncedQuery.toLowerCase();
-      const filtered = productsData.filter(
-        (product: Product) =>
-          product.name.toLowerCase().includes(lowerCaseQuery) ||
-          product.brand.toLowerCase().includes(lowerCaseQuery) ||
-          product.category.toLowerCase().includes(lowerCaseQuery)
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts([]);
-    }
+    const fetchFilteredProducts = async () => {
+      if (debouncedQuery) {
+        setLoading(true);
+        try {
+          const { products } = await fetchProducts({ name: debouncedQuery });
+          setFilteredProducts(products);
+        } catch (error) {
+          console.error("Failed to fetch products:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setFilteredProducts([]);
+      }
+    };
+
+    fetchFilteredProducts();
   }, [debouncedQuery]);
 
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+
+  // Function to handle product click
+  const handleProductClick = (id: string) => {
+    navigate(`/products/${id}`); // Navigate to the product page
+  };
 
   return (
     <div className="relative">
@@ -55,10 +70,22 @@ const SearchBarWithResults = () => {
         />
       </div>
 
-      {filteredProducts.length > 0 && (
+      {/* Loading Spinner */}
+      {loading && (
+        <div className="absolute z-10 mt-2 w-full bg-white border rounded-md shadow-lg p-4">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      )}
+
+      {/* Displaying search results */}
+      {!loading && filteredProducts.length > 0 && (
         <div className="absolute z-10 mt-2 w-full bg-white border rounded-md shadow-lg">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="p-4 border-b hover:bg-gray-100">
+            <div
+              key={product.id}
+              className="p-4 border-b hover:bg-gray-100 cursor-pointer"
+              onClick={() => handleProductClick(product.id)} // Navigate on click
+            >
               <h3 className="font-semibold">{product.name}</h3>
               <p className="text-sm text-gray-600">{product.brand}</p>
               <p className="text-sm font-medium">${product.price}</p>
@@ -70,7 +97,8 @@ const SearchBarWithResults = () => {
         </div>
       )}
 
-      {filteredProducts.length === 0 && debouncedQuery && (
+      {/* No products found */}
+      {!loading && filteredProducts.length === 0 && debouncedQuery && (
         <div className="absolute z-10 mt-2 w-full bg-white border rounded-md shadow-lg p-4">
           <p className="text-gray-600">
             No products found for "{debouncedQuery}".
@@ -81,4 +109,4 @@ const SearchBarWithResults = () => {
   );
 };
 
-export default SearchBarWithResults;
+export default SearchBar;

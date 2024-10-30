@@ -1,23 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe, DollarSign } from "lucide-react";
 import { useRef } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom";
 
 interface DropdownMenuProps {
   isMenuOpen: boolean;
-  language: string;
-  currency: string;
-  toggleLanguage: () => void;
-  toggleCurrency: () => void;
 }
 
-const DropdownMenu = ({
-  isMenuOpen,
-  language,
-  currency,
-  toggleLanguage,
-  toggleCurrency,
-}: DropdownMenuProps) => {
+const DropdownMenu = ({ isMenuOpen }: DropdownMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -50,22 +39,6 @@ const DropdownMenu = ({
             >
               Contact
             </Link>
-            <div className="flex items-center justify-between py-2">
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center space-x-2 text-gray-800"
-              >
-                <Globe size={20} />
-                <span>{language}</span>
-              </button>
-              <button
-                onClick={toggleCurrency}
-                className="flex items-center space-x-2 text-gray-800"
-              >
-                <DollarSign size={20} />
-                <span>{currency}</span>
-              </button>
-            </div>
           </nav>
         </motion.div>
       )}

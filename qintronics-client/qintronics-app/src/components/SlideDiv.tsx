@@ -1,11 +1,11 @@
-// SlideDiv.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { Product } from "../common/types/Product-interface"; // Adjust path as needed
+import fetchProducts from "../common/utils/fetchProducts"; // Import your fetchProducts function
 import "./SlideDiv.css"; // Import the separate CSS file
 
-const SlideDiv: React.FC = () => {
+const SlideDiv = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -15,18 +15,13 @@ const SlideDiv: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("/products.json");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Product[] = await response.json();
-
-        // Filter products with a discount and shuffle them
+        // Fetch products from the backend
+        const response = await fetchProducts({ discount: true }); // Adjust parameters as needed
         const discountedProducts = shuffleArray(
-          data.filter((product) => product.discount > 0)
+          response.products.filter((product) => product.discount > 0)
         ).slice(0, 10); // Select only 10 products with a discount
 
         setProducts(discountedProducts);
@@ -37,7 +32,7 @@ const SlideDiv: React.FC = () => {
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   if (isLoading) {
