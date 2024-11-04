@@ -78,7 +78,7 @@ export class ProductsService {
     const [products, total] = await this.productRepository.findAndCount({
       where: {
         ...whereQuery,
-        categoryId: Not(giftCardCategory.id),
+        // categoryId: Not(giftCardCategory.id),
       },
       skip: (page - 1) * pageSize,
       take: pageSize,
