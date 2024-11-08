@@ -98,6 +98,38 @@ export class OrderReturnDto {
 
   @Expose()
   @ApiProperty({
+    type: String,
+    description: 'Email of the order',
+    example: 'john.doe@gmail.com',
+  })
+  email: string;
+
+  @Expose()
+  @ApiProperty({
+    type: String,
+    description: 'First Name of the recipient',
+    example: 'John',
+  })
+  firstName: string;
+
+  @Expose()
+  @ApiProperty({
+    type: String,
+    description: 'Last Name of the recipient',
+    example: 'Doe',
+  })
+  lastName: string;
+
+  @Expose()
+  @ApiProperty({
+    type: String,
+    description: 'Phone number of the recipient',
+    example: '+38977777777',
+  })
+  phoneNumber: string;
+
+  @Expose()
+  @ApiProperty({
     type: Date,
     description: 'Preferred delivery date of the order',
     example: '2024-09-30',

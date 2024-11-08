@@ -1,29 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Product } from "../common/types/Product-interface";
+import { BaseProduct, Product } from "../common/types/products-interface"; // Make sure the path is correct
+import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 
 // Promeni na Filip
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
-// 
+import { useNavigate } from "react-router-dom";
 
+interface SlideDivProps {
+  products: Product[];
+}
 
-const CardsDiv: React.FC = () => {
+const CardsDiv: FC<SlideDivProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const productsPerPage = 4;
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("/products.json");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Product[] = await response.json();
-        setProducts(data.slice(0, 12)); // Fetch and set up to 12 products
+        const response = await fetchProducts({
+          page: 1, // Change page number as needed
+          pageSize: 12, // Adjust the number of products you want to fetch
+        });
+        setProducts(response.products); // Update the products with fetched data
       } catch (error) {
         console.error("Error fetching products data:", error);
       } finally {
@@ -31,10 +35,9 @@ const CardsDiv: React.FC = () => {
       }
     };
 
-    fetchProducts();
+    loadProducts();
   }, []);
 
-  const productsPerPage = 4;
   const pageCount = Math.ceil(products.length / productsPerPage);
 
   const handleNextPage = () => {
@@ -83,6 +86,29 @@ const CardsDiv: React.FC = () => {
     tap: { scale: 0.95 },
   };
 
+  const navigate = useNavigate();
+
+  const handleNavigateClick = (id: string) => {
+    navigate(`/products/${id}`);
+  };
+
+  const handleAddToCart = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    product: BaseProduct
+  ) => {
+    event.stopPropagation();
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: 1,
+      image: product.img,
+    };
+    addToCart(cartItem);
+    console.log(`Added product ${product.id} to cart`);
+  };
+
   return (
     <div className="w-[90vw] max-w-7xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
       {isLoading ? (
@@ -109,16 +135,17 @@ const CardsDiv: React.FC = () => {
                 {currentProducts.map((product) => (
                   <motion.div
                     key={product.id}
-                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 transition-all duration-300"
+                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 transition-all duration-300 hover:cursor-pointer"
                     variants={cardVariants}
                     whileHover="hover"
+                    onClick={() => handleNavigateClick(product.id)}
                   >
                     <div className="relative h-60 overflow-hidden">
                       <motion.img
                         src={product.img}
                         alt={product.name}
-                        className="w-[90%] h-[90%] m-auto object-contain" // Adjusted width and height
-                        whileHover={{ scale: 1 }} // Adjust scale of picture on hover
+                        className="w-[90%] h-[90%] m-auto object-contain"
+                        whileHover={{ scale: 1 }}
                         transition={{ duration: 0.5 }}
                       />
                     </div>
@@ -138,19 +165,7 @@ const CardsDiv: React.FC = () => {
                           whileHover="hover"
                           whileTap="tap"
                           variants={buttonVariants}
-                          
-                          // Proimeni na Filip
-                          onClick={() => {
-                            const cartItem: CartItem = {
-                              id: product.id,
-                              name: product.name,
-                              description: product.description,
-                              price: product.price,
-                              quantity: 1, // Set default quantity to 1
-                              image: product.img,
-                            };
-                            addToCart(cartItem); // Add product to cart
-                          }}
+                          onClick={(event) => handleAddToCart(event, product)}
                         >
                           <ShoppingCart size={14} />
                           <span className="text-sm">Add</span>
@@ -167,7 +182,7 @@ const CardsDiv: React.FC = () => {
           <motion.button
             onClick={handlePrevPage}
             disabled={currentPage === 0}
-            className={`absolute left-[-20px] top-1/2  flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
+            className={`absolute left-[-20px] top-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
               currentPage === 0 ? "opacity-0" : "opacity-100"
             }`}
             whileHover={currentPage !== 0 ? "hover" : undefined}
@@ -180,7 +195,7 @@ const CardsDiv: React.FC = () => {
           <motion.button
             onClick={handleNextPage}
             disabled={currentPage === pageCount - 1}
-            className={`absolute right-[-20px] top-1/2  flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
+            className={`absolute right-[-20px] top-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
               currentPage === pageCount - 1 ? "opacity-0" : "opacity-100"
             }`}
             whileHover={currentPage !== pageCount - 1 ? "hover" : undefined}

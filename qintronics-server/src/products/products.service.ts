@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
-import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, MoreThan, Not, Repository } from 'typeorm';
 import { ProductCreateDto } from './dtos/product-create.dto';
 import { ProductQueryDto } from './dtos/product-query.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
@@ -36,6 +36,10 @@ export class ProductsService {
     userId,
   }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
+
+    const giftCardCategory = await this.categoryRepository.findOne({
+      where: { name: ILike('Gift Cards') },
+    });
 
     if (discount) {
       whereQuery = {
@@ -72,7 +76,10 @@ export class ProductsService {
     }
 
     const [products, total] = await this.productRepository.findAndCount({
-      where: whereQuery,
+      where: {
+        ...whereQuery,
+        // categoryId: Not(giftCardCategory.id),
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
       order: {
@@ -182,6 +189,10 @@ export class ProductsService {
   }
 
   async deleteProduct(id: string): Promise<void> {
-    await this.productRepository.delete(id);
+    const deletedAnswer = await this.productRepository.softDelete(id);
+
+    if (!deletedAnswer.affected) {
+      throw new NotFoundException('Product not found!');
+    }
   }
 }

@@ -193,13 +193,15 @@ const CardPaymentForm: React.FC = () => {
 
   const handleSaveOrder = async () => {
     if (orderDetails) {
-      try {
-        await axiosInstance.post("/orders", { ...orderDetails, isPaid: true });
-        clearCart();
-        paymentSuccessful(navigate);
-      } catch (error) {
-        console.error("Error saving order:", error);
-      }
+      axiosInstance
+        .post("/orders", { ...orderDetails, isPaid: true })
+        .then(() => {
+          clearCart();
+          setTimeout(() => {
+            paymentSuccessful(navigate);
+          }, 1000);
+        })
+        .catch((err) => console.log(err));
     }
   };
 

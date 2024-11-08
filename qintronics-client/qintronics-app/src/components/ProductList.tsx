@@ -7,10 +7,9 @@ import { CartItem } from "../common/interfaces/cart.item.interface";
 import { ProductAndFavFlag } from "../common/types/product-and-favorites-interface";
 import addToCart from "../common/utils/addToCart";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
 import { AuthContext } from "../context/auth.context";
 import Loader from "./Loader";
-import Sidebar from "./Sidebar";
-import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
 
 interface ProductListProps {
   categoryName: string;
@@ -103,7 +102,6 @@ const ProductList = ({
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
       <div className="flex-1 flex justify-center items-start p-4 sm:p-6 lg:p-8">
         {isLoaded ? (
           <div className="flex flex-col items-center w-full max-w-7xl">

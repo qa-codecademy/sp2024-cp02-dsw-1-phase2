@@ -4,11 +4,11 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 interface StatCardProps {
   title: string;
-  value: string;
+  value: string | number;
   trend: number;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, trend }) => (
+export const StatCard: React.FC<StatCardProps> = ({ title, value, trend }) => (
   <motion.div
     className="bg-white p-6 rounded-lg shadow-sm"
     whileHover={{ y: -5, transition: { duration: 0.2 } }}
@@ -25,5 +25,3 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, trend }) => (
     </div>
   </motion.div>
 );
-
-export default StatCard;

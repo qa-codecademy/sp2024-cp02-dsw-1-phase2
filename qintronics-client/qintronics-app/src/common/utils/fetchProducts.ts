@@ -1,10 +1,40 @@
-import { Product } from "./../types/Product-interface";
-
 // fetchProducts.ts
-export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch("/products.json");
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+import { Product } from "../types/products-interface";
+import axiosInstance from "./axios-instance.util";
+
+interface FetchProductsParams {
+  page?: number;
+  pageSize?: number;
+  sort?: "ASC" | "DESC";
+  sortBy?: string;
+  categoryName?: string;
+  brand?: string;
+  name?: string;
+  discount?: boolean;
+}
+
+interface ProductsResponse {
+  products: Product[];
+  total: number;
+  next: boolean;
+  prev: boolean;
+}
+
+export const fetchProducts = async (
+  params: FetchProductsParams = {}
+): Promise<ProductsResponse> => {
+  try {
+    const response = await axiosInstance.post("/products", {
+      ...params, // Sending the parameters as the request body
+      page: 1, // Setting the default page to 1
+      pageSize: 12, // Setting the default page size to 12
+    });
+
+    return response.data; // Return the data from the response
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error; // Rethrow the error for further handling
   }
-  return response.json();
 };
+
+export default fetchProducts;

@@ -100,6 +100,10 @@ const CheckoutForm: React.FC = () => {
     setOrderDetails({
       address: formData.address,
       city: formData.city,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phoneNumber: formData.phone,
+      email: formData.email,
       zip: Number(formData.zipCode),
       prefDeliveryDate: formData.deliveryDay,
       productsAndQuantity: [...mappedCartItems],

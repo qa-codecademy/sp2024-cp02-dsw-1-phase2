@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  FaGamepad,
-  FaMouse,
   FaCamera,
-  FaKeyboard,
-  FaMobileAlt,
-  FaShoppingCart,
-  FaVideo,
-  FaMicrophone,
-  FaTv,
+  FaGamepad,
   FaGift,
+  FaKeyboard,
+  FaMicrophone,
+  FaMobileAlt,
+  FaMouse,
+  FaShoppingCart,
+  FaTv,
+  FaVideo,
 } from "react-icons/fa";
-import Loader from "./Loader";
-import giftImage from "/images/gift-bow-removebg-preview.png";
-import barcodeImage from "/images/barcode.png"; // Static barcode image
-import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BaseProduct } from "../common/types/products-interface";
 import addToCart from "../common/utils/addToCart";
 import axiosInstance from "../common/utils/axios-instance.util";
-import { BaseProduct } from "../common/types/products-interface";
 import { giftCardComplete } from "../common/utils/swalUtils";
-import { useNavigate } from "react-router-dom";
+import Loader from "./Loader";
+import barcodeImage from "/images/barcode.png"; // Static barcode image
+import giftImage from "/images/gift-bow-removebg-preview.png";
 
 const colorOptions = [
   {
@@ -166,7 +165,6 @@ const GiftCard = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
       <div className="flex justify-center items-start pt-2 min-h-screen flex-1 bg-gray-50">
         {loading ? (
           <Loader />
@@ -404,7 +402,7 @@ const GiftCard = () => {
                 className="w-full sm:w-auto mt-4 bg-[#1A3F6B] text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-lg shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex justify-center items-center"
               >
                 <FaShoppingCart className="mr-1 sm:mr-2" />
-                Add to Cart
+                ADD TO CART
               </button>
             </div>
           </div>

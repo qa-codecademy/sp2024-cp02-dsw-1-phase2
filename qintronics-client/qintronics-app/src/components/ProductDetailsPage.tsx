@@ -8,7 +8,6 @@ import addToCart from "../common/utils/addToCart";
 import axiosInstance from "../common/utils/axios-instance.util";
 import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
 import { AuthContext } from "../context/auth.context";
-import Sidebar from "./Sidebar";
 
 const formatKey = (key: string) => {
   return key
@@ -127,7 +126,6 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
       <div className="min-h-screen flex flex-1 justify-center items-start p-4 md:p-8">
         <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[80vh] relative">
           {/* For larger screens, show the discount badge in the top-left corner */}

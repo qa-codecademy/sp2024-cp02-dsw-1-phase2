@@ -72,8 +72,8 @@ export class OrdersService {
       });
     }
     await this.emailService.sendOrderConfirmationEmail(
-      user.email,
-      user.userInfo?.firstName,
+      orderDetails.email,
+      orderDetails?.firstName,
       orderDetails,
       productDetails,
     );
@@ -204,6 +204,7 @@ export class OrdersService {
         },
         user: true,
       },
+      withDeleted: true,
       skip: paginationQueries.skip,
       take: paginationQueries.perPage,
     });

@@ -5,6 +5,10 @@ export interface ProductsAndQuantity {
 
 export interface OrderDetails {
   address: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
   city: string;
   zip: number;
   prefDeliveryDate: string;
