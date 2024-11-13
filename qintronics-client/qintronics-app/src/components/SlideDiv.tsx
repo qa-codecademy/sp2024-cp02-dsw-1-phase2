@@ -1,3 +1,4 @@
+// SlideDiv.tsx
 import { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";

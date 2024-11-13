@@ -38,7 +38,6 @@ import CustomerOrders from "./components/CustomerOrders";
 function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const navigate = useNavigate();
-
   const handleLoginClick = () => {
     navigate("/login");
   };
@@ -59,10 +58,10 @@ function App() {
                   <Route path="/payment" element={<CardPaymentForm />} />
                   <Route path="/favorites" element={<Favorites />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
                 <Route path="/contact" element={<ContactForm />} />
                 <Route path="/compare" element={<CompareProducts />} />
-                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/products/:id" element={<ProductDetailsPage />} />
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />

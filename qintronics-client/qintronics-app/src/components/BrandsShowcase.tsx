@@ -1,3 +1,4 @@
+// BrandsShowcase.tsx
 import { motion } from "framer-motion";
 
 // Define an array with brand names and their corresponding image URLs
