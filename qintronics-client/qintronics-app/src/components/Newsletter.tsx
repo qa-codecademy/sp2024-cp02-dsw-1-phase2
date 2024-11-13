@@ -12,13 +12,14 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="bg-[#CBEDEE] py-16">
+    <section className="shadow-lg bg-[#CBEDEE] rounded-md py-16">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center text-[#06255B] mb-8">
-          Subscribe to Our Newsletter
+          Stay Informed with Our Newsletter
         </h2>
         <p className="text-center text-lg text-[#06255B] mb-6">
-          Stay updated with the latest news and exclusive offers.
+          Get the latest updates, news, and special offers straight to your
+          inbox.
         </p>
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
           <div className="flex rounded-full overflow-hidden shadow-lg">
@@ -41,7 +42,7 @@ const Newsletter = () => {
           </div>
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">
-          We respect your privacy. Unsubscribe at any time.
+          We respect your privacy. You can unsubscribe anytime.
         </p>
       </div>
     </section>

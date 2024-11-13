@@ -1,3 +1,4 @@
+// FeaturedCategories.tsx
 import { motion } from "framer-motion";
 
 const categories = [
