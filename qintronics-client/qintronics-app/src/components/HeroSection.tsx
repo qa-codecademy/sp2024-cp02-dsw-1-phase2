@@ -4,6 +4,7 @@ import { Sparkles, Box, Star, Clock } from "lucide-react";
 import { Product } from "../common/types/products-interface";
 import fetchProducts from "../common/utils/fetchProducts";
 import SliderDiv from "./SliderDiv";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -27,6 +28,12 @@ const HeroSection = () => {
     };
     loadFeaturedProducts();
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleNavigateClick = (id: string) => {
+    navigate(`/products/${id}`);
+  };
 
   const fadeInUpVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -129,6 +136,7 @@ const HeroSection = () => {
         >
           {featuredProducts.slice(0, 4).map((product) => (
             <motion.div
+              onClick={() => handleNavigateClick(product.id)}
               key={product.id}
               className="aspect-square size-60 bg-gray-50 rounded-3xl shadow-lg overflow-hidden relative transition-transform duration-300 transform hover:scale-105"
             >
