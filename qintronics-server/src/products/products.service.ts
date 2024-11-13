@@ -34,6 +34,7 @@ export class ProductsService {
     sortBy = 'name',
     sort = 'ASC',
     userId,
+    random = false,
   }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
 
@@ -75,17 +76,35 @@ export class ProductsService {
       };
     }
 
-    const [products, total] = await this.productRepository.findAndCount({
-      where: {
-        ...whereQuery,
-        // categoryId: Not(giftCardCategory.id),
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      order: {
-        [sortBy]: sort,
-      },
-    });
+    let products: Product[] = [];
+    let total = 0;
+
+    if (random) {
+      products = await this.productRepository
+        .createQueryBuilder('product')
+        .where(whereQuery)
+        .andWhere('product.categoryId != :giftCardCategoryId', {
+          giftCardCategoryId: giftCardCategory?.id,
+        })
+        .orderBy('RANDOM()')
+        .take(pageSize)
+        .getMany();
+
+      total = products.length;
+    } else {
+      const [paginatedProducts, totalCount] =
+        await this.productRepository.findAndCount({
+          where: whereQuery,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          order: {
+            [sortBy]: sort,
+          },
+        });
+
+      products = paginatedProducts;
+      total = totalCount;
+    }
 
     let favoriteProductIds: string[] = [];
     if (userId) {

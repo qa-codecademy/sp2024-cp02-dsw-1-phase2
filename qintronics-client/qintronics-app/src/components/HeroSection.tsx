@@ -14,8 +14,8 @@ const HeroSection = () => {
       setIsLoading(true);
       try {
         const response = await fetchProducts({
-          sortBy: "price",
-          sort: "DESC",
+          random: true,
+          discount: true,
           pageSize: 4,
         });
         setFeaturedProducts(response.products);

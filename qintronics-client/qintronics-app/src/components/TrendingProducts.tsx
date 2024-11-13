@@ -1,32 +1,30 @@
-import { useState, useEffect, FC } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { BaseProduct, Product } from "../common/types/products-interface"; // Ensure the path is correct
-import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
+import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
-import addToCart from "../common/utils/addToCart";
-import { CartItem } from "../common/interfaces/cart.item.interface";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BaseProduct, Product } from "../common/types/products-interface"; // Ensure the path is correct
+import addToCart from "../common/utils/addToCart";
+import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
 
-interface TrendingProductsProps {
-  products: Product[];
-}
-
-const TrendingProducts: FC<TrendingProductsProps> = () => {
+const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Set page size to 20 products
-  const productsPerPage = 20;
+  const productsPerPage = 8;
 
   useEffect(() => {
     const loadProducts = async () => {
       setIsLoading(true);
       try {
         const response = await fetchProducts({
-          page: 1, // No pagination here, fetch a large set of products
-          pageSize: productsPerPage, // Fetch 20 products for the trending section
+          random: true,
+          page: 1,
+          pageSize: productsPerPage,
         });
         setProducts(response.products); // Update with fetched data
+        console.log(response.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

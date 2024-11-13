@@ -86,4 +86,13 @@ export class ProductQueryDto {
   @IsUUID()
   @IsOptional()
   userId?: string;
+
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Random Products',
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  random?: boolean;
 }

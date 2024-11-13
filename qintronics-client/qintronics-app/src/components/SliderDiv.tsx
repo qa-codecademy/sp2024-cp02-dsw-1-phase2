@@ -14,7 +14,7 @@ const SliderDiv = () => {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const data = await fetchProducts({ page: 1, pageSize: 8 });
+        const data = await fetchProducts({ random: true, pageSize: 8 });
         setProducts(data.products);
       } catch (error: any) {
         setError(error.message);

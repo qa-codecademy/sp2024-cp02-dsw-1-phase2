@@ -22,10 +22,11 @@ const CardsDiv: FC<CardsDivProps> = () => {
       setIsLoading(true);
       try {
         const response = await fetchProducts({
-          page: 1, // Adjust the page number as needed
-          pageSize: 12, // Adjust the number of products to fetch
+          random: true,
+          page: 1,
+          pageSize: 12,
         });
-        setProducts(response.products); // Update with fetched data
+        setProducts(response.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

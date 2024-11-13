@@ -1,17 +1,17 @@
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { ArrowUp, ChevronLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { ChevronLeft, Star, ArrowUp } from "lucide-react";
-import CardsDiv from "./CardsDiv";
-import Newsletter from "./Newsletter";
-import SlideDiv from "./SlideDiv";
-import BrandsShowcase from "./BrandsShowcase";
-import FeaturedCategories from "./FeaturedCategories";
-import LatestBlogPosts from "./LatestBlogPosts";
-import Sidebar from "./Sidebar";
-import Testimonials from "./Testimonials";
 import { Product } from "../common/types/Product-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
+import BrandsShowcase from "./BrandsShowcase";
+import CardsDiv from "./CardsDiv";
+import FeaturedCategories from "./FeaturedCategories";
 import HeroSection from "./HeroSection";
+import LatestBlogPosts from "./LatestBlogPosts";
+import Newsletter from "./Newsletter";
+import Sidebar from "./Sidebar";
+import SlideDiv from "./SlideDiv";
+import Testimonials from "./Testimonials";
 import TrendingProducts from "./TrendingProducts";
 
 // Fetch products helper function
@@ -29,10 +29,12 @@ const fetchProducts = async (
   }> = {}
 ) => {
   try {
+    console.log(params, "PARAMS");
     const response = await axiosInstance.post("/products", {
-      page: 1,
+      page: 5,
       pageSize: 12,
-      ...params,
+      sort: "ASC",
+      sortBy: "name",
     });
     return response.data;
   } catch (error) {
@@ -59,7 +61,6 @@ const AnimatedSection = ({ children, className = "" }) => {
   );
 };
 
-
 const MainComponent = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
@@ -84,7 +85,7 @@ const MainComponent = () => {
             fetchProducts({ sortBy: "price", sort: "DESC", pageSize: 8 }),
             fetchProducts({ sortBy: "name", sort: "DESC", pageSize: 12 }),
             fetchProducts({ discount: true, pageSize: 10 }),
-            fetchProducts({ sortBy: "popularity", pageSize: 10 }),
+            fetchProducts({ sortBy: "name", sort: "ASC", pageSize: 10 }),
             fetchProducts({ discount: true, sortBy: "time", pageSize: 5 }),
           ]);
 
@@ -93,6 +94,7 @@ const MainComponent = () => {
         setDiscountedProducts(discounted.products);
         setTrendingProducts(trending.products);
         setFlashSaleProducts(flashSale.products);
+        console.log(trending.products, "PRODUCTS TRENDING");
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -159,7 +161,7 @@ const MainComponent = () => {
             <h2 className="text-4xl font-bold mb-8 text-gray-900">
               Trending Products
             </h2>
-            <TrendingProducts products={trendingProducts} />
+            <TrendingProducts />
           </div>
         </AnimatedSection>
 
