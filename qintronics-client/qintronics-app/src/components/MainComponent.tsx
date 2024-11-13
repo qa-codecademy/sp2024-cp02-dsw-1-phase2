@@ -137,21 +137,32 @@ const MainComponent = () => {
       >
         <Sidebar />
       </div>
+      
 
       {/* Main Content */}
       <div className="flex flex-col min-h-screen w-full bg-white mx-auto">
-        {/* Hero Section with Parallax */}
-        <motion.div style={{ opacity: heroOpacity, scale: heroScale }}>
-          <HeroSection />
-        </motion.div>
-
-        {/* Categories */}
-        <AnimatedSection className="bg-white py-16 border-b border-gray-200">
+                {/* Categories */}
+                <AnimatedSection className="bg-white py-16 border-b border-gray-200">
           <div className="max-w-[80vw] mx-auto px-8">
             <h2 className="text-4xl font-bold mb-8 text-gray-900">
               Shop by Category
             </h2>
             <FeaturedCategories />
+          </div>
+        </AnimatedSection>
+        {/* Hero Section with Parallax */}
+        {/* <motion.div style={{ opacity: heroOpacity, scale: heroScale }}> */}
+          <HeroSection />
+        {/* </motion.div> */}
+
+
+                {/* Special Offers */}
+                <AnimatedSection className="py-16 bg-gray-50">
+          <div className="max-w-[80vw] mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-gray-900">
+              Special Offers
+            </h2>
+            <SlideDiv products={discountedProducts} />
           </div>
         </AnimatedSection>
 
@@ -172,16 +183,6 @@ const MainComponent = () => {
               Latest Releases
             </h2>
             <CardsDiv products={newArrivals} />
-          </div>
-        </AnimatedSection>
-
-        {/* Special Offers */}
-        <AnimatedSection className="py-16 bg-gray-50">
-          <div className="max-w-[80vw] mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Special Offers
-            </h2>
-            <SlideDiv products={discountedProducts} />
           </div>
         </AnimatedSection>
 
