@@ -8,6 +8,7 @@ import { AuthContext } from "../context/auth.context";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
+  const { brand = "" } = useParams<{ brand: string }>();
   const [filteredProducts, setFilteredProducts] = useState<ProductAndFavFlag[]>(
     []
   );
@@ -25,6 +26,7 @@ const CategoryPage = () => {
       .post(`/products`, {
         page,
         pageSize: size,
+        brand: brand,
         categoryName: category,
         userId: user?.userId,
       })
@@ -69,7 +71,7 @@ const CategoryPage = () => {
         <Loader /> // Show loader while loading
       ) : (
         <ProductList
-          categoryName={category}
+          categoryName={category === "" ? brand : category}
           productList={filteredProducts}
           total={total}
           currentPage={currentPage}

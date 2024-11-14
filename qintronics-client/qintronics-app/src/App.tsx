@@ -65,6 +65,7 @@ function App() {
                 <Route path="/products/:id" element={<ProductDetailsPage />} />
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/brand/:brand" element={<CategoryPage />} />
                 <Route path="/category/gift-cards" element={<GiftCard />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/faq" element={<FAQ />} />

@@ -9,6 +9,7 @@ const Layout = ({ children }: any) => {
     // "/",
     "/products/*",
     "/category/*",
+    "/brand/*",
     "/sales",
     "favorites",
   ];
