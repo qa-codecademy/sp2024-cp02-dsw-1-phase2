@@ -84,7 +84,7 @@ function App() {
             </Layout>
           </CardPaymentProvider>
         </div>
-        <Footer />
+        {/* <Footer /> */} {/* Transferred to Layout.js */}
         <div className="fixed bottom-4 right-4">
           <motion.button
             onClick={toggleChat}
