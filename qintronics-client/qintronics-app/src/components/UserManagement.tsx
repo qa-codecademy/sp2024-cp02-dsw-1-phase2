@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Trash2, AlertCircle, X } from "lucide-react";
 import axiosInstance from "../common/utils/axios-instance.util";
+import { AuthContext } from "../context/auth.context";
 
 interface UserInfo {
   firstName: string;
@@ -86,6 +87,7 @@ const Alert = ({
 };
 
 const UserManagement = () => {
+  const { user: loggedInUser } = useContext(AuthContext);
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -123,13 +125,23 @@ const UserManagement = () => {
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      // Using the correct endpoint format from the schema
       await axiosInstance.delete(`/users/${userId}`);
-      await fetchUsers(); // Refresh the list after deletion
+      await fetchUsers();
       setDeleteModal({ isOpen: false, userId: "", userName: "" });
     } catch (err) {
       setError("Failed to delete user. Please try again later.");
       console.error("Error deleting user:", err);
+    }
+  };
+
+  const handleChangeUserRole = async (userId: string, newRole: string) => {
+    try {
+      console.log(`Change role of user ${userId} to ${newRole}`);
+      await axiosInstance.patch(`/users/${userId}`, { role: newRole });
+      await fetchUsers();
+    } catch (err) {
+      setError("Failed to update user role. Please try again later.");
+      console.error("Error updating user role:", err);
     }
   };
 
@@ -187,9 +199,17 @@ const UserManagement = () => {
                       {user.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        {user.role}
-                      </span>
+                      <select
+                        value={user.role}
+                        onChange={(e) =>
+                          handleChangeUserRole(user.id, e.target.value)
+                        }
+                        className="border rounded-md px-2 py-1 text-gray-700"
+                      >
+                        <option value="Customer">Customer</option>
+                        <option value="Delivery_Person">Delivery Person</option>
+                        <option value="Admin">Admin</option>
+                      </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
@@ -200,7 +220,8 @@ const UserManagement = () => {
                             userName: `${user.userInfo.firstName} ${user.userInfo.lastName}`,
                           })
                         }
-                        className="text-red-600 hover:text-red-800"
+                        disabled={user.id === loggedInUser?.userId}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -216,27 +237,21 @@ const UserManagement = () => {
           )}
 
           {users.length > 0 && (
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-gray-700">
-                Showing {(page - 1) * perPage + 1} to{" "}
-                {Math.min(page * perPage, totalUsers)} of {totalUsers} users
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setPage(page + 1)}
-                  disabled={users.length < perPage}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
+            <div className="flex justify-between items-center py-4">
+              <button
+                onClick={() => setPage(page - 1)}
+                disabled={page === 1}
+                className="px-3 py-1 border rounded-md disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage(page + 1)}
+                disabled={page * perPage >= totalUsers}
+                className="px-3 py-1 border rounded-md disabled:opacity-50"
+              >
+                Next
+              </button>
             </div>
           )}
         </>
