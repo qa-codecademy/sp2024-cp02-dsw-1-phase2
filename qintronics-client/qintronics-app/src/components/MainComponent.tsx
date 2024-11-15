@@ -137,20 +137,19 @@ const MainComponent = () => {
       >
         <Sidebar />
       </div>
-      
 
       {/* Main Content */}
       <div className="flex flex-col min-h-screen w-full bg-white mx-auto">
-                {/* Categories */}
-                <AnimatedSection className="bg-white border-b border-gray-200">
+        {/* Categories */}
+        <AnimatedSection className="bg-white border-b border-gray-200">
           <div className="max-w-[80vw] mx-auto px-8">
             <FeaturedCategories />
           </div>
         </AnimatedSection>
         {/* Hero Section */}
-          <HeroSection />
-                {/* Special Offers */}
-                <AnimatedSection className="py-16 bg-gray-50">
+        <HeroSection />
+        {/* Special Offers */}
+        <AnimatedSection className="py-16 bg-gray-50">
           <div className="max-w-[80vw] mx-auto">
             <h2 className="text-4xl font-bold mb-8 text-gray-900">
               Special Offers
@@ -221,7 +220,7 @@ const MainComponent = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: showScrollTop ? 1 : 0 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-50"
+          className="fixed bottom-24 right-8 bg-[#1BD8C4] text-white p-4 rounded-full shadow-lg hover:bg-[#17B3A7] transition-colors z-50"
         >
           <ArrowUp size={24} />
         </motion.button>
