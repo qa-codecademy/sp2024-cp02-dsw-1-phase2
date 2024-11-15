@@ -30,11 +30,13 @@ import {
 import { CardPaymentContext } from "../context/card-payment.context";
 import "../styles/card.css";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [showPayWithSavedCardButton, setShowPayWithSavedCardButton] = useState(false);
+  const [showPayWithSavedCardButton, setShowPayWithSavedCardButton] =
+    useState(false);
   const [cardType, setCardType] = useState<string>("");
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [cardData, setCardData] = useState({
@@ -70,7 +72,8 @@ const CardPaymentForm: React.FC = () => {
     const firstTwoDigits = cardNumber.slice(0, 2);
     if (firstDigit === "4") return "Visa";
     if (firstTwoDigits >= "51" && firstTwoDigits <= "55") return "MasterCard";
-    if (firstTwoDigits === "34" || firstTwoDigits === "37") return "AmericanExpress";
+    if (firstTwoDigits === "34" || firstTwoDigits === "37")
+      return "AmericanExpress";
     return "";
   };
 
@@ -114,14 +117,20 @@ const CardPaymentForm: React.FC = () => {
       await axiosInstance.patch("/user-info/update", cardDataPayload);
       return true;
     } catch (error) {
-      Swal.fire("Error Saving Card", "An error occurred while saving the card. Please try again.", "error");
+      Swal.fire(
+        "Error Saving Card",
+        "An error occurred while saving the card. Please try again.",
+        "error"
+      );
       return false;
     }
   };
 
   const prepareCardDataPayload = () => {
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
-    const expiryDate = new Date(`20${cardData.expiryYear}-${cardData.expiryMonth}-01`).toISOString();
+    const expiryDate = new Date(
+      `20${cardData.expiryYear}-${cardData.expiryMonth}-01`
+    ).toISOString();
     return {
       ccFullName: cardData.cardHolderName,
       ccNum: cardNumberWithoutSpaces,
@@ -135,15 +144,26 @@ const CardPaymentForm: React.FC = () => {
     const currentYear = new Date().getFullYear() % 100;
     const currentMonth = new Date().getMonth() + 1;
 
-    if (cardNumberWithoutSpaces.length !== 16 || isNaN(Number(cardNumberWithoutSpaces))) {
+    if (
+      cardNumberWithoutSpaces.length !== 16 ||
+      isNaN(Number(cardNumberWithoutSpaces))
+    ) {
       invalidCardNumber();
       return false;
     }
-    if (parseInt(cardData.expiryMonth) < 1 || parseInt(cardData.expiryMonth) > 12 || cardData.expiryMonth.length !== 2) {
+    if (
+      parseInt(cardData.expiryMonth) < 1 ||
+      parseInt(cardData.expiryMonth) > 12 ||
+      cardData.expiryMonth.length !== 2
+    ) {
       invalidExpiryMonth();
       return false;
     }
-    if (parseInt(cardData.expiryYear) < currentYear || (parseInt(cardData.expiryYear) === currentYear && parseInt(cardData.expiryMonth) < currentMonth)) {
+    if (
+      parseInt(cardData.expiryYear) < currentYear ||
+      (parseInt(cardData.expiryYear) === currentYear &&
+        parseInt(cardData.expiryMonth) < currentMonth)
+    ) {
       invalidExpiryDate();
       return false;
     }
@@ -187,7 +207,11 @@ const CardPaymentForm: React.FC = () => {
         navigate("/");
       });
     } catch (paymentError) {
-      Swal.fire("Payment Error", "An error occurred while processing the payment. Please try again.", "error");
+      Swal.fire(
+        "Payment Error",
+        "An error occurred while processing the payment. Please try again.",
+        "error"
+      );
     }
   };
 
@@ -237,19 +261,29 @@ const CardPaymentForm: React.FC = () => {
                   }}
                   checked={selectedCardId === savedCard.id}
                 />
-                <label htmlFor={`card-${savedCard.id}`} className="flex flex-col space-y-1 text-gray-800">
+                <label
+                  htmlFor={`card-${savedCard.id}`}
+                  className="flex flex-col space-y-1 text-gray-800"
+                >
                   <span className="font-semibold text-lg tracking-wide">
-                    {savedCard?.ccNum ? `************${savedCard.ccNum.slice(-4)}` : "xxxx xxxx xxxx xxxx"} — {savedCard?.firstName || "Customer"} {savedCard?.lastName || "Name"}
+                    {savedCard?.ccNum
+                      ? `************${savedCard.ccNum.slice(-4)}`
+                      : "xxxx xxxx xxxx xxxx"}{" "}
+                    — {savedCard?.firstName || "Customer"}{" "}
+                    {savedCard?.lastName || "Name"}
                   </span>
                   {savedCard.expDate ? (
                     !isNaN(Date.parse(savedCard.expDate)) ? (
                       new Date(savedCard.expDate) > new Date() ? (
                         <span className="text-sm text-gray-500 font-medium">
                           Valid until{" "}
-                          {new Date(savedCard.expDate).toLocaleDateString("en-US", {
-                            month: "2-digit",
-                            year: "2-digit",
-                          })}
+                          {new Date(savedCard.expDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "2-digit",
+                              year: "2-digit",
+                            }
+                          )}
                         </span>
                       ) : (
                         <span className="text-sm text-red-500 flex items-center font-medium">
@@ -263,7 +297,9 @@ const CardPaymentForm: React.FC = () => {
                       </span>
                     )
                   ) : (
-                    <span className="text-sm text-gray-500 font-medium">N/A</span>
+                    <span className="text-sm text-gray-500 font-medium">
+                      N/A
+                    </span>
                   )}
                 </label>
               </div>
@@ -274,7 +310,6 @@ const CardPaymentForm: React.FC = () => {
               <button
                 onClick={handleUseSelectedCard}
                 className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
-
               >
                 <TbCreditCardPay className="mr-2" size={18} />
                 Use Selected Card to Pay
@@ -290,15 +325,44 @@ const CardPaymentForm: React.FC = () => {
           Add a New Card
         </h3>
         <div className="card-container">
-          <div className="card" onClick={() => setIsCardFlipped(!isCardFlipped)}>
+          <div
+            className="card"
+            onClick={() => setIsCardFlipped(!isCardFlipped)}
+          >
             <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
               <div className="front">
-                <img src="https://i.ibb.co/PYss3yv/map.png" className="map-img" alt="map" />
+                <img
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
+                />
                 <div className="row">
-                  <img src="https://i.ibb.co/G9pDnYJ/chip.png" width="60px" alt="chip" />
-                  {cardType === "Visa" && <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" width="60px" alt="Visa" />}
-                  {cardType === "MasterCard" && <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" width="60px" alt="MasterCard" />}
-                  {cardType === "AmericanExpress" && <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png" width="60px" alt="American Express" />}
+                  <img
+                    src="https://i.ibb.co/G9pDnYJ/chip.png"
+                    width="60px"
+                    alt="chip"
+                  />
+                  {cardType === "Visa" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+                      width="60px"
+                      alt="Visa"
+                    />
+                  )}
+                  {cardType === "MasterCard" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
+                      width="60px"
+                      alt="MasterCard"
+                    />
+                  )}
+                  {cardType === "AmericanExpress" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
+                      width="60px"
+                      alt="American Express"
+                    />
+                  )}
                 </div>
                 <div className="row card-no">
                   <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
@@ -309,15 +373,26 @@ const CardPaymentForm: React.FC = () => {
                 </div>
                 <div className="row name">
                   <p>{cardData.cardHolderName || "Cardholder Name"}</p>
-                  <p>{cardData.expiryMonth && cardData.expiryYear ? `${cardData.expiryMonth} / ${cardData.expiryYear}` : "MM/YY"}</p>
+                  <p>
+                    {cardData.expiryMonth && cardData.expiryYear
+                      ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
+                      : "MM/YY"}
+                  </p>
                 </div>
               </div>
               <div className="back">
-                <img src="https://i.ibb.co/PYss3yv/map.png" className="map-img" alt="map" />
+                <img
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
+                />
                 <div className="bar"></div>
                 <div className="row card-cvv">
                   <div>
-                    <img src="https://i.ibb.co/S6JG8px/pattern.png" alt="pattern" />
+                    <img
+                      src="https://i.ibb.co/S6JG8px/pattern.png"
+                      alt="pattern"
+                    />
                   </div>
                   <p>{cardData.cvv || "****"}</p>
                 </div>
@@ -330,74 +405,89 @@ const CardPaymentForm: React.FC = () => {
           </div>
         </div>
         <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
-          <div className="relative">
-            <div className="flex items-center">
-              <FaUser className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">Card Holder Name</label>
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-2 mb-2">
+              <FaUser className="text-secondary" />
+              <label className="text-primary font-semibold">
+                Card Holder Name
+              </label>
             </div>
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.02 }}
               type="text"
-              name="cardHolderName"
+              name="name"
               value={cardData.cardHolderName}
               onChange={handleInputChange}
-              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-              required
-              placeholder="Cardholder Name"
+              className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+              placeholder="Enter your name"
               maxLength={30}
             />
           </div>
-          <div className="relative">
-            <div className="flex items-center">
-              <FaCreditCard className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">Card Number</label>
+
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-2 mb-2">
+              <FaCreditCard className="text-secondary" />
+              <label className="text-primary font-semibold">Card Number</label>
             </div>
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.02 }}
               type="tel"
               name="cardNumber"
               value={cardData.cardNumber}
               onChange={handleInputChange}
-              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
               required
               placeholder="xxxx xxxx xxxx xxxx"
               maxLength={19}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative">
-              <FaCalendarAlt className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">Expiry Month</label>
-              <input
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="flex flex-col">
+              <div className="flex items-center space-x-2 mb-2">
+                <FaCalendarAlt className="text-secondary" />
+                <label className="text-primary font-semibold">
+                  Expiry Month
+                </label>
+              </div>
+              <motion.input
+                whileFocus={{ scale: 1.02 }}
                 type="text"
                 name="expiryMonth"
                 value={cardData.expiryMonth}
                 onChange={handleInputChange}
-                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
                 placeholder="MM"
                 maxLength={2}
               />
             </div>
-            <div className="relative">
-              <FaCalendarAlt className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">Expiry Year</label>
-              <input
+            <div className="flex flex-col">
+              <div className="flex items-center space-x-2 mb-2">
+                <FaCalendarAlt className="text-secondary" />
+                <label className="text-primary font-semibold">
+                  Expiry Year
+                </label>
+              </div>
+              <motion.input
+                whileFocus={{ scale: 1.02 }}
                 type="text"
                 name="expiryYear"
                 value={cardData.expiryYear}
                 onChange={handleInputChange}
-                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
                 placeholder="YY"
                 maxLength={2}
               />
             </div>
           </div>
-          <div className="relative">
-            <div className="flex items-center">
-              <FaLock className="mr-2 text-secondary text-lg" />
-              <label className="block text-sm text-primary">CVV / CVC</label>
+          <div className="flex flex-col mt-6">
+            <div className="flex items-center space-x-2 mb-2">
+              <FaLock className="text-secondary text-lg" />
+              <label className="text-primary font-semibold">CVV / CVC</label>
             </div>
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.02 }}
               type="text"
               name="cvv"
               value={cardData.cvv}
@@ -407,7 +497,7 @@ const CardPaymentForm: React.FC = () => {
               }}
               onFocus={() => setIsCardFlipped(true)}
               onBlur={() => setIsCardFlipped(false)}
-              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
               required
               placeholder="* * * *"
               maxLength={4}
@@ -417,7 +507,6 @@ const CardPaymentForm: React.FC = () => {
             <button
               type="submit"
               className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
-
             >
               <TbCreditCardPay className="mr-2" size={18} />
               Pay Now

@@ -21,6 +21,7 @@ import { ProductsAndQuantity } from "../common/interfaces/order.details.interfac
 import axiosInstance from "../common/utils/axios-instance.util";
 import { orderConfirm, orderFormIncomplete } from "../common/utils/swalUtils";
 import { CardPaymentContext } from "../context/card-payment.context";
+import { motion } from "framer-motion";
 
 const CheckoutForm: React.FC = () => {
   const cartItems = () => {
@@ -241,24 +242,23 @@ const CheckoutForm: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* First Name */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaUser className="text-secondary" />
-                    <label className="leading-loose text-primary">
+                    <label className="text-primary font-semibold">
                       First Name
                     </label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your first name"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("firstName")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your first name"
+                    disabled={isSubmitted}
+                  />
                   {errors.firstName && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.firstName}
@@ -268,24 +268,23 @@ const CheckoutForm: React.FC = () => {
 
                 {/* Last Name */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaUser className="text-secondary" />
-                    <label className="leading-loose text-primary">
+                    <label className="text-primary font-semibold">
                       Last Name
                     </label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your last name"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("lastName")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your last name"
+                    disabled={isSubmitted}
+                  />
                   {errors.lastName && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.lastName}
@@ -295,22 +294,21 @@ const CheckoutForm: React.FC = () => {
 
                 {/* Email */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaEnvelope className="text-secondary" />
-                    <label className="leading-loose text-primary">Email</label>
+                    <label className="text-primary font-semibold">Email</label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your email"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("email")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your email"
+                    disabled={isSubmitted}
+                  />
                   {errors.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                   )}
@@ -318,22 +316,21 @@ const CheckoutForm: React.FC = () => {
 
                 {/* Phone */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaPhone className="text-secondary" />
-                    <label className="leading-loose text-primary">Phone</label>
+                    <label className="text-primary font-semibold">Phone</label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your phone number"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("phone")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your phone number"
+                    disabled={isSubmitted}
+                  />
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
                   )}
@@ -341,24 +338,23 @@ const CheckoutForm: React.FC = () => {
 
                 {/* Address */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaHome className="text-secondary" />
-                    <label className="leading-loose text-primary">
+                    <label className="text-primary font-semibold">
                       Address
                     </label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your address"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("address")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your address"
+                    disabled={isSubmitted}
+                  />
                   {errors.address && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.address}
@@ -368,22 +364,21 @@ const CheckoutForm: React.FC = () => {
 
                 {/* City */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaCity className="text-secondary" />
-                    <label className="leading-loose text-primary">City</label>
+                    <label className="text-primary font-semibold">City</label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your city"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("city")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your city"
+                    disabled={isSubmitted}
+                  />
                   {errors.city && (
                     <p className="text-red-500 text-xs mt-1">{errors.city}</p>
                   )}
@@ -391,24 +386,23 @@ const CheckoutForm: React.FC = () => {
 
                 {/* ZIP Code */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <FaMapMarkerAlt className="text-secondary" />
-                    <label className="leading-loose text-primary">
+                    <label className="text-primary font-semibold">
                       ZIP Code
                     </label>
                   </div>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
-                      placeholder="Enter your ZIP code"
-                      disabled={isSubmitted}
-                    />
-                    {renderValidationIcon("zipCode")}
-                  </div>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    name="zipCode"
+                    value={formData.zipCode}
+                    onChange={handleChange}
+                    className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
+                    required
+                    placeholder="Enter your ZIP code"
+                    disabled={isSubmitted}
+                  />
                   {errors.zipCode && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.zipCode}
@@ -418,9 +412,9 @@ const CheckoutForm: React.FC = () => {
 
                 {/* Delivery Day */}
                 <div className="flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <TbTruckDelivery className="text-secondary" />
-                    <label className="leading-loose text-primary">
+                    <label className="text-primary font-semibold">
                       Delivery Day
                     </label>
                   </div>
@@ -431,7 +425,7 @@ const CheckoutForm: React.FC = () => {
                       value={formData.deliveryDay}
                       onChange={handleChange}
                       min={new Date().toISOString().split("T")[0]} // Set min to today's date
-                      className="px-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full sm:text-sm rounded-xl focus:outline-none text-gray-600"
+                      className="border border-darkGray pl-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary"
                       disabled={isSubmitted}
                     />
                     {renderValidationIcon("deliveryDay")}
@@ -495,7 +489,6 @@ const CheckoutForm: React.FC = () => {
                   <button
                     type="button"
                     className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
-
                     onClick={handleConfirmOrder}
                   >
                     <GiConfirmed className="mr-2" size={18} />
