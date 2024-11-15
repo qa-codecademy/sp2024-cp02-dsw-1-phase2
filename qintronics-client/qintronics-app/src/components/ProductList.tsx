@@ -64,6 +64,18 @@ const ProductList = ({
             )
           );
           console.log("Favorite toggled");
+          let currentFavorites = JSON.parse(
+            localStorage.getItem("favoriteCount") || "0"
+          );
+          currentFavorites += products.find((p) => p.id === productId)
+            ?.isFavorite
+            ? -1
+            : 1;
+          localStorage.setItem(
+            "favoriteCount",
+            JSON.stringify(currentFavorites)
+          );
+          window.dispatchEvent(new Event("favoritesUpdated"));
         })
         .catch((err) => console.error(err));
     } else {
