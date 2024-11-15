@@ -353,7 +353,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                   >
                     <nav className="p-1">
                       <MenuLink to="/">Home</MenuLink>
-                      <MenuLink to="/products">Products</MenuLink>
+                      <MenuLink to="/sales">Sale</MenuLink>
                       <MenuLink to="/about-us">About Us</MenuLink>
                       <MenuLink to="/contact">Contact</MenuLink>
                     </nav>
