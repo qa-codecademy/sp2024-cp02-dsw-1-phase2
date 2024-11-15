@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { HiOutlineXMark, HiPlus, HiMinus } from "react-icons/hi2";
+import { HiOutlineXMark } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 import { BsCartX } from "react-icons/bs";
@@ -10,6 +10,8 @@ import {
   FaSortAmountUp,
   FaCalculator,
   FaShoppingCart,
+  FaPlus,
+  FaMinus,
 } from "react-icons/fa";
 import { IoBagCheckOutline } from "react-icons/io5";
 
@@ -82,7 +84,7 @@ const CartPage: React.FC = () => {
             Time to start your shopping
           </p>
           <button
-           className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
+            className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
             onClick={() => navigate("/")}
           >
             <MdShoppingCartCheckout className="mr-2" size={18} />
@@ -159,22 +161,25 @@ const CartPage: React.FC = () => {
                   <td className="py-4 text-center px-4">
                     <div className="flex items-center justify-center space-x-2">
                       <button
-                        className="px-3 py-1 bg-red-500 text-white rounded-md shadow hover:bg-red-600 transition-all"
+                        className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
+                        style={{ width: "40px", height: "40px" }}
                         onClick={() => handleDecrement(item.id)}
                       >
-                        <HiMinus size={18} />
+                        <FaMinus />
                       </button>
                       <input
-                        type="text"
+                        type="number"
                         value={item.quantity}
                         readOnly
-                        className="w-12 text-center border border-gray-300 rounded-md"
+                        className="text-center w-12 sm:w-16 p-2 border border-[#1A3F6B] rounded-lg"
+                        style={{ height: "40px" }}
                       />
                       <button
-                        className="px-3 py-1 bg-green-500 text-white rounded-md shadow hover:bg-green-600 transition-all"
+                        className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
+                        style={{ width: "40px", height: "40px" }}
                         onClick={() => handleIncrement(item.id)}
                       >
-                        <HiPlus size={18} />
+                        <FaPlus />
                       </button>
                     </div>
                   </td>
@@ -188,21 +193,22 @@ const CartPage: React.FC = () => {
 
           <div className="mt-6 flex justify-between items-center">
             <button
-             className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
-
+              className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase mt-20"
               onClick={() => navigate("/")}
             >
               <MdShoppingCartCheckout className="mr-2" size={18} />
               Continue Shopping
             </button>
 
-            <div className="flex flex-col items-end">
+            <div
+              className="flex flex-col"
+              style={{ marginLeft: "-50px" }}
+            >
               <span className="text-lg font-bold text-gray-900 mb-2">
                 Total: ${calculateTotal().toFixed(2)}
               </span>
               <button
-               className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
-
+                className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
                 onClick={handleCheckout}
               >
                 <IoBagCheckOutline className="mr-2" size={18} />

@@ -211,7 +211,7 @@ const CardPaymentForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto mt-16 mb-16">
       <h2 className="text-3xl font-semibold text-primary text-center mb-12 flex justify-center items-center">
         Card Payment
         <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
