@@ -81,9 +81,10 @@ const SlideDiv: FC<SlideDivProps> = () => {
         <div className="featured-products">
           <h2 className="featured-title">Featured Products</h2>
           <motion.button
-            className="view-all-button"
+            className="view-all-button "
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            style={{ backgroundColor: "#1A3F6B" }}
           >
             View All
           </motion.button>
