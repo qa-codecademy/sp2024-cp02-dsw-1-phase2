@@ -62,7 +62,7 @@ const SalesPage = () => {
         <Loader /> // Show loader while loading
       ) : (
         <ProductList
-          categoryName=""
+          categoryName="sales"
           productList={saleProducts}
           total={total}
           currentPage={currentPage}
