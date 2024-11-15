@@ -28,11 +28,6 @@ export default function AuthContextProvider({
 }: AuthContextProviderType) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // const userRef = useRef(user);
-
-  // useEffect(() => {
-  //   userRef.current = user;
-  // }, [user]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -47,6 +42,8 @@ export default function AuthContextProvider({
       })
       .finally(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => console.log("isLoading ", isLoading), [isLoading]);
 
   useEffect(() => {
     const requestInterceptorId = axiosInstance.interceptors.request.use(

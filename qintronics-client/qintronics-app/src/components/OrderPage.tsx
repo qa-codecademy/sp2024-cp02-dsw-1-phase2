@@ -63,12 +63,12 @@ const CheckoutForm: React.FC = () => {
           phone: phone || "",
           address: address || "",
           city: city || "",
-          zipCode: postalCode || "",
+          zipCode: postalCode.toString() || "",
           deliveryDay: "",
         });
       })
       .catch(() => {
-        // do something if you get error
+        // do something if you get error);
       });
   }, []);
 

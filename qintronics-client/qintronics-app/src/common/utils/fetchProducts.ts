@@ -11,6 +11,7 @@ interface FetchProductsParams {
   brand?: string;
   name?: string;
   discount?: boolean;
+  random?: boolean;
 }
 
 interface ProductsResponse {
@@ -25,9 +26,9 @@ export const fetchProducts = async (
 ): Promise<ProductsResponse> => {
   try {
     const response = await axiosInstance.post("/products", {
-      ...params, // Sending the parameters as the request body
       page: 1, // Setting the default page to 1
       pageSize: 12, // Setting the default page size to 12
+      ...params, // Sending the parameters as the request body
     });
 
     return response.data; // Return the data from the response

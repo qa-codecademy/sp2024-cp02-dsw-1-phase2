@@ -66,7 +66,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(2)
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiPropertyOptional({
     type: String,
     description: `User's city`,
@@ -89,7 +89,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(4)
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiPropertyOptional({
     type: String,
     description: `User's country`,
@@ -101,7 +101,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(5)
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiPropertyOptional({
     type: String,
     description: `Card name`,
@@ -117,7 +117,7 @@ export class UpdateUserInfoDto {
   @Matches(/^(34|37|4|5|6)/, {
     message: 'ccNum must start with 34, 37, 4, 5 or 6',
   })
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiPropertyOptional({
     type: String,
     description: `Card number`,
@@ -129,7 +129,9 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsDate()
   @MinDate(new Date(), { message: `Expiration date can't be in the past.` })
-  @Transform(({ value }) => new Date(value))
+  @Transform(({ value }) =>
+    typeof value === 'string' ? new Date(value) : value,
+  )
   @ApiPropertyOptional({
     type: Date,
     description: `Card expiration date`,

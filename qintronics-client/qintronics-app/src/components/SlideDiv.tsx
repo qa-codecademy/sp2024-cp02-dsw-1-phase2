@@ -9,11 +9,7 @@ import "./SlideDiv.css";
 import { useNavigate } from "react-router-dom";
 import { BaseProduct } from "../common/types/products-interface";
 
-interface SlideDivProps {
-  products: Product[]; // this prop might be unnecessary if you're fetching products internally
-}
-
-const SlideDiv: FC<SlideDivProps> = () => {
+const SlideDiv: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -78,11 +74,13 @@ const SlideDiv: FC<SlideDivProps> = () => {
     <div className="slide-div-container">
       <div className="slide-div-wrapper">
         <div className="featured-products">
-          <h2 className="featured-title">Featured Products</h2>
+          <h2 className="featured-title">Products On Sale</h2>
           <motion.button
             className="view-all-button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            style={{ backgroundColor: "#1A3F6B" }}
+            onClick={() => navigate("/sales")} // Navigate to /sales
           >
             View All
           </motion.button>

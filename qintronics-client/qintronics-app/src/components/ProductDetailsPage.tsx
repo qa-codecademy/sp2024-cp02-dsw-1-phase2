@@ -31,7 +31,18 @@ const ProductDetailsPage = () => {
         })
         .then(() => {
           fetchProduct();
-          console.log("Favorite toggled");
+          const currentFavorites = JSON.parse(
+            localStorage.getItem("favoriteCount") || "0"
+          );
+          const newFavoriteCount = product?.isFavorite
+            ? currentFavorites - 1
+            : currentFavorites + 1;
+          localStorage.setItem(
+            "favoriteCount",
+            JSON.stringify(newFavoriteCount)
+          );
+
+          window.dispatchEvent(new Event("favoritesUpdated"));
         })
         .catch((err) => {
           console.error(err);
@@ -57,7 +68,7 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [id]);
 
   const [quantity, setQuantity] = useState(1);
   const [isOpen, setIsOpen] = useState(false);

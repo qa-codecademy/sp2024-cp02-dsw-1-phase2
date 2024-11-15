@@ -8,15 +8,22 @@ import { ProductAndFavFlag } from "../common/types/product-and-favorites-interfa
 import addToCart from "../common/utils/addToCart";
 import axiosInstance from "../common/utils/axios-instance.util";
 import { AuthContext } from "../context/auth.context";
+import { notLoggedFavoriteProduct } from "../common/utils/swalUtils";
+import Loader from "./Loader";
 
 const Favorites = () => {
   const { user } = useContext(AuthContext);
   const [favoriteProducts, setFavoriteProducts] = useState<ProductAndFavFlag[]>(
     []
   );
-
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const updateFavoritesCount = (count: number) => {
+    // Store count in localStorage and dispatch custom event
+    localStorage.setItem("favoriteCount", JSON.stringify(count));
+    window.dispatchEvent(new Event("favoritesUpdated"));
+  };
 
   const fetchFavorites = () => {
     setLoading(true);
@@ -25,6 +32,7 @@ const Favorites = () => {
       .then((res) => {
         setFavoriteProducts(res.data);
         setLoading(false);
+        updateFavoritesCount(res.data.length); // Update count in localStorage
       })
       .catch((err) => {
         console.error(err);
@@ -33,20 +41,22 @@ const Favorites = () => {
   };
 
   const handleToggleFavorite = (productId: string) => {
-    if (user) {
-      axiosInstance
-        .post("/products/favorite", {
-          productId,
-        })
-        .then(() => {
-          fetchFavorites();
-          console.log("Favorite toggled");
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    if (!user) {
+      notLoggedFavoriteProduct(navigate);
+      return;
     }
-    return; // Could possibly show an info popup or login redirect
+
+    axiosInstance
+      .post("/products/favorite", { productId })
+      .then(() => {
+        // Remove the product from local favorites list and update count
+        const updatedFavorites = favoriteProducts.filter(
+          (product) => product.id !== productId
+        );
+        setFavoriteProducts(updatedFavorites);
+        updateFavoritesCount(updatedFavorites.length);
+      })
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
@@ -65,10 +75,10 @@ const Favorites = () => {
             Favorite Products
           </h1>
           {loading ? (
-            <div>Loading...</div> // You can replace this with a loader component if available
+            <Loader />
           ) : (
             <>
-              {favoriteProducts && favoriteProducts.length > 0 ? (
+              {favoriteProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full justify-center items-center">
                   {favoriteProducts.map((product, index) => {
                     const price = Number(product.price);
@@ -77,40 +87,29 @@ const Favorites = () => {
                         ? calculateDiscountedPrice(price, product.discount)
                         : price;
 
-                    const validPrice = !isNaN(price)
-                      ? price.toFixed(2)
-                      : "0.00";
-                    const validDiscountedPrice = !isNaN(discountedPrice)
-                      ? discountedPrice.toFixed(2)
-                      : "0.00";
-
                     return (
                       <div
-                        className={`relative mx-auto w-64 h-96 min-h-[28rem] rounded-lg text-center cursor-pointer transform transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group`}
+                        className="relative mx-auto w-64 h-96 min-h-[28rem] rounded-lg text-center cursor-pointer transform transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group"
                         key={product.id}
                         onClick={() => handleProductClick(product.id)}
-                        style={{
-                          animationDelay: `${index * 0.1}s`,
-                        }}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                       >
-                        {/* Discount badge on the left */}
                         {product.discount > 0 && (
                           <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full">
                             {product.discount}% OFF
                           </div>
                         )}
 
-                        {/* Heart icon and ArrowRightLeft icon - Hidden until hover */}
                         <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <Heart
                             size={24}
                             className={`${
                               product.isFavorite
-                                ? "fill-[#1A3F6B] stroke-[#1A3F6B] bg-white border-2" // Filled heart with bold border
-                                : "fill-none stroke-[#1A3F6B] bg-white border" // Outline heart with normal border
+                                ? "fill-[#1A3F6B] stroke-[#1A3F6B] bg-white border-2"
+                                : "fill-none stroke-[#1A3F6B] bg-white border"
                             } border-[#1A3F6B] rounded-full p-1 cursor-pointer`}
                             onClick={(e) => {
-                              e.stopPropagation(); // Prevent card click
+                              e.stopPropagation();
                               handleToggleFavorite(product.id);
                             }}
                           />
@@ -120,7 +119,6 @@ const Favorites = () => {
                           />
                         </div>
 
-                        {/* Product image centered with lazy loading */}
                         <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                           <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
                             <img
@@ -136,18 +134,17 @@ const Favorites = () => {
                           </h4>
                           <p className="text-md mt-1">Brand: {product.brand}</p>
 
-                          {/* Pricing Section */}
                           <div className="flex flex-col items-center">
                             <p
                               className={`text-lg sm:text-xl font-bold mt-1 ${
                                 product.discount > 0 ? "text-[#1BD8C4]" : ""
                               }`}
                             >
-                              ${validDiscountedPrice}
+                              ${discountedPrice.toFixed(2)}
                             </p>
                             {product.discount > 0 && (
                               <p className="text-sm mt-1 line-through text-gray-500">
-                                ${validPrice}
+                                ${price.toFixed(2)}
                               </p>
                             )}
                           </div>
@@ -156,20 +153,20 @@ const Favorites = () => {
                             Availability: {product.availability} units
                           </p>
 
-                          {/* Add to Cart Button */}
                           <button
                             className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
                             aria-label="Add to Cart"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               const cartItem: CartItem = {
                                 id: product.id,
                                 name: product.name,
                                 description: product.description,
                                 price: product.price,
-                                quantity: 1, // Set default quantity to 1
+                                quantity: 1,
                                 image: product.img,
                               };
-                              addToCart(cartItem); // Add product to cart
+                              addToCart(cartItem);
                             }}
                           >
                             <FaShoppingCart className="mr-2" />

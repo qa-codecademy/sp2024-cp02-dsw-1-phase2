@@ -1,23 +1,18 @@
-import { useState, useEffect, FC } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { BaseProduct, Product } from "../common/types/products-interface"; // Ensure the path is correct
-import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
-import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
-
-// Promeni na Filip
-import addToCart from "../common/utils/addToCart";
-import { CartItem } from "../common/interfaces/cart.item.interface";
+import { AnimatePresence, motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BaseProduct, Product } from "../common/types/products-interface"; // Ensure the path is correct
+import addToCart from "../common/utils/addToCart";
+import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
 
-interface CardsDivProps {
-  products: Product[];
-}
-
-const CardsDiv: FC<CardsDivProps> = () => {
+const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const productsPerPage = 4;
+
+  // Set page size to 20 products
+  const productsPerPage = 8;
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -26,9 +21,10 @@ const CardsDiv: FC<CardsDivProps> = () => {
         const response = await fetchProducts({
           random: true,
           page: 1,
-          pageSize: 12,
+          pageSize: productsPerPage,
         });
-        setProducts(response.products);
+        setProducts(response.products); // Update with fetched data
+        console.log(response.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -38,21 +34,6 @@ const CardsDiv: FC<CardsDivProps> = () => {
 
     loadProducts();
   }, []);
-
-  const pageCount = Math.ceil(products.length / productsPerPage);
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, pageCount - 1));
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 0));
-  };
-
-  const currentProducts = products.slice(
-    currentPage * productsPerPage,
-    (currentPage + 1) * productsPerPage
-  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -126,35 +107,35 @@ const CardsDiv: FC<CardsDivProps> = () => {
           >
             <AnimatePresence mode="wait">
               <motion.div
-                key={currentPage}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                key={1}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.5 }}
               >
-                {currentProducts.map((product) => (
+                {products.map((product) => (
                   <motion.div
                     key={product.id}
-                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 transition-all duration-300 hover:cursor-pointer"
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 transition-all duration-300 hover:cursor-pointer"
                     variants={cardVariants}
                     whileHover="hover"
                     onClick={() => handleNavigateClick(product.id)}
                   >
-                    <div className="relative h-60 overflow-hidden">
+                    <div className="relative w-full h-72 overflow-hidden">
                       <motion.img
                         src={product.img}
                         alt={product.name}
-                        className="w-[90%] h-[90%] m-auto object-contain"
+                        className="w-full h-full object-cover"
                         whileHover={{ scale: 1 }}
                         transition={{ duration: 0.5 }}
                       />
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold mb-1 text-gray-800 truncate">
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold mb-2 text-gray-800 truncate">
                         {product.name}
                       </h3>
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                         {product.description}
                       </p>
                       <div className="flex justify-between items-center">
@@ -168,7 +149,7 @@ const CardsDiv: FC<CardsDivProps> = () => {
                           variants={buttonVariants}
                           onClick={(event) => handleAddToCart(event, product)}
                         >
-                          <ShoppingCart size={14} />
+                          <ShoppingCart size={16} />
                           <span className="text-sm">Add</span>
                         </motion.button>
                       </div>
@@ -178,37 +159,10 @@ const CardsDiv: FC<CardsDivProps> = () => {
               </motion.div>
             </AnimatePresence>
           </motion.div>
-
-          {/* Navigation Buttons */}
-          <motion.button
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className={`absolute left-[-20px] top-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
-              currentPage === 0 ? "opacity-0" : "opacity-100"
-            }`}
-            whileHover={currentPage !== 0 ? "hover" : undefined}
-            whileTap={currentPage !== 0 ? "tap" : undefined}
-            variants={buttonVariants}
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-800" />
-          </motion.button>
-
-          <motion.button
-            onClick={handleNextPage}
-            disabled={currentPage === pageCount - 1}
-            className={`absolute right-[-20px] top-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md transition-opacity duration-300 ${
-              currentPage === pageCount - 1 ? "opacity-0" : "opacity-100"
-            }`}
-            whileHover={currentPage !== pageCount - 1 ? "hover" : undefined}
-            whileTap={currentPage !== pageCount - 1 ? "tap" : undefined}
-            variants={buttonVariants}
-          >
-            <ChevronRight className="w-6 h-6 text-gray-800" />
-          </motion.button>
         </div>
       )}
     </div>
   );
 };
 
-export default CardsDiv;
+export default TrendingProducts;

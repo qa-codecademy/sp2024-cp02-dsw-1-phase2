@@ -44,7 +44,7 @@ const LatestBlogPosts = () => {
                 {post.excerpt}
               </p>
               <motion.button
-                className="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700 transition-colors duration-300"
+                className="bg-[#1A3F6B] text-white py-2 px-6 rounded-full font-medium hover:bg-[#173755] transition-colors duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
