@@ -134,6 +134,7 @@ const Profile = () => {
     type = "text",
     value = "",
     error,
+    disabled = false,
   }: {
     label: string;
     name: string;
@@ -152,10 +153,11 @@ const Profile = () => {
         type={type}
         value={value || ""}
         onChange={handleChange}
-        disabled={!isEditing}
-        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 transition-all ${
-          error ? "border-red-500" : "border-gray-300"
+        disabled={disabled || !isEditing}
+        className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all ${
+          error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
         }`}
+        placeholder={`Enter ${label.toLowerCase()}`}
       />
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
@@ -191,26 +193,28 @@ const Profile = () => {
             <h1 className="text-3xl font-bold text-gray-900">
               Account Settings
             </h1>
-            <div className="space-x-2">
+            <div className="flex items-center space-x-4">
               {isEditing ? (
                 <>
                   <button
-                    onClick={() => setIsEditing(false)}
-                    className="p-2 border rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <X className="h-5 w-5 text-gray-500" />
-                  </button>
-                  <button
                     onClick={handleSubmit}
-                    className="p-2 bg-blue-600 text-black rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-transform transform hover:scale-105"
+                    title="Save"
                   >
                     <Save className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105"
+                    title="Cancel"
+                  >
+                    <X className="h-5 w-5 text-gray-500" />
                   </button>
                 </>
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-blue-600 text-black rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center space-x-2"
                 >
                   <Pencil className="h-4 w-4" />
                   <span>Edit Profile</span>
@@ -224,36 +228,36 @@ const Profile = () => {
             <nav className="flex space-x-8">
               <button
                 onClick={() => setActiveSection("personal")}
-                className={`px-1 py-4 flex items-center space-x-2 border-b-2 font-medium text-sm ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeSection === "personal"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                 }`}
               >
-                <User className="h-5 w-5" />
-                <span>Personal Information</span>
+                <User className="h-5 w-5 inline-block mr-2" />
+                Personal Information
               </button>
               <button
                 onClick={() => setActiveSection("payment")}
-                className={`px-1 py-4 flex items-center space-x-2 border-b-2 font-medium text-sm ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeSection === "payment"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                 }`}
               >
-                <CreditCard className="h-5 w-5" />
-                <span>Payment Methods</span>
+                <CreditCard className="h-5 w-5 inline-block mr-2" />
+                Payment Methods
               </button>
               <button
                 onClick={() => setActiveSection("security")}
-                className={`px-1 py-4 flex items-center space-x-2 border-b-2 font-medium text-sm ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeSection === "security"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                 }`}
               >
-                <ShieldCheck className="h-5 w-5" />
-                <span>Security</span>
+                <ShieldCheck className="h-5 w-5 inline-block mr-2" />
+                Security
               </button>
             </nav>
           </div>
@@ -266,33 +270,47 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-white shadow-sm rounded-xl p-8"
+                className="bg-white shadow-lg rounded-xl p-8 space-y-8"
               >
-                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    label="First Name"
-                    name="firstName"
-                    value={user?.userInfo.firstName}
-                    error={formErrors.firstName}
-                  />
-                  <FormField
-                    label="Last Name"
-                    name="lastName"
-                    value={user?.userInfo.lastName}
-                    error={formErrors.lastName}
-                  />
-                  <FormField
-                    label="Phone"
-                    name="phone"
-                    value={user?.userInfo.phone}
-                    error={formErrors.phone}
-                  />
-                  <FormField
-                    label="Email"
-                    name="email"
-                    value={user?.email}
-                    disabled={true}
-                  />
+                <h3 className="text-lg font-medium">Personal Information</h3>
+                <p className="text-gray-600">
+                  Update your personal details and ensure they are accurate.
+                </p>
+
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  {/* Name Fields */}
+                  <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <FormField
+                      label="First Name"
+                      name="firstName"
+                      value={user?.userInfo.firstName}
+                      error={formErrors.firstName}
+                    />
+                    <FormField
+                      label="Last Name"
+                      name="lastName"
+                      value={user?.userInfo.lastName}
+                      error={formErrors.lastName}
+                    />
+                  </div>
+
+                  {/* Contact Fields */}
+                  <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <FormField
+                      label="Phone"
+                      name="phone"
+                      value={user?.userInfo.phone}
+                      error={formErrors.phone}
+                    />
+                    <FormField
+                      label="Email"
+                      name="email"
+                      value={user?.email}
+                      disabled={true}
+                    />
+                  </div>
+
+                  {/* Address Information Section */}
                   <FormField
                     label="Address"
                     name="address"
@@ -323,33 +341,45 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-white shadow-sm rounded-xl p-8"
+                className="bg-white shadow-lg rounded-xl p-8 space-y-6"
               >
+                <h3 className="text-lg font-medium">Payment Details</h3>
+                <p className="text-gray-600">
+                  Please provide your payment details below. Your information is
+                  secure.
+                </p>
                 <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    label="Cardholder Name"
-                    name="ccFullName"
-                    value={user?.userInfo.ccFullName}
-                  />
-                  <FormField
-                    label="Card Number"
-                    name="ccNum"
-                    value={user?.userInfo.ccNum}
-                    error={formErrors.ccNum}
-                  />
-                  <FormField
-                    label="Expiration Date"
-                    name="expDate"
-                    type="date"
-                    value={user?.userInfo.expDate?.split(" ")[0]}
-                  />
-                  <FormField
-                    label="CVV"
-                    name="cvv"
-                    type="password"
-                    value={user?.userInfo.cvv}
-                    error={formErrors.cvv}
-                  />
+                  {/* Left column */}
+                  <div className="space-y-6">
+                    <FormField
+                      label="Cardholder Name"
+                      name="ccFullName"
+                      value={user?.userInfo.ccFullName}
+                    />
+                    <FormField
+                      label="Expiration Date"
+                      name="expDate"
+                      type="date"
+                      value={user?.userInfo.expDate?.split(" ")[0]}
+                    />
+                  </div>
+
+                  {/* Right column */}
+                  <div className="space-y-6">
+                    <FormField
+                      label="Card Number"
+                      name="ccNum"
+                      value={user?.userInfo.ccNum}
+                      error={formErrors.ccNum}
+                    />
+                    <FormField
+                      label="CVV"
+                      name="cvv"
+                      type="password"
+                      value={user?.userInfo.cvv}
+                      error={formErrors.cvv}
+                    />
+                  </div>
                 </form>
               </motion.div>
             )}
@@ -389,9 +419,9 @@ const Profile = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className={`fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg ${
+            className={`fixed inset-x-0 mx-auto bottom-4 px-6 py-3 rounded-lg shadow-lg text-center ${
               toast.type === "success" ? "bg-green-500" : "bg-red-500"
-            } text-black`}
+            } text-white w-fit`}
           >
             {toast.message}
           </motion.div>
