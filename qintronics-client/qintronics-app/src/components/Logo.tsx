@@ -22,8 +22,8 @@ const Logo = () => {
 
       {/* Logo Text with Hover Effect */}
       <motion.h1
-        // whileHover={{ scale: 1.1, color: "#1f2937" }}
-        // transition={{ type: "spring", stiffness: 300 }}
+        whileHover={{ scale: 1.1, color: "#1f2937" }}
+        transition={{ type: "spring", stiffness: 300 }}
         className="text-3xl font-bold text-gray-800 relative z-10"
       >
         Qintronics
