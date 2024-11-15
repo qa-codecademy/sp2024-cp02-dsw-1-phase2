@@ -30,8 +30,24 @@ const ProductDetailsPage = () => {
           productId: product?.id,
         })
         .then(() => {
+          // Fetch the updated product details to update the favorite status
           fetchProduct();
-          console.log("Favorite toggled");
+
+          // Update favorite count in localStorage
+          const currentFavorites = JSON.parse(
+            localStorage.getItem("favoriteCount") || "0"
+          );
+          const newFavoriteCount = product?.isFavorite
+            ? currentFavorites - 1
+            : currentFavorites + 1;
+          localStorage.setItem(
+            "favoriteCount",
+            JSON.stringify(newFavoriteCount)
+          );
+
+          // Dispatch event to update other components
+          window.dispatchEvent(new Event("favoritesUpdated"));
+          console.log("Favorite toggled and count updated");
         })
         .catch((err) => {
           console.error(err);

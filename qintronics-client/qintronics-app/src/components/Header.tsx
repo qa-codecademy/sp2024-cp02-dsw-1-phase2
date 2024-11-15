@@ -30,6 +30,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [favoriteCount, setFavoriteCount] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,25 @@ const Header = ({ onLoginClick }: HeaderProps) => {
   const userPanelRef = useRef<HTMLDivElement>(null);
 
   const { user, setUser, isLoading } = useContext(AuthContext);
+
+  // Initialize favorite count from localStorage and listen for updates
+  useEffect(() => {
+    const storedFavoriteCount = localStorage.getItem("favoriteCount");
+    setFavoriteCount(storedFavoriteCount ? JSON.parse(storedFavoriteCount) : 0);
+
+    const handleFavoritesUpdate = () => {
+      const updatedFavoriteCount = localStorage.getItem("favoriteCount");
+      setFavoriteCount(
+        updatedFavoriteCount ? JSON.parse(updatedFavoriteCount) : 0
+      );
+    };
+
+    window.addEventListener("favoritesUpdated", handleFavoritesUpdate);
+
+    return () => {
+      window.removeEventListener("favoritesUpdated", handleFavoritesUpdate);
+    };
+  }, []);
 
   // Cart item count management
   useEffect(() => {
@@ -252,7 +272,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
             </Link>
 
             <Link to="/favorites">
-              <IconButton icon={<Heart size={20} />} />
+              <IconButton icon={<Heart size={20} />} count={favoriteCount} />
             </Link>
 
             <Link to="/compare" className="relative group">
