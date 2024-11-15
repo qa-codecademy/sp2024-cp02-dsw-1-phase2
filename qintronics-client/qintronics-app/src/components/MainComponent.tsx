@@ -142,20 +142,13 @@ const MainComponent = () => {
       {/* Main Content */}
       <div className="flex flex-col min-h-screen w-full bg-white mx-auto">
                 {/* Categories */}
-                <AnimatedSection className="bg-white py-16 border-b border-gray-200">
+                <AnimatedSection className="bg-white border-b border-gray-200">
           <div className="max-w-[80vw] mx-auto px-8">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Shop by Category
-            </h2>
             <FeaturedCategories />
           </div>
         </AnimatedSection>
-        {/* Hero Section with Parallax */}
-        {/* <motion.div style={{ opacity: heroOpacity, scale: heroScale }}> */}
+        {/* Hero Section */}
           <HeroSection />
-        {/* </motion.div> */}
-
-
                 {/* Special Offers */}
                 <AnimatedSection className="py-16 bg-gray-50">
           <div className="max-w-[80vw] mx-auto">
@@ -235,7 +228,7 @@ const MainComponent = () => {
       </div>
 
       {/* Sidebar Toggle Button */}
-      <button
+      {/* <button
         onClick={toggleSidebar}
         className="fixed top-24 left-4 z-50 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
       >
@@ -245,7 +238,7 @@ const MainComponent = () => {
         >
           <ChevronLeft size={24} />
         </motion.div>
-      </button>
+      </button> */}
     </div>
   );
 };

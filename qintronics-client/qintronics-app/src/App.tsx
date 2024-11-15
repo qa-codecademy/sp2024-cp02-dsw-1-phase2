@@ -65,6 +65,7 @@ function App() {
                 <Route path="/products/:id" element={<ProductDetailsPage />} />
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/brand/:brand" element={<CategoryPage />} />
                 <Route path="/category/gift-cards" element={<GiftCard />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/faq" element={<FAQ />} />
@@ -83,7 +84,7 @@ function App() {
             </Layout>
           </CardPaymentProvider>
         </div>
-        <Footer />
+        {/* <Footer /> */} {/* Transferred to Layout.js */}
         <div className="fixed bottom-4 right-4">
           <motion.button
             onClick={toggleChat}

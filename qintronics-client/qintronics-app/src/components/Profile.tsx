@@ -60,11 +60,17 @@ const Profile = () => {
     if (!user?.userInfo) return;
 
     const { name, value } = e.target;
+
     setUser((prev) => {
       if (!prev) return prev;
+
       return {
         ...prev,
-        userInfo: { ...prev.userInfo, [name]: value },
+        userInfo: {
+          ...prev.userInfo,
+          [name]: value,
+          postalCode: parseInt(value),
+        },
       };
     });
 
@@ -134,6 +140,7 @@ const Profile = () => {
     type?: string;
     value?: string | number;
     error?: string;
+    disabled?: boolean;
   }) => (
     <div className="space-y-1">
       <label htmlFor={name} className="block text-sm font-medium text-gray-700">
@@ -143,7 +150,7 @@ const Profile = () => {
         id={name}
         name={name}
         type={type}
-        value={value}
+        value={value || ""}
         onChange={handleChange}
         disabled={!isEditing}
         className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 transition-all ${
