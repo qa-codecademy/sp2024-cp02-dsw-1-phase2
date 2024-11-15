@@ -146,6 +146,8 @@ const Header = ({ onLoginClick }: HeaderProps) => {
     setIsUserPanelOpen(false);
     axiosInstance.post("/auth/logout");
     localStorage.removeItem("cart");
+    localStorage.removeItem("favoriteCount");
+    window.dispatchEvent(new CustomEvent("favoritesUpdated", { detail: 0 }));
     window.dispatchEvent(new CustomEvent("cartUpdated", { detail: [] }));
     navigate("/");
   };
