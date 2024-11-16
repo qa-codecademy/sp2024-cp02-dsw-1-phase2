@@ -165,9 +165,8 @@ const ProductList = ({
               </div>
             </div>
             <div
-              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-[90%] justify-center items-center ${
-                isLoaded ? "flip-in" : ""
-              }`}
+              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full justify-center items-start`}
+              style={{ maxWidth: "90%", columnGap: "1rem" }}
             >
               {products.length > 0 ? (
                 products.map((product, index) => {
@@ -184,18 +183,19 @@ const ProductList = ({
 
                   return (
                     <div
-                      className={`relative mx-auto w-full sm:w-60 md:w-64 lg:w-72 xl:w-80 h-auto rounded-lg text-center cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group`}
+                      className={`relative w-full h-auto max-w-[180px] sm:max-w-[220px] lg:max-w-[240px] bg-white rounded-lg text-center cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] flex flex-col group`}
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{
-                        animationDelay: `${index * 0.1}s`,
-                      }}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
+                      {/* Discount Badge */}
                       {product.discount > 0 && (
-                        <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
                           {product.discount}% OFF
                         </div>
                       )}
+
+                      {/* Icons (Heart and Compare) */}
                       <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <Heart
                           size={24}
@@ -203,7 +203,7 @@ const ProductList = ({
                             product.isFavorite
                               ? "fill-[#1A3F6B] stroke-[#1A3F6B] bg-white border-2"
                               : "fill-none stroke-[#1A3F6B] bg-white border"
-                          } border-[#1A3F6B] rounded-full p-1 cursor-pointer`}
+                          } border-[#1A3F6B] rounded-full p-1 cursor-pointer shadow-md`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleToggleFavorite(product.id);
@@ -211,48 +211,52 @@ const ProductList = ({
                         />
                         <ArrowRightLeft
                           size={24}
-                          className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
+                          className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white shadow-md"
                         />
                       </div>
-                      <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
-                        <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
+
+                      {/* Card Content */}
+                      <div className="p-4 flex-grow flex flex-col justify-between">
+                        <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-4">
                           <img
                             src={product.img}
                             alt={`Image of ${product.name}`}
-                            className="max-h-full max-w-full object-contain rounded-lg shadow-lg"
+                            className="max-h-full max-w-full object-contain rounded-lg shadow-sm"
                             loading="lazy"
                           />
                         </div>
-                        <h4 className="text-lg sm:text-xl font-semibold mt-2 min-h-[3rem] flex items-center justify-center">
+                        <h4 className="text-sm sm:text-base lg:text-lg font-semibold mt-2 min-h-[2.5rem] flex items-center justify-center">
                           {product.name}
                         </h4>
-                        <p className="text-md mt-1">Brand: {product.brand}</p>
+                        <p className="text-xs sm:text-sm mt-1 text-gray-600">
+                          Brand: {product.brand}
+                        </p>
 
-                        <div className="flex flex-col items-center">
+                        <div className="flex flex-col items-center mt-2">
                           <div className="flex items-center space-x-2">
                             <p
-                              className={`text-lg sm:text-xl font-bold mt-1 ${
+                              className={`text-sm sm:text-base lg:text-lg font-bold ${
                                 product.discount > 0 ? "text-[#1BD8C4]" : ""
                               }`}
                             >
                               ${validDiscountedPrice}
                             </p>
                             {product.discount > 0 && (
-                              <p className="text-sm line-through text-gray-500">
+                              <p className="text-xs sm:text-sm line-through text-gray-500">
                                 ${validPrice}
                               </p>
                             )}
                           </div>
                         </div>
-                        <p className="text-md mt-1">
+                        <p className="text-xs sm:text-sm text-gray-500 mt-2">
                           Availability: {product.availability} units
                         </p>
                         <button
-                          className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
+                          className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-2 rounded-lg shadow-md transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase text-xs sm:text-sm lg:text-base w-auto"
                           aria-label="Add to Cart"
                           onClick={(event) => handleAddToCart(event, product)}
                         >
-                          <FaShoppingCart className="mr-2" />
+                          <FaShoppingCart className="mr-1" />
                           Add to Cart
                         </button>
                       </div>
@@ -263,6 +267,7 @@ const ProductList = ({
                 <p className="text-center text-lg">No products available.</p>
               )}
             </div>
+
             <div className="mt-6 text-center text-lg">
               Showing {startItem}-{endItem} of {total} results
             </div>

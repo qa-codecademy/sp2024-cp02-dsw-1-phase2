@@ -79,7 +79,10 @@ const Favorites = () => {
           ) : (
             <>
               {favoriteProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full justify-center items-center">
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 w-full justify-center items-center"
+                  style={{ columnGap: "10rem" }}
+                >
                   {favoriteProducts.map((product, index) => {
                     const price = Number(product.price);
                     const discountedPrice =
@@ -94,12 +97,14 @@ const Favorites = () => {
                         onClick={() => handleProductClick(product.id)}
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
+                        {/* Discount Badge */}
                         {product.discount > 0 && (
                           <div className="absolute top-2 left-2 bg-[#1BD8C4] text-white text-xs font-bold px-2 py-1 rounded-full">
                             {product.discount}% OFF
                           </div>
                         )}
 
+                        {/* Icons */}
                         <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <Heart
                             size={24}
@@ -119,6 +124,7 @@ const Favorites = () => {
                           />
                         </div>
 
+                        {/* Card Content */}
                         <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                           <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
                             <img
