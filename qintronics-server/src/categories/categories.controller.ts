@@ -121,17 +121,6 @@ export class CategoriesController {
     return this.categoriesService.createCategory(body);
   }
 
-  // ========== BACKFILL CATEGORIES ==========
-  @PublicRoute()
-  @Post('/backfill')
-  @ApiOperation({ summary: 'Backfill Categories' })
-  @ApiOkResponse({
-    description: 'Categories backfilled successfully.',
-  })
-  backfillCategories(): Promise<void> {
-    return this.categoriesService.backfillCategories();
-  }
-
   // ========== UPDATE CATEGORY ==========
   @Put('/:id')
   @ApiOperation({ summary: 'Update Category' })

@@ -47,21 +47,6 @@ export class CategoriesService {
     return this.categoryRepository.save(newCategory);
   }
 
-  async backfillCategories(): Promise<void> {
-    await this.productRepository.delete({});
-    await this.categoryRepository.delete({});
-    for (const category of categoriesData) {
-      const newCategory = this.categoryRepository.create(category);
-      await this.categoryRepository.save(newCategory);
-    }
-
-    const newProducts = this.productRepository.create(
-      productsData as DeepPartial<Product[]>,
-    );
-
-    await this.productRepository.save(newProducts);
-  }
-
   async updateCategory(
     id: string,
     body: CategoryUpdateDto,
