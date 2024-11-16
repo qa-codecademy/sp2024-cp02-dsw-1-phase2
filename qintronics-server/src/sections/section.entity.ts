@@ -1,24 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Product } from 'src/products/product.entity';
-import { Section } from 'src/sections/section.entity';
+import { Category } from 'src/categories/category.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Category {
+export class Section {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: String,
-    description: 'Category ID',
+    description: 'Section ID',
     example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
   })
   id: string;
@@ -26,43 +23,16 @@ export class Category {
   @Column()
   @ApiProperty({
     type: String,
-    description: 'Category name',
-    example: 'Laptops',
+    description: 'Section name',
+    example: 'Electronics',
   })
   name: string;
 
-  @Column({
-    nullable: true,
-  })
-  @ApiProperty({
-    type: String,
-    description: 'Category icon URL',
-    example: './images/laptops.png',
-  })
-  iconURL: string;
-
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Category, (category) => category.section)
   @ApiPropertyOptional({
-    type: Product,
+    type: Category,
   })
-  products: Product[];
-
-  @ManyToOne(() => Section, (section) => section.categories)
-  @JoinColumn({
-    name: 'section_id',
-  })
-  section: Section;
-
-  @Column({
-    name: 'section_id',
-    nullable: true,
-  })
-  @ApiProperty({
-    type: String,
-    description: 'The ID of the category section',
-    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
-  })
-  sectionId: string;
+  categories: Category[];
 
   @CreateDateColumn()
   @ApiProperty({

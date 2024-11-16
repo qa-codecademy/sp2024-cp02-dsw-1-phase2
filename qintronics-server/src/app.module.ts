@@ -11,6 +11,7 @@ import { EmailModule } from './email/email.module';
 import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
 import { ResetPasswordModule } from './reset-password/reset-password.module';
 import { ContactModule } from './contact/contact.module';
+import { SectionsModule } from './sections/sections.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ContactModule } from './contact/contact.module';
     RefreshTokensModule,
     ResetPasswordModule,
     ContactModule,
+    SectionsModule,
   ],
   controllers: [],
   providers: [],

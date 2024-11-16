@@ -1,23 +1,128 @@
 [
-  { "id": "fb767117-e139-4283-8580-01f8138a4ae7", "name": "Laptops" },
-  { "id": "9f7e7bd6-8422-4618-89d6-4591253404ee", "name": "TVs" },
-  { "id": "eda8b1a9-a3ea-42ac-8de8-bd883aefde94", "name": "Phones" },
-  { "id": "0540de36-9857-4dc8-8c76-c27d65fcfbbc", "name": "Tablets" },
-  { "id": "d5895bd3-cd72-4770-ba3f-52ce98522ea7", "name": "Smartwatches" },
-  { "id": "cf97e00c-bb61-4fc0-b1e9-cd2abd134171", "name": "Processors" },
-  { "id": "9ee23839-b6f1-4685-8e21-982ed37497f6", "name": "Graphics Cards" },
-  { "id": "789046fe-8221-4130-bfcb-a1990b0fd135", "name": "RAM" },
-  { "id": "a0cef625-d477-4f2d-b558-dbd6b4a5d291", "name": "Cameras" },
-  { "id": "6c626bbc-feff-4608-907e-98c51c684b91", "name": "Action Cameras" },
-  { "id": "43fa211f-a9ec-4310-b045-54d064b2b32e", "name": "Drones" },
-  { "id": "7fe8ce57-4e81-4dcc-a3e7-93b0ca488b80", "name": "Gaming Chairs" },
-  { "id": "db502c25-c45e-44d5-901a-fb328f859e2e", "name": "Games" },
-  { "id": "379f4146-5e5a-410b-9791-8acdf68c0851", "name": "Controllers" },
-  { "id": "7dd123aa-75a9-4de4-95ba-4ec4d2c80b21", "name": "Keyboards" },
-  { "id": "28449bc0-ac4d-44af-b327-c293eaf9d8aa", "name": "Mouses" },
-  { "id": "4917edf4-7c0b-47d7-adab-24c1282c6a94", "name": "Mouse Pads" },
-  { "id": "c1775a5b-2e39-42a0-a64a-7d07efba66b2", "name": "Headphones" },
-  { "id": "b204b803-031e-4928-a870-bf15a47c187e", "name": "Microphones" },
-  { "id": "9fa42da2-dd51-4ac4-9501-c0e7a385b4d8", "name": "Web Cameras" },
-  { "id": "1d1c30c8-0ae4-4760-bd12-153720a34214", "name": "Gift Cards" }
+  {
+    "id": "fb767117-e139-4283-8580-01f8138a4ae7",
+    "name": "Laptops",
+    "iconURL": "/data/images/category-icons/laptops.svg",
+    "sectionId": "847f984d-8b14-4589-bc2b-e58d6be0b24b"
+  },
+  {
+    "id": "9f7e7bd6-8422-4618-89d6-4591253404ee",
+    "name": "TVs",
+    "iconURL": "/data/images/category-icons/tvs.svg",
+    "sectionId": "847f984d-8b14-4589-bc2b-e58d6be0b24b"
+  },
+  {
+    "id": "eda8b1a9-a3ea-42ac-8de8-bd883aefde94",
+    "name": "Phones",
+    "iconURL": "/data/images/category-icons/phones.svg",
+    "sectionId": "847f984d-8b14-4589-bc2b-e58d6be0b24b"
+  },
+  {
+    "id": "0540de36-9857-4dc8-8c76-c27d65fcfbbc",
+    "name": "Tablets",
+    "iconURL": "/data/images/category-icons/tablets.svg",
+    "sectionId": "847f984d-8b14-4589-bc2b-e58d6be0b24b"
+  },
+  {
+    "id": "d5895bd3-cd72-4770-ba3f-52ce98522ea7",
+    "name": "Smartwatches",
+    "iconURL": "/data/images/category-icons/smartwatches.svg",
+    "sectionId": "847f984d-8b14-4589-bc2b-e58d6be0b24b"
+  },
+  {
+    "id": "cf97e00c-bb61-4fc0-b1e9-cd2abd134171",
+    "name": "Processors",
+    "iconURL": "/data/images/category-icons/processors.svg",
+    "sectionId": "b862e902-c11a-47f1-8cd2-e26ded8f09b3"
+  },
+  {
+    "id": "9ee23839-b6f1-4685-8e21-982ed37497f6",
+    "name": "Graphics Cards",
+    "iconURL": "/data/images/category-icons/graphics-cards.svg",
+    "sectionId": "b862e902-c11a-47f1-8cd2-e26ded8f09b3"
+  },
+  {
+    "id": "789046fe-8221-4130-bfcb-a1990b0fd135",
+    "name": "RAM",
+    "iconURL": "/data/images/category-icons/ram.svg",
+    "sectionId": "b862e902-c11a-47f1-8cd2-e26ded8f09b3"
+  },
+  {
+    "id": "a0cef625-d477-4f2d-b558-dbd6b4a5d291",
+    "name": "Cameras",
+    "iconURL": "/data/images/category-icons/cameras.svg",
+    "sectionId": "644f884d-6f35-46fc-a19b-430b1423a569"
+  },
+  {
+    "id": "6c626bbc-feff-4608-907e-98c51c684b91",
+    "name": "Action Cameras",
+    "iconURL": "/data/images/category-icons/action-cameras.svg",
+    "sectionId": "644f884d-6f35-46fc-a19b-430b1423a569"
+  },
+  {
+    "id": "43fa211f-a9ec-4310-b045-54d064b2b32e",
+    "name": "Drones",
+    "iconURL": "/data/images/category-icons/drones.svg",
+    "sectionId": "644f884d-6f35-46fc-a19b-430b1423a569"
+  },
+  {
+    "id": "7fe8ce57-4e81-4dcc-a3e7-93b0ca488b80",
+    "name": "Gaming Chairs",
+    "iconURL": "/data/images/category-icons/gaming-chairs.svg",
+    "sectionId": "142cfba1-2eb6-4fe0-a120-b8587d1aba1e"
+  },
+  {
+    "id": "db502c25-c45e-44d5-901a-fb328f859e2e",
+    "name": "Games",
+    "iconURL": "/data/images/category-icons/games.svg",
+    "sectionId": "142cfba1-2eb6-4fe0-a120-b8587d1aba1e"
+  },
+  {
+    "id": "379f4146-5e5a-410b-9791-8acdf68c0851",
+    "name": "Controllers",
+    "iconURL": "/data/images/category-icons/controllers.svg",
+    "sectionId": "142cfba1-2eb6-4fe0-a120-b8587d1aba1e"
+  },
+  {
+    "id": "7dd123aa-75a9-4de4-95ba-4ec4d2c80b21",
+    "name": "Keyboards",
+    "iconURL": "/data/images/category-icons/keyboards.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "28449bc0-ac4d-44af-b327-c293eaf9d8aa",
+    "name": "Mouses",
+    "iconURL": "/data/images/category-icons/mouses.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "4917edf4-7c0b-47d7-adab-24c1282c6a94",
+    "name": "Mouse Pads",
+    "iconURL": "/data/images/category-icons/mouse-pads.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "c1775a5b-2e39-42a0-a64a-7d07efba66b2",
+    "name": "Headphones",
+    "iconURL": "/data/images/category-icons/headphones.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "b204b803-031e-4928-a870-bf15a47c187e",
+    "name": "Microphones",
+    "iconURL": "/data/images/category-icons/microphones.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "9fa42da2-dd51-4ac4-9501-c0e7a385b4d8",
+    "name": "Web Cameras",
+    "iconURL": "/data/images/category-icons/web-cameras.svg",
+    "sectionId": "9ed91571-22c0-4110-abd3-164777b90c21"
+  },
+  {
+    "id": "1d1c30c8-0ae4-4760-bd12-153720a34214",
+    "name": "Gift Cards",
+    "iconURL": "/data/images/category-icons/gift-cards.svg",
+    "sectionId": "8dcdfadd-1a3a-4dfe-88d2-ccf312d9d78b"
+  }
 ]
