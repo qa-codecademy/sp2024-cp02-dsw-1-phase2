@@ -85,7 +85,7 @@ const Sidebar = React.memo(() => {
                   <span
                     className={`relative z-10 group-hover:text-transparent bg-clip-text bg-gradient-to-r from-[#1BD8C4] to-[#1A3F6B] transition-colors duration-300 ${
                       selectedCategory === category.name
-                        ? "text-transparent text-lg bg-clip-text bg-gradient-to-r from-[#1BD8C4] to-[#1A3F6B]"
+                        ? "text-transparent bg-clip-text bg-gradient-to-r from-[#1BD8C4] to-[#1A3F6B]"
                         : "text-white"
                     }`}
                   >

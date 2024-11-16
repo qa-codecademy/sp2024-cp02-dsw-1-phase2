@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { PlusCircle, Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Edit2, Loader2, PlusCircle, Trash2, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../common/utils/axios-instance.util";
 
 interface Category {
@@ -11,6 +11,11 @@ interface Category {
   updatedAt: string;
 }
 
+interface Section {
+  id: string;
+  name: string;
+}
+
 const CategoryManager: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -19,10 +24,29 @@ const CategoryManager: React.FC = () => {
   const [editingName, setEditingName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [iconPath, setIconPath] = useState<string | null>(null);
+  const [editingSection, setEditingSection] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
+    fetchSections();
   }, []);
+
+  const fetchSections = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/sections");
+      setSections(response.data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch sections");
+      console.error("Error fetching sections:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -43,8 +67,10 @@ const CategoryManager: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await axiosInstance.post("/categories", {
+      await axiosInstance.post("/categories", {
         name: newCategoryName.trim(),
+        sectionId: selectedSection,
+        iconURL: iconPath,
       });
       await fetchCategories(); // Fetch fresh data after creating
       setNewCategoryName("");
@@ -63,12 +89,14 @@ const CategoryManager: React.FC = () => {
 
     try {
       setLoading(true);
-      await axiosInstance.put(`/categories/${id}`, {
+      await axiosInstance.put(`/categories/${editingId}`, {
         name: editingName.trim(),
+        sectionId: editingSection,
       });
-      await fetchCategories(); // Fetch fresh data after updating
+      await fetchCategories();
       setEditingId(null);
       setEditingName("");
+      setEditingSection(null);
       setError(null);
     } catch (err) {
       setError("Failed to update category");
@@ -128,19 +156,48 @@ const CategoryManager: React.FC = () => {
             placeholder="Enter category name"
             autoFocus
           />
+
+          <input
+            type="text"
+            value={iconPath || ""}
+            onChange={(e) => setIconPath(e.target.value)}
+            onKeyPress={(e) => handleKeyPress(e, handleCreateCategory)}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter category icon URL"
+          />
+
+          <div className="px-6 py-4 whitespace-nowrap">
+            <select
+              value={selectedSection || ""}
+              onChange={(e) => setSelectedSection(e.target.value)}
+              className="border rounded-md px-2 py-1 text-gray-700"
+            >
+              <option value="" disabled>
+                Choose Section
+              </option>
+              {sections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  {section.name}{" "}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <motion.button
             onClick={handleCreateCategory}
-            disabled={loading || !newCategoryName.trim()}
+            disabled={loading || !newCategoryName.trim() || !selectedSection}
             className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Check size={20} />
           </motion.button>
+
           <motion.button
             onClick={() => {
               setIsCreating(false);
               setNewCategoryName("");
+              setSelectedSection(null);
             }}
             className="p-2 text-red-500 hover:text-red-600"
             whileHover={{ scale: 1.1 }}
@@ -196,6 +253,21 @@ const CategoryManager: React.FC = () => {
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
                     />
+                    <select
+                      value={editingSection || ""}
+                      onChange={(e) => setEditingSection(e.target.value)}
+                      className="border rounded-md px-2 py-1"
+                    >
+                      <option value="" disabled>
+                        Select Section
+                      </option>
+                      {sections.map((section) => (
+                        <option key={section.id} value={section.id}>
+                          {section.name}
+                        </option>
+                      ))}
+                    </select>
+
                     <motion.button
                       onClick={() => handleUpdateCategory(category.id)}
                       disabled={loading || !editingName.trim()}
@@ -209,6 +281,7 @@ const CategoryManager: React.FC = () => {
                       onClick={() => {
                         setEditingId(null);
                         setEditingName("");
+                        setSelectedSection(null);
                       }}
                       className="p-2 text-red-500 hover:text-red-600"
                       whileHover={{ scale: 1.1 }}
