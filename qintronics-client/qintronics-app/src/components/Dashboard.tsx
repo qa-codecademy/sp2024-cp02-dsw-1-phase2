@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "./DashboardSidebar";
 import CategoryManager from "./CategoryManager";
+import SectionsManager from "./SectionsManager";
 import OrderManager from "./OrderManager";
 import RecentActivity from "./RecentActivity";
 // import InventoryStatus from "./InventoryStatus";
@@ -53,6 +54,17 @@ const AdminDashboard = () => {
               Categories
             </h2>
             <CategoryManager />
+          </motion.div>
+        );
+      case "sections":
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-light text-gray-800 mb-8">Sections</h2>
+            <SectionsManager />
           </motion.div>
         );
       case "orders":

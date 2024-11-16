@@ -1,6 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Package, List, Folder, ShoppingCart, Users } from "lucide-react";
+import {
+  Package,
+  List,
+  Folder,
+  ShoppingCart,
+  Users,
+  Folders,
+} from "lucide-react";
 
 interface SidebarProps {
   activeSection: string;
@@ -15,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "dashboard", icon: Package, label: "Dashboard" },
     { id: "products", icon: List, label: "Products" },
     { id: "categories", icon: Folder, label: "Categories" },
+    { id: "sections", icon: Folders, label: "Sections" },
     { id: "orders", icon: ShoppingCart, label: "Orders" },
     { id: "users", icon: Users, label: "Users" },
   ];

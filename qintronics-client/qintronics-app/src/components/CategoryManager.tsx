@@ -9,6 +9,7 @@ interface Category {
   products: string[];
   createdAt: string;
   updatedAt: string;
+  sectionId: string;
 }
 
 interface Section {
@@ -164,15 +165,6 @@ const CategoryManager: React.FC = () => {
             autoFocus
           />
 
-          {/* <input
-            type="text"
-            value={iconPath || ""}
-            onChange={(e) => setIconPath(e.target.value)}
-            onKeyPress={(e) => handleKeyPress(e, handleCreateCategory)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter category icon URL"
-          /> */}
-
           <input
             type="file"
             accept="image/*"
@@ -245,95 +237,109 @@ const CategoryManager: React.FC = () => {
               <Loader2 className="animate-spin text-blue-500" size={24} />
             </motion.div>
           ) : (
-            categories.map((category) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-gray-100"
-              >
-                {editingId === category.id ? (
-                  <div className="flex items-center gap-2 flex-1">
-                    <input
-                      type="text"
-                      value={editingName}
-                      onChange={(e) => setEditingName(e.target.value)}
-                      onKeyPress={(e) =>
-                        handleKeyPress(e, () =>
-                          handleUpdateCategory(category.id)
-                        )
-                      }
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      autoFocus
-                    />
-                    <select
-                      value={editingSection || ""}
-                      onChange={(e) => setEditingSection(e.target.value)}
-                      className="border rounded-md px-2 py-1"
-                    >
-                      <option value="" disabled>
-                        Select Section
-                      </option>
-                      {sections.map((section) => (
-                        <option key={section.id} value={section.id}>
-                          {section.name}
-                        </option>
-                      ))}
-                    </select>
+            categories.map((category) => {
+              // Find the section name using the sectionId from the category
+              const sectionName =
+                sections.find((section) => section.id === category.sectionId)
+                  ?.name || "Unknown Section";
 
-                    <motion.button
-                      onClick={() => handleUpdateCategory(category.id)}
-                      disabled={loading || !editingName.trim()}
-                      className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Check size={16} />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => {
-                        setEditingId(null);
-                        setEditingName("");
-                        setSelectedSection(null);
-                      }}
-                      className="p-2 text-red-500 hover:text-red-600"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <X size={16} />
-                    </motion.button>
-                  </div>
-                ) : (
-                  <>
-                    <span className="text-gray-700">{category.name}</span>
-                    <div className="flex items-center gap-2">
+              return (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-gray-100"
+                >
+                  {editingId === category.id ? (
+                    <div className="flex items-center gap-2 flex-1">
+                      <input
+                        type="text"
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        onKeyPress={(e) =>
+                          handleKeyPress(e, () =>
+                            handleUpdateCategory(category.id)
+                          )
+                        }
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        autoFocus
+                      />
+                      <select
+                        value={editingSection || ""}
+                        onChange={(e) => setEditingSection(e.target.value)}
+                        className="border rounded-md px-2 py-1"
+                      >
+                        <option value="" disabled>
+                          Select Section
+                        </option>
+                        {sections.map((section) => (
+                          <option key={section.id} value={section.id}>
+                            {section.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <motion.button
+                        onClick={() => handleUpdateCategory(category.id)}
+                        disabled={loading || !editingName.trim()}
+                        className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Check size={16} />
+                      </motion.button>
                       <motion.button
                         onClick={() => {
-                          setEditingId(category.id);
-                          setEditingName(category.name);
+                          setEditingId(null);
+                          setEditingName("");
+                          setSelectedSection(null);
                         }}
-                        className="p-2 text-blue-500 hover:text-blue-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        disabled={loading}
-                      >
-                        <Edit2 size={16} />
-                      </motion.button>
-                      <motion.button
-                        onClick={() => handleRemoveCategory(category.id)}
-                        disabled={loading}
-                        className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50"
+                        className="p-2 text-red-500 hover:text-red-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        <Trash2 size={16} />
+                        <X size={16} />
                       </motion.button>
                     </div>
-                  </>
-                )}
-              </motion.div>
-            ))
+                  ) : (
+                    <>
+                      <div className="flex-1">
+                        <span className="block text-gray-700 text-lg">
+                          {category.name}
+                        </span>
+                        <span className="text-xs text-[#1A3F6B]">
+                          {sectionName}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <motion.button
+                          onClick={() => {
+                            setEditingId(category.id);
+                            setEditingName(category.name);
+                          }}
+                          className="p-2 text-blue-500 hover:text-blue-600"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          disabled={loading}
+                        >
+                          <Edit2 size={16} />
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handleRemoveCategory(category.id)}
+                          disabled={loading}
+                          className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <Trash2 size={16} />
+                        </motion.button>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              );
+            })
           )}
         </AnimatePresence>
       </div>
