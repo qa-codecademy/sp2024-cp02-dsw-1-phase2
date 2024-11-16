@@ -243,18 +243,29 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                       <div
                         key={product.id}
                         onClick={() => handleProductClick(product.id)}
-                        className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-none"
+                        className="p-4 flex items-center gap-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-none"
                       >
-                        <h3 className="font-medium text-sm">{product.name}</h3>
-                        <p className="text-sm text-gray-600">{product.brand}</p>
-                        <div className="flex justify-between items-center mt-1">
-                          <p className="text-sm font-medium">
+                        <img
+                          src={product.img}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium text-sm">
+                            {product.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {product.brand}
+                          </p>
+                          <p className="text-sm font-medium mt-1">
                             ${product.price}
                           </p>
+                        </div>
+                        {/* <div className="ml-auto">
                           <p className="text-xs text-gray-500">
                             {product.availability} in stock
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     ))}
                 </motion.div>
