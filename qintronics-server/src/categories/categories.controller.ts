@@ -83,11 +83,15 @@ export class CategoriesController {
   @UseInterceptors(
     FileInterceptor('icon', {
       storage: diskStorage({
-        destination: '/data/images/category-icons',
+        destination: path.join(
+          __dirname,
+          '../../../qintronics-client/qintronics-app/public/data/images/category-icons',
+        ),
         filename: (req, file, cb) => {
           cb(null, `${Date.now()}${path.extname(file.originalname)}`);
         },
       }),
+
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.startsWith('image/')) {
           return cb(new Error('Only image files are allowed!'), false);
@@ -111,7 +115,6 @@ export class CategoriesController {
     if (!icon) {
       throw new Error('Icon file is required');
     }
-
     const iconURL = `/data/images/category-icons/${icon.filename}`;
     body.iconURL = iconURL;
 
