@@ -84,13 +84,11 @@ const Sidebar = React.memo(() => {
   const handleCategoryClick = (categoryName: string) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    if (categoryName !== selectedCategory) {
-      setSelectedCategory(categoryName);
-      if (categoryName === "Gift Cards") {
-        navigate("/category/gift-cards");
-      } else {
-        navigate(`/category/${categoryName}`);
-      }
+    setSelectedCategory(categoryName);
+    if (categoryName === "Gift Cards") {
+      navigate("/category/gift-cards");
+    } else {
+      navigate(`/category/${categoryName}`);
     }
 
     setIsOpen(false); // Close the menu when a category is selected
