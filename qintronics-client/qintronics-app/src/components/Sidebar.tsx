@@ -1,8 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa"; // Import necessary icons
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../common/utils/axios-instance.util";
-import React from "react";
 
 // Define Category interface
 interface Category {

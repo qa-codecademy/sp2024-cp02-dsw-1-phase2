@@ -1,24 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import axiosInstance from "./../common/utils/axios-instance.util";
-import {
-  Camera,
-  Gamepad,
-  Gift,
-  Headphones,
-  Laptop,
-  Cpu,
-  Smartphone,
-  MousePointer,
-  Keyboard,
-  Tv,
-  Tablet,
-  Camera as ActionCamera,
-  Joystick,
-  MonitorPlay,
-} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "./../common/utils/axios-instance.util";
 
 interface Category {
   id: string;
@@ -26,6 +10,7 @@ interface Category {
   products?: string[];
   createdAt: string;
   updatedAt: string;
+  iconURL: string;
 }
 
 const FeaturedCategories = () => {
@@ -58,26 +43,6 @@ const FeaturedCategories = () => {
   }, [fetchCategories]);
 
   const navigate = useNavigate();
-
-  const getCategoryIcon = (name: string) => {
-    const iconMap: { [key: string]: JSX.Element } = {
-      Laptops: <Laptop className="w-8 h-8" />,
-      Smartphones: <Smartphone className="w-8 h-8" />,
-      Audio: <Headphones className="w-8 h-8" />,
-      Gaming: <Gamepad className="w-8 h-8" />,
-      Cameras: <Camera className="w-8 h-8" />,
-      "Action Cameras": <ActionCamera className="w-8 h-8" />,
-      Mouses: <MousePointer className="w-8 h-8" />,
-      Keyboards: <Keyboard className="w-8 h-8" />,
-      TVs: <Tv className="w-8 h-8" />,
-      Tablets: <Tablet className="w-8 h-8" />,
-      Processors: <Cpu className="w-8 h-8" />,
-      Controllers: <Joystick className="w-8 h-8" />,
-      "Gaming Chairs": <MonitorPlay className="w-8 h-8" />,
-      "Gift Cards": <Gift className="w-8 h-8" />,
-    };
-    return iconMap[name] || <Gift className="w-8 h-8" />;
-  };
 
   const nextSlide = useCallback(() => {
     setActiveIndex((prev) => {
@@ -216,7 +181,13 @@ const FeaturedCategories = () => {
                       }
                       className="mb-3 text-blue-400 group-hover:text-blue-300 transition-colors duration-300"
                     >
-                      {getCategoryIcon(category.name)}
+                      {
+                        <img
+                          src={category.iconURL}
+                          alt={`${category.name} icon`}
+                          className={`w-6 h-6 transition-all duration-300 ease-in-out`}
+                        />
+                      }
                     </motion.div>
                     <h3 className="text-sm font-medium leading-tight group-hover:text-blue-300 transition-colors duration-300">
                       {category.name}
