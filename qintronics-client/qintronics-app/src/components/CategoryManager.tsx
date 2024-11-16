@@ -26,7 +26,7 @@ const CategoryManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const [iconPath, setIconPath] = useState<string | null>(null);
+  const [icon, setIcon] = useState<File | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,18 +63,25 @@ const CategoryManager: React.FC = () => {
   };
 
   const handleCreateCategory = async () => {
-    if (!newCategoryName.trim()) return;
+    if (!newCategoryName.trim() || !selectedSection || !icon) {
+      setError("Please provide all required fields");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", newCategoryName.trim());
+    formData.append("sectionId", selectedSection);
+    formData.append("icon", icon);
 
     try {
       setLoading(true);
-      await axiosInstance.post("/categories", {
-        name: newCategoryName.trim(),
-        sectionId: selectedSection,
-        iconURL: iconPath,
+      await axiosInstance.post("/categories", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      await fetchCategories(); // Fetch fresh data after creating
+      await fetchCategories(); // Refresh categories after creation
       setNewCategoryName("");
-      setIsCreating(false);
+      setSelectedSection(null);
+      setIcon(null);
       setError(null);
     } catch (err) {
       setError("Failed to create category");
@@ -157,13 +164,20 @@ const CategoryManager: React.FC = () => {
             autoFocus
           />
 
-          <input
+          {/* <input
             type="text"
             value={iconPath || ""}
             onChange={(e) => setIconPath(e.target.value)}
             onKeyPress={(e) => handleKeyPress(e, handleCreateCategory)}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter category icon URL"
+          /> */}
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setIcon(e.target.files?.[0] || null)}
+            className="flex-1 px-4 py-2 border rounded-lg"
           />
 
           <div className="px-6 py-4 whitespace-nowrap">

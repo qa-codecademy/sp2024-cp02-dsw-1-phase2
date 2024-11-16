@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import {
@@ -29,6 +31,9 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
 import { PublicRoute } from 'src/common/decorators/public-route.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -75,6 +80,22 @@ export class CategoriesController {
 
   // ========== CREATE CATEGORY ==========
   @Post('/')
+  @UseInterceptors(
+    FileInterceptor('icon', {
+      storage: diskStorage({
+        destination: '/data/images/category-icons',
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @ApiOperation({ summary: 'Create Category' })
   @ApiOkResponse({
     description: 'Category created successfully.',
@@ -85,7 +106,15 @@ export class CategoriesController {
   })
   createCategory(
     @Body() body: CategoryCreateDto,
+    @UploadedFile() icon: Express.Multer.File,
   ): Promise<CategoryResponseDto> {
+    if (!icon) {
+      throw new Error('Icon file is required');
+    }
+
+    const iconURL = `/data/images/category-icons/${icon.filename}`;
+    body.iconURL = iconURL;
+
     return this.categoriesService.createCategory(body);
   }
 
