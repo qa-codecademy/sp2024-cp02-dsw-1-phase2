@@ -1,17 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Flame, TrendingUp, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
-import { BaseProduct, Product } from "../common/types/products-interface"; // Ensure the path is correct
+import { BaseProduct, Product } from "../common/types/products-interface";
 import addToCart from "../common/utils/addToCart";
-import { fetchProducts } from "../common/utils/fetchProducts"; // Adjust the path based on your project structure
+import { fetchProducts } from "../common/utils/fetchProducts";
 
 const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Set page size to 20 products
   const productsPerPage = 8;
 
   useEffect(() => {
@@ -23,8 +21,7 @@ const TrendingProducts = () => {
           page: 1,
           pageSize: productsPerPage,
         });
-        setProducts(response.products); // Update with fetched data
-        console.log(response.products);
+        setProducts(response.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -59,7 +56,7 @@ const TrendingProducts = () => {
     },
     hover: {
       y: -5,
-      transition: { duration: 0.1 },
+      transition: { duration: 0.3 },
     },
   };
 
@@ -88,69 +85,116 @@ const TrendingProducts = () => {
       image: product.img,
     };
     addToCart(cartItem);
-    console.log(`Added product ${product.id} to cart`);
   };
 
   return (
-    <div className="max-w-[80vw] mx-auto my-12 px-4 sm:px-6 lg:px-8">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <div className="relative">
+    <div className="bg-gradient-to-b from-neutral-50 to-white">
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
+          </div>
+        ) : (
           <motion.div
-            className="relative overflow-hidden"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
+            className="space-y-16"
           >
+            <div className="text-center space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full text-sm font-medium"
+              >
+                <Flame size={16} className="text-orange-400" />
+                <span>Trending Now</span>
+              </motion.div>
+              
+              <h2 className="text-5xl font-semibold tracking-tight text-gray-900">
+                Most Popular Products
+              </h2>
+              <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+                Discover what everyone's talking about. Our top trending products, curated based on popularity and sales.
+              </p>
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={1}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                {products.map((product) => (
+                {products.map((product, index) => (
                   <motion.div
                     key={product.id}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 transition-all duration-300 hover:cursor-pointer"
+                    className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
                     variants={cardVariants}
                     whileHover="hover"
                     onClick={() => handleNavigateClick(product.id)}
                   >
-                    <div className="relative w-full h-72 overflow-hidden">
+                    {index < 4 && (
+                      <div className="absolute top-4 left-4 z-10">
+                        <motion.div 
+                          className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <TrendingUp size={14} className="text-green-400" />
+                          <span>Hot Item</span>
+                        </motion.div>
+                      </div>
+                    )}
+                    
+                    <div className="relative pt-[100%] bg-white">
                       <motion.img
                         src={product.img}
                         alt={product.name}
-                        className="w-full h-full object-cover"
-                        whileHover={{ scale: 1 }}
-                        transition={{ duration: 0.5 }}
+                        className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                       />
+                      <motion.div 
+                        className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-gray-900"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                        <span>4.9</span>
+                      </motion.div>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2 text-gray-800 truncate">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {product.description}
-                      </p>
-                      <div className="flex justify-between items-center">
-                        <p className="text-lg font-bold text-gray-900">
-                          ${product.price}
+                    
+                    <div className="p-6 space-y-4">
+                      <div className="min-h-[6rem] flex flex-col justify-between">
+                        <h3 className="text-lg font-medium text-gray-900">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-2">
+                          {product.description}
                         </p>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="space-y-1">
+                          <p className="text-xl font-medium text-gray-900">
+                            ${product.price}
+                          </p>
+                          <p className="text-sm text-green-600 font-medium">
+                            Fast Selling
+                          </p>
+                        </div>
                         <motion.button
-                          className="px-3 py-1.5 bg-white text-black rounded-full flex items-center space-x-1 border border-gray-300 shadow-sm hover:bg-gray-50 transition-colors duration-300"
+                          className="rounded-full bg-black text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                          variants={buttonVariants}
                           whileHover="hover"
                           whileTap="tap"
-                          variants={buttonVariants}
                           onClick={(event) => handleAddToCart(event, product)}
                         >
                           <ShoppingCart size={16} />
-                          <span className="text-sm">Add</span>
+                          <span>Add</span>
                         </motion.button>
                       </div>
                     </div>
@@ -159,8 +203,8 @@ const TrendingProducts = () => {
               </motion.div>
             </AnimatePresence>
           </motion.div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
