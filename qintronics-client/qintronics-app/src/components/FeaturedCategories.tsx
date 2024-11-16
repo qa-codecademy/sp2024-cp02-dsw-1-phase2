@@ -16,8 +16,9 @@ import {
   Tablet,
   Camera as ActionCamera,
   Joystick,
-  MonitorPlay
+  MonitorPlay,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: string;
@@ -56,20 +57,22 @@ const FeaturedCategories = () => {
     fetchCategories();
   }, [fetchCategories]);
 
+  const navigate = useNavigate();
+
   const getCategoryIcon = (name: string) => {
     const iconMap: { [key: string]: JSX.Element } = {
-      "Laptops": <Laptop className="w-8 h-8" />,
-      "Smartphones": <Smartphone className="w-8 h-8" />,
-      "Audio": <Headphones className="w-8 h-8" />,
-      "Gaming": <Gamepad className="w-8 h-8" />,
-      "Cameras": <Camera className="w-8 h-8" />,
+      Laptops: <Laptop className="w-8 h-8" />,
+      Smartphones: <Smartphone className="w-8 h-8" />,
+      Audio: <Headphones className="w-8 h-8" />,
+      Gaming: <Gamepad className="w-8 h-8" />,
+      Cameras: <Camera className="w-8 h-8" />,
       "Action Cameras": <ActionCamera className="w-8 h-8" />,
-      "Mouses": <MousePointer className="w-8 h-8" />,
-      "Keyboards": <Keyboard className="w-8 h-8" />,
-      "TVs": <Tv className="w-8 h-8" />,
-      "Tablets": <Tablet className="w-8 h-8" />,
-      "Processors": <Cpu className="w-8 h-8" />,
-      "Controllers": <Joystick className="w-8 h-8" />,
+      Mouses: <MousePointer className="w-8 h-8" />,
+      Keyboards: <Keyboard className="w-8 h-8" />,
+      TVs: <Tv className="w-8 h-8" />,
+      Tablets: <Tablet className="w-8 h-8" />,
+      Processors: <Cpu className="w-8 h-8" />,
+      Controllers: <Joystick className="w-8 h-8" />,
       "Gaming Chairs": <MonitorPlay className="w-8 h-8" />,
       "Gift Cards": <Gift className="w-8 h-8" />,
     };
@@ -134,22 +137,22 @@ const FeaturedCategories = () => {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-purple-600/10"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex justify-between items-center mb-12"
         >
           <div>
-            <motion.h2 
-              className="text-4xl font-bold tracking-tight text-white"
-            >
+            <motion.h2 className="text-4xl font-bold tracking-tight text-white">
               Explore Categories
             </motion.h2>
-            <p className="text-gray-400 mt-2">Discover our curated selection of premium tech</p>
+            <p className="text-gray-400 mt-2">
+              Discover our curated selection of premium tech
+            </p>
           </div>
-          
+
           {categories.length > 7 && (
             <div className="flex gap-2">
               <motion.button
@@ -172,7 +175,7 @@ const FeaturedCategories = () => {
           )}
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4"
           initial={false}
         >
@@ -183,12 +186,13 @@ const FeaturedCategories = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ 
+                transition={{
                   duration: 0.3,
                   delay: idx * 0.05,
                   type: "spring",
-                  stiffness: 100
+                  stiffness: 100,
                 }}
+                onClick={() => navigate(`/category/${category.name}`)}
                 onHoverStart={() => setHoveredIndex(idx)}
                 onHoverEnd={() => setHoveredIndex(null)}
                 className="group cursor-pointer"
@@ -199,13 +203,17 @@ const FeaturedCategories = () => {
                 >
                   {/* Glow Effect */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
+
                   <div className="relative z-10 flex flex-col items-center text-center">
                     <motion.div
-                      animate={hoveredIndex === idx ? { 
-                        scale: [1, 1.1, 1],
-                        transition: { duration: 0.3 }
-                      } : {}}
+                      animate={
+                        hoveredIndex === idx
+                          ? {
+                              scale: [1, 1.1, 1],
+                              transition: { duration: 0.3 },
+                            }
+                          : {}
+                      }
                       className="mb-3 text-blue-400 group-hover:text-blue-300 transition-colors duration-300"
                     >
                       {getCategoryIcon(category.name)}
@@ -214,7 +222,7 @@ const FeaturedCategories = () => {
                       {category.name}
                     </h3>
                     {category.products && (
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="text-xs text-gray-400 mt-1"
