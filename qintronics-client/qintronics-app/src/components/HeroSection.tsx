@@ -5,10 +5,28 @@ import {
   Clock, Package, Shield, Heart, Eye, ChevronLeft, 
   ChevronRight, Percent, Award
 } from "lucide-react";
-import { Product } from "../common/types/products-interface";
+import { BaseProduct, Product } from "../common/types/products-interface";
 import fetchProducts from "../common/utils/fetchProducts";
 import { Link, useNavigate } from "react-router-dom";
 import FlashSale from "./FlashSale";
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
+
+const handleAddToCart = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  product: BaseProduct
+) => {
+  event.stopPropagation();
+  const cartItem: CartItem = {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    quantity: 1,
+    image: product.img,
+  };
+  addToCart(cartItem);
+};
 
 const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (id: string) => void }) => (
   <motion.div
@@ -99,10 +117,11 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={(event) => handleAddToCart(event, product)}
           className="px-4 py-2 bg-black text-white rounded-full flex items-center gap-2 hover:bg-gray-800 transition-colors"
         >
           <ShoppingCart size={16} />
-          <span>Add to Cart</span>
+          <span>Add</span>
         </motion.button>
       </div>
     </div>
