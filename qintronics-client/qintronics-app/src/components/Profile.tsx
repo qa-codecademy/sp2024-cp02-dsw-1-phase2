@@ -154,7 +154,7 @@ const Profile = () => {
         value={value || ""}
         onChange={handleChange}
         disabled={disabled || !isEditing}
-        className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all ${
+        className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A3F6B] focus:border-[#1A3F6B] disabled:bg-gray-100 disabled:cursor-not-allowed transition-all ${
           error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
         }`}
         placeholder={`Enter ${label.toLowerCase()}`}
@@ -198,18 +198,22 @@ const Profile = () => {
                 <>
                   <button
                     onClick={handleSubmit}
-                    className="flex items-center justify-center w-10 h-10 bg-[#1A3F6B] text-white rounded-full hover:bg-[#15406D] transition-transform transform hover:scale-105"
-                    title="Save"
+                    className="relative flex items-center justify-center w-10 h-10 bg-[#1A3F6B] text-white rounded-full hover:bg-[#15406D] transition-transform transform hover:scale-105 group"
                   >
                     <Save className="h-5 w-5" />
+                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      Save
+                    </span>
                   </button>
 
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105"
-                    title="Cancel"
+                    className="relative flex items-center justify-center w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 group"
                   >
                     <X className="h-5 w-5 text-gray-500" />
+                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      Cancel
+                    </span>
                   </button>
                 </>
               ) : (

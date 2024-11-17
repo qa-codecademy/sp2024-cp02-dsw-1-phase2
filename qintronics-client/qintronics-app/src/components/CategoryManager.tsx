@@ -225,11 +225,14 @@ const CategoryManager: React.FC = () => {
           <motion.button
             onClick={handleCreateCategory}
             disabled={loading || !newCategoryName.trim() || !selectedSection}
-            className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
+            className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50 relative group"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Check size={20} />
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Save
+            </span>
           </motion.button>
 
           <motion.button
@@ -239,11 +242,14 @@ const CategoryManager: React.FC = () => {
               setSelectedSection(null);
               setIcon(null);
             }}
-            className="p-2 text-red-500 hover:text-red-600"
+            className="p-2 text-red-500 hover:text-red-600 relative group"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <X size={20} />
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Cancel
+            </span>
           </motion.button>
         </motion.div>
       ) : (
@@ -318,23 +324,30 @@ const CategoryManager: React.FC = () => {
                       <motion.button
                         onClick={() => handleUpdateCategory(category.id)}
                         disabled={loading || !editingName.trim()}
-                        className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
+                        className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50 relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <Check size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Save
+                        </span>
                       </motion.button>
+
                       <motion.button
                         onClick={() => {
                           setEditingId(null);
                           setEditingName("");
                           setSelectedSection(null);
                         }}
-                        className="p-2 text-red-500 hover:text-red-600"
+                        className="p-2 text-red-500 hover:text-red-600 relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <X size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Cancel
+                        </span>
                       </motion.button>
                     </div>
                   ) : (
