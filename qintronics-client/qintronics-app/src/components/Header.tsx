@@ -278,11 +278,16 @@ const Header = ({ onLoginClick }: HeaderProps) => {
               <IconButton
                 icon={<ShoppingCart size={20} />}
                 count={cartItemCount}
+                tooltip="Cart"
               />
             </Link>
 
             <Link to="/favorites">
-              <IconButton icon={<Heart size={20} />} count={favoriteCount} />
+              <IconButton
+                icon={<Heart size={20} />}
+                count={favoriteCount}
+                tooltip="Favorites"
+              />
             </Link>
 
             <Link to="/compare" className="relative group">
@@ -384,11 +389,13 @@ const Header = ({ onLoginClick }: HeaderProps) => {
 const IconButton = ({
   icon,
   count,
+  tooltip,
 }: {
   icon: React.ReactNode;
   count?: number;
+  tooltip?: string;
 }) => (
-  <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+  <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200 group">
     {icon}
     {count !== undefined && count > 0 && (
       <span
@@ -396,6 +403,11 @@ const IconButton = ({
         style={{ backgroundColor: "#1A3F6B" }}
       >
         {count}
+      </span>
+    )}
+    {tooltip && (
+      <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        {tooltip}
       </span>
     )}
   </button>
