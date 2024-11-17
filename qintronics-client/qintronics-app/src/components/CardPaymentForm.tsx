@@ -176,35 +176,54 @@ const CardPaymentForm: React.FC = () => {
 
   const handlePaymentSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    // Validate inputs before proceeding
     if (!validateInputs()) return;
+
     try {
-      await handleSaveOrder();
-      if (!savedCard) {
-        const result = await Swal.fire({
-          title: "Save Card?",
-          text: "Would you like to save this card for future use?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Yes, save it",
-        });
-        if (result.isConfirmed) {
-          const cardDataPayload = prepareCardDataPayload();
-          const saveSuccess = await handleSaveCardRequest(cardDataPayload);
-          if (saveSuccess) {
-            await loadSavedCard();
-          }
-        }
+      // Step 1: Ask if the user wants to save the card
+      const saveCardResponse = await Swal.fire({
+        title: "Save Card?",
+        text: "Would you like to save this card for future use?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, save it",
+        cancelButtonText: "No, just pay",
+      });
+
+      // Step 2: Save the card if the user confirms
+      if (saveCardResponse.isConfirmed) {
+        const cardDataPayload = prepareCardDataPayload();
+        const saveSuccess = await handleSaveCardRequest(cardDataPayload);
+        if (!saveSuccess) return; // Stop if saving the card fails
       }
+
+      // Step 3: Show a loading indicator while processing the payment
       Swal.fire({
+        title: "Processing Payment",
+        text: "Please wait...",
+        icon: "info",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading(),
+        timer: 1500,
+      });
+
+      // Step 4: Save the order and show success message
+      await handleSaveOrder();
+
+      // Step 5: Show a success message, then redirect after the timer ends
+      await Swal.fire({
         icon: "success",
         title: "Payment Successful!",
-        text: "Your payment has been processed successfully. Thank you!",
+        text: "Your payment has been processed successfully!",
         timer: 3000,
         timerProgressBar: true,
         showConfirmButton: false,
-      }).then(() => {
-        clearCart();
-        navigate("/");
+        willClose: () => {
+          clearCart();
+          navigate("/");
+        },
       });
     } catch (paymentError) {
       Swal.fire(
@@ -311,7 +330,8 @@ const CardPaymentForm: React.FC = () => {
                 onClick={handleUseSelectedCard}
                 className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
               >
-                <TbCreditCardPay className="mr-2" size={18} />
+                <TbCreditCardPay className="mr-2" size={28} />{" "}
+                {/* Increased size here */}
                 Use Selected Card to Pay
               </button>
             </div>
@@ -508,7 +528,8 @@ const CardPaymentForm: React.FC = () => {
               type="submit"
               className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
             >
-              <TbCreditCardPay className="mr-2" size={18} />
+              <TbCreditCardPay className="mr-2" size={28} />{" "}
+              {/* Increased size here */}
               Pay Now
             </button>
           </div>

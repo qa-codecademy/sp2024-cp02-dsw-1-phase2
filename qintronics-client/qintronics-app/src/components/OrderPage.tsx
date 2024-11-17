@@ -491,7 +491,7 @@ const CheckoutForm: React.FC = () => {
                     className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
                     onClick={handleConfirmOrder}
                   >
-                    <GiConfirmed className="mr-2" size={18} />
+                    <GiConfirmed className="mr-2" size={28} />
                     Confirm Order
                   </button>
                 </div>

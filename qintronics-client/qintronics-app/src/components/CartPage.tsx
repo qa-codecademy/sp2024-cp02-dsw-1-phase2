@@ -167,12 +167,17 @@ const CartPage: React.FC = () => {
                       >
                         <FaMinus />
                       </button>
+
                       <input
                         type="number"
                         value={item.quantity}
                         readOnly
-                        className="text-center w-12 sm:w-16 p-2 border border-[#1A3F6B] rounded-lg"
-                        style={{ height: "40px" }}
+                        className="text-center w-16 border border-[#1A3F6B] rounded-lg text-xl font-semibold"
+                        style={{
+                          height: "40px",
+                          padding: "0",
+                          lineHeight: "40px",
+                        }}
                       />
                       <button
                         className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
@@ -193,25 +198,22 @@ const CartPage: React.FC = () => {
 
           <div className="mt-6 flex justify-between items-center">
             <button
-              className="ml-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase mt-20"
+              className="mt-16 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase "
               onClick={() => navigate("/")}
             >
-              <MdShoppingCartCheckout className="mr-2" size={18} />
+              <MdShoppingCartCheckout className="mr-2" size={28} />
               Continue Shopping
             </button>
 
-            <div
-              className="flex flex-col"
-              style={{ marginLeft: "-50px" }}
-            >
+            <div className="flex flex-col" style={{ marginLeft: "-50px" }}>
               <span className="text-lg font-bold text-gray-900 mb-2">
                 Total: ${calculateTotal().toFixed(2)}
               </span>
               <button
-                className="mt-4 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase"
+                className="mt-6 bg-[#1A3F6B] text-white font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center justify-center uppercase "
                 onClick={handleCheckout}
               >
-                <IoBagCheckOutline className="mr-2" size={18} />
+                <IoBagCheckOutline className="mr-2" size={28} />
                 Checkout
               </button>
             </div>
