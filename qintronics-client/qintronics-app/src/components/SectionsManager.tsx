@@ -150,7 +150,7 @@ const SectionManager: React.FC = () => {
       ) : (
         <motion.button
           onClick={() => setIsCreating(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center gap-2 hover:bg-blue-600 transition-colors duration-200"
+          className="px-4 py-2 bg-[#1A3F6B] text-white rounded-lg flex items-center gap-2 hover:bg-[#15406D] transition-colors duration-200"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={loading}
@@ -222,21 +222,27 @@ const SectionManager: React.FC = () => {
                           setEditingId(section.id);
                           setEditingName(section.name);
                         }}
-                        className="p-2 text-blue-500 hover:text-blue-600"
+                        className="p-2 text-blue-500 hover:text-blue-600 relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         disabled={loading}
                       >
                         <Edit2 size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Edit
+                        </span>
                       </motion.button>
                       <motion.button
                         onClick={() => handleRemoveSection(section.id)}
                         disabled={loading}
-                        className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50"
+                        className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50 relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <Trash2 size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Delete
+                        </span>
                       </motion.button>
                     </div>
                   </>

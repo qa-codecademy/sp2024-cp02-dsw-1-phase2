@@ -5,7 +5,6 @@ import Sidebar from "./DashboardSidebar";
 import CategoryManager from "./CategoryManager";
 import SectionsManager from "./SectionsManager";
 import OrderManager from "./OrderManager";
-import RecentActivity from "./RecentActivity";
 // import InventoryStatus from "./InventoryStatus";
 import UserManagement from "./UserManagement";
 import { DashboardStats } from "./DashboardStats";
@@ -29,7 +28,6 @@ const AdminDashboard = () => {
             <DashboardStats />
             <SalesChart />
             {/* <InventoryStatus /> */}
-            <RecentActivity />
           </motion.div>
         );
       case "products":

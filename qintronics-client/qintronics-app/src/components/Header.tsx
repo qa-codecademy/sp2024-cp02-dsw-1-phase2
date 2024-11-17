@@ -365,7 +365,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                   >
                     <nav className="p-1">
                       <MenuLink to="/">Home</MenuLink>
-                      <MenuLink to="/sales">Sale</MenuLink>
+                      {/* <MenuLink to="/sales">Sale</MenuLink> */}
                       <MenuLink to="/about-us">About Us</MenuLink>
                       <MenuLink to="/contact">Contact</MenuLink>
                     </nav>
@@ -391,7 +391,10 @@ const IconButton = ({
   <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200">
     {icon}
     {count !== undefined && count > 0 && (
-      <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+      <span
+        className="absolute -top-1 -right-1 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+        style={{ backgroundColor: "#1A3F6B" }}
+      >
         {count}
       </span>
     )}

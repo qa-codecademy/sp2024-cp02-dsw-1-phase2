@@ -47,7 +47,7 @@ export const SalesChart: React.FC = () => {
 
   const formatMonthLabel = (month: string) => {
     const date = new Date(month + "-01");
-    return date.toLocaleString("default", { month: "short", year: "numeric" });
+    return date.toLocaleString("default", { month: "short", year: "numeric" }); // Include month and year
   };
 
   return (
@@ -65,6 +65,14 @@ export const SalesChart: React.FC = () => {
             dataKey="month"
             tickFormatter={formatMonthLabel}
             interval={0} // Ensure every month is displayed
+            tick={{
+              fontSize: 12,
+              fill: "#333333",
+              fontWeight: "500",
+            }} // Adjust font size and color
+            angle={-30} // Rotate labels slightly for better spacing
+            textAnchor="end" // Align text after rotation
+            height={80} // Increase height to fit labels
           />
           <YAxis
             tickFormatter={(value) => `$${value.toLocaleString()}`}
@@ -75,13 +83,18 @@ export const SalesChart: React.FC = () => {
               `$${value.toLocaleString()}`,
               "Sales",
             ]}
-            labelFormatter={formatMonthLabel}
+            labelFormatter={(month: string) =>
+              new Date(month + "-01").toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              })
+            }
           />
           <Area
             type="monotone"
             dataKey="totalSum"
-            stroke="#3b82f6"
-            fill="#93c5fd"
+            stroke="#1A3F6B"
+            fill="rgba(27, 216, 196, 0.5)"
             name="Sales"
           />
         </AreaChart>

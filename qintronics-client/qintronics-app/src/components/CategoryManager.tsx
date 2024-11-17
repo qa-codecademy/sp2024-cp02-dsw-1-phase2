@@ -29,6 +29,7 @@ const CategoryManager: React.FC = () => {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [icon, setIcon] = useState<File | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // For success messages
 
   useEffect(() => {
     fetchCategories();
@@ -79,11 +80,17 @@ const CategoryManager: React.FC = () => {
       await axiosInstance.post("/categories", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      await fetchCategories(); // Refresh categories after creation
+      await fetchCategories();
+
       setNewCategoryName("");
       setSelectedSection(null);
       setIcon(null);
+      setIsCreating(false);
       setError(null);
+
+      // Set success message
+      setSuccessMessage(`Category "${newCategoryName}" created successfully!`);
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err) {
       setError("Failed to create category");
       console.error("Error creating category:", err);
@@ -139,6 +146,7 @@ const CategoryManager: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Error Message */}
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -146,6 +154,17 @@ const CategoryManager: React.FC = () => {
           className="bg-red-50 text-red-500 p-4 rounded-lg mb-4"
         >
           {error}
+        </motion.div>
+      )}
+
+      {/* Success Message */}
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-green-50 text-green-600 p-4 rounded-lg mb-4"
+        >
+          {successMessage}
         </motion.div>
       )}
 
@@ -160,30 +179,44 @@ const CategoryManager: React.FC = () => {
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             onKeyPress={(e) => handleKeyPress(e, handleCreateCategory)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A3F6B] focus:border-[#1A3F6B] placeholder-gray-400 transition duration-200"
             placeholder="Enter category name"
             autoFocus
           />
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setIcon(e.target.files?.[0] || null)}
-            className="flex-1 px-4 py-2 border rounded-lg"
-          />
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="icon-upload"
+              className="cursor-pointer px-4 py-2 bg-[#1A3F6B] text-white text-sm font-medium rounded-lg shadow-sm hover:bg-[#15406D] transition duration-200"
+            >
+              Choose File
+            </label>
+            <input
+              id="icon-upload"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setIcon(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+            {icon && <span className="text-sm text-gray-600">{icon.name}</span>}
+          </div>
 
-          <div className="px-6 py-4 whitespace-nowrap">
+          <div className="max-w-md w-full mx-auto">
             <select
               value={selectedSection || ""}
               onChange={(e) => setSelectedSection(e.target.value)}
-              className="border rounded-md px-2 py-1 text-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1A3F6B] focus:border-[#1A3F6B] transition duration-200"
             >
-              <option value="" disabled>
+              <option value="" disabled className="text-gray-400">
                 Choose Section
               </option>
               {sections.map((section) => (
-                <option key={section.id} value={section.id}>
-                  {section.name}{" "}
+                <option
+                  key={section.id}
+                  value={section.id}
+                  className="text-gray-700"
+                >
+                  {section.name}
                 </option>
               ))}
             </select>
@@ -204,6 +237,7 @@ const CategoryManager: React.FC = () => {
               setIsCreating(false);
               setNewCategoryName("");
               setSelectedSection(null);
+              setIcon(null);
             }}
             className="p-2 text-red-500 hover:text-red-600"
             whileHover={{ scale: 1.1 }}
@@ -215,7 +249,10 @@ const CategoryManager: React.FC = () => {
       ) : (
         <motion.button
           onClick={() => setIsCreating(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center gap-2 hover:bg-blue-600 transition-colors duration-200"
+          className="px-4 py-2 text-white rounded-lg flex items-center gap-2 transition-colors duration-200"
+          style={{
+            backgroundColor: "#1A3F6B",
+          }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={loading}
@@ -224,7 +261,6 @@ const CategoryManager: React.FC = () => {
           Create Category
         </motion.button>
       )}
-
       <div className="space-y-4">
         <AnimatePresence>
           {loading && categories.length === 0 ? (
@@ -238,7 +274,6 @@ const CategoryManager: React.FC = () => {
             </motion.div>
           ) : (
             categories.map((category) => {
-              // Find the section name using the sectionId from the category
               const sectionName =
                 sections.find((section) => section.id === category.sectionId)
                   ?.name || "Unknown Section";
@@ -303,39 +338,50 @@ const CategoryManager: React.FC = () => {
                       </motion.button>
                     </div>
                   ) : (
-                    <>
+                    <div className="flex flex-1 items-center gap-4">
                       <div className="flex-1">
-                        <span className="block text-gray-700 text-lg">
+                        <span className="text-gray-700 text-lg font-medium">
                           {category.name}
                         </span>
-                        <span className="text-xs text-[#1A3F6B]">
-                          {sectionName}
-                        </span>
                       </div>
+                      {sectionName && (
+                        <div className="flex-1 text-left pl-12">
+                          <span className="text-sm text-gray-500">
+                            {sectionName}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2">
                         <motion.button
                           onClick={() => {
                             setEditingId(category.id);
                             setEditingName(category.name);
                           }}
-                          className="p-2 text-blue-500 hover:text-blue-600"
+                          className="p-2 text-[#1A3F6B] hover:text-[#15406D] relative group"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           disabled={loading}
                         >
                           <Edit2 size={16} />
+                          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            Edit
+                          </span>
                         </motion.button>
+
                         <motion.button
                           onClick={() => handleRemoveCategory(category.id)}
                           disabled={loading}
-                          className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50"
+                          className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50 relative group"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
                           <Trash2 size={16} />
+                          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            Delete
+                          </span>
                         </motion.button>
                       </div>
-                    </>
+                    </div>
                   )}
                 </motion.div>
               );
