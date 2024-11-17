@@ -128,11 +128,14 @@ const SectionManager: React.FC = () => {
           <motion.button
             onClick={handleCreateSection}
             disabled={loading || !newSectionName.trim()}
-            className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
+            className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50 relative group"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Check size={20} />
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Save
+            </span>
           </motion.button>
 
           <motion.button
@@ -140,11 +143,14 @@ const SectionManager: React.FC = () => {
               setIsCreating(false);
               setNewSectionName("");
             }}
-            className="p-2 text-red-500 hover:text-red-600"
+            className="p-2 text-red-500 hover:text-red-600 relative group"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <X size={20} />
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Cancel
+            </span>
           </motion.button>
         </motion.div>
       ) : (
@@ -195,22 +201,29 @@ const SectionManager: React.FC = () => {
                     <motion.button
                       onClick={() => handleUpdateSection(section.id)}
                       disabled={loading || !editingName.trim()}
-                      className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50"
+                      className="p-2 text-green-500 hover:text-green-600 disabled:opacity-50 relative group"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       <Check size={16} />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Save
+                      </span>
                     </motion.button>
+
                     <motion.button
                       onClick={() => {
                         setEditingId(null);
                         setEditingName("");
                       }}
-                      className="p-2 text-red-500 hover:text-red-600"
+                      className="p-2 text-red-500 hover:text-red-600 relative group"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       <X size={16} />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Cancel
+                      </span>
                     </motion.button>
                   </div>
                 ) : (
@@ -222,7 +235,7 @@ const SectionManager: React.FC = () => {
                           setEditingId(section.id);
                           setEditingName(section.name);
                         }}
-                        className="p-2 text-blue-500 hover:text-blue-600 relative group"
+                        className="p-2 text-[#1A3F6B] hover:text-[#1A3F6B] relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         disabled={loading}
@@ -232,6 +245,7 @@ const SectionManager: React.FC = () => {
                           Edit
                         </span>
                       </motion.button>
+
                       <motion.button
                         onClick={() => handleRemoveSection(section.id)}
                         disabled={loading}
