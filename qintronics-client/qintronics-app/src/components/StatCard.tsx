@@ -17,7 +17,7 @@ export const StatCard: React.FC<StatCardProps> = ({ title, value, trend }) => (
     <div className="text-3xl font-light">{value}</div>
     <div
       className={`flex items-center mt-2 ${
-        trend > 0 ? "text-green-500" : "text-red-500"
+        trend > 0 ? "text-[#1BD8C4]" : "text-red-500"
       }`}
     >
       {trend > 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}

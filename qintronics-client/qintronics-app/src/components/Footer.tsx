@@ -16,11 +16,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             {/* Add your logo here */}
-            <img
+            {/* <img
               src="../../public/images/qintronics-high-resolution-logo-white-transparent-removebg-preview (1).png" // Replace with the path to your logo image
               alt="Company Logo"
               className="h-12 w-auto mb-4" // Adjust the size of your logo
-            />
+            /> */}
+            <h1 className="text-4xl font-bold mb-4">Qintronics</h1>
             <h3 className="text-xl font-bold mb-6">Skopje</h3>
             <p className="text-sm leading-relaxed">
               11th October St. 33A

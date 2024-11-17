@@ -1,8 +1,9 @@
-import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContactService } from './contact.service';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ContactCreateDto } from './dtos/contact-create.dto';
 
+@ApiTags('Contact')
 @Controller('contact')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}

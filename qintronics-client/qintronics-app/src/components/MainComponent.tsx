@@ -7,11 +7,9 @@ import BrandsShowcase from "./BrandsShowcase";
 import CardsDiv from "./CardsDiv";
 import FeaturedCategories from "./FeaturedCategories";
 import HeroSection from "./HeroSection";
-import LatestBlogPosts from "./LatestBlogPosts";
 import Newsletter from "./Newsletter";
 import Sidebar from "./Sidebar";
 import SlideDiv from "./SlideDiv";
-import Testimonials from "./Testimonials";
 import TrendingProducts from "./TrendingProducts";
 
 // Fetch products helper function
@@ -152,7 +150,7 @@ const MainComponent = () => {
         </AnimatedSection>
                 {/* Special Offers */}
                 <AnimatedSection className="py-16 bg-gray-50">
-          <div className="max-w-[100vw] mx-auto">
+          <div className="max-w-[80%] mx-auto">
             <SlideDiv products={discountedProducts} />
           </div>
         </AnimatedSection>
@@ -165,11 +163,8 @@ const MainComponent = () => {
         </AnimatedSection>
 
         {/* Latest Releases */}
-        <AnimatedSection className="bg-white py-16 border-b border-gray-200">
+        <AnimatedSection className="bg-white border-b border-gray-200">
           <div className="max-w-[80vw] mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Latest Releases
-            </h2>
             <CardsDiv products={newArrivals} />
           </div>
         </AnimatedSection>
@@ -177,30 +172,7 @@ const MainComponent = () => {
         {/* Featured Brands */}
         <AnimatedSection className="py-16">
           <div className="max-w-[80vw] mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Featured Brands
-            </h2>
             <BrandsShowcase />
-          </div>
-        </AnimatedSection>
-
-        {/* Testimonials */}
-        <AnimatedSection className="bg-white py-16 border-b border-gray-200">
-          <div className="max-w-[80vw] mx-auto px-8">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Customer Stories
-            </h2>
-            <Testimonials />
-          </div>
-        </AnimatedSection>
-
-        {/* Blog Posts */}
-        <AnimatedSection className="py-16 bg-gray-50">
-          <div className="max-w-[80vw] mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-gray-900">
-              Tech News & Insights
-            </h2>
-            <LatestBlogPosts />
           </div>
         </AnimatedSection>
 

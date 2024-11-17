@@ -11,7 +11,6 @@ import {
   ArrowRightLeft,
   Menu,
   Search,
-  X,
 } from "lucide-react";
 import { AuthContext } from "../context/auth.context";
 import axiosInstance from "../common/utils/axios-instance.util";
@@ -213,7 +212,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                   }}
                   className="absolute right-3 text-gray-500 hover:text-gray-700"
                 >
-                  <X size={18} />
+                  {/* <X size={18} /> */}
                 </button>
               )}
             </div>
@@ -243,18 +242,29 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                       <div
                         key={product.id}
                         onClick={() => handleProductClick(product.id)}
-                        className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-none"
+                        className="p-4 flex items-center gap-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-none"
                       >
-                        <h3 className="font-medium text-sm">{product.name}</h3>
-                        <p className="text-sm text-gray-600">{product.brand}</p>
-                        <div className="flex justify-between items-center mt-1">
-                          <p className="text-sm font-medium">
+                        <img
+                          src={product.img}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium text-sm">
+                            {product.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {product.brand}
+                          </p>
+                          <p className="text-sm font-medium mt-1">
                             ${product.price}
                           </p>
+                        </div>
+                        {/* <div className="ml-auto">
                           <p className="text-xs text-gray-500">
                             {product.availability} in stock
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     ))}
                 </motion.div>
@@ -355,7 +365,7 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                   >
                     <nav className="p-1">
                       <MenuLink to="/">Home</MenuLink>
-                      <MenuLink to="/sales">Sale</MenuLink>
+                      {/* <MenuLink to="/sales">Sale</MenuLink> */}
                       <MenuLink to="/about-us">About Us</MenuLink>
                       <MenuLink to="/contact">Contact</MenuLink>
                     </nav>
@@ -381,7 +391,10 @@ const IconButton = ({
   <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200">
     {icon}
     {count !== undefined && count > 0 && (
-      <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+      <span
+        className="absolute -top-1 -right-1 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+        style={{ backgroundColor: "#1A3F6B" }}
+      >
         {count}
       </span>
     )}

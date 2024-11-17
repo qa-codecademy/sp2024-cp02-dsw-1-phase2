@@ -198,11 +198,12 @@ const Profile = () => {
                 <>
                   <button
                     onClick={handleSubmit}
-                    className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-transform transform hover:scale-105"
+                    className="flex items-center justify-center w-10 h-10 bg-[#1A3F6B] text-white rounded-full hover:bg-[#15406D] transition-transform transform hover:scale-105"
                     title="Save"
                   >
                     <Save className="h-5 w-5" />
                   </button>
+
                   <button
                     onClick={() => setIsEditing(false)}
                     className="flex items-center justify-center w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105"
@@ -214,7 +215,7 @@ const Profile = () => {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center space-x-2"
+                  className="px-4 py-2 bg-[#1A3F6B] text-white rounded-lg hover:bg-[#15406D] transition-transform transform hover:scale-105 flex items-center space-x-2"
                 >
                   <Pencil className="h-4 w-4" />
                   <span>Edit Profile</span>
@@ -398,12 +399,13 @@ const Profile = () => {
                     Your account is protected with password authentication.
                   </p>
                   <button
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 bg-[#1A3F6B] text-white font-medium rounded-lg hover:bg-[#15406D] shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center space-x-2"
                     onClick={() => {
                       /* Add password change logic */
                     }}
                   >
-                    Change Password
+                    <ShieldCheck className="h-5 w-5" />
+                    <span>Change Password</span>
                   </button>
                 </div>
               </motion.div>
