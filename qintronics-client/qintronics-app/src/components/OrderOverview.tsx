@@ -14,7 +14,7 @@ export default function OrderOverview() {
       perPage: 10,
     },
     queryParams: {
-      userMail: "customer@example.com",
+      userMail: order?.email,
     },
   };
 

@@ -40,7 +40,7 @@ const OrderManager: React.FC = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (user?.role === "Customer") {
@@ -70,6 +70,8 @@ const OrderManager: React.FC = () => {
         setLoading(false);
       });
     }
+
+    setLoading(false);
   };
 
   const handleOrderStatusChange = async (status: string, orderId?: string) => {
@@ -81,6 +83,12 @@ const OrderManager: React.FC = () => {
 
     if (status === "Canceled") {
       await axiosInstance.put(`/orders/cancel/${orderId}`).then((res) => console.log(res));
+    }
+
+    if (status === "Delivered") {
+      await axiosInstance
+        .put(`/orders/status/${orderId}`, { isDelivered: true })
+        .then((res) => console.log(res));
     }
 
     await fetchOrders();
@@ -102,7 +110,7 @@ const OrderManager: React.FC = () => {
     return <div className="text-center text-gray-500">Loading orders...</div>;
   }
 
-  if (!orders) {
+  if (orders.length <= 0) {
     return <div className="text-center text-gray-500">No orders found</div>;
   }
 
@@ -169,11 +177,25 @@ const OrderManager: React.FC = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOrderStatusChange("Taken", order.id);
-                      console.log(order);
                     }}
                     className="absolute bottom-5 right-5 bg-blue-600 hover:scale-105 py-2 px-4 rounded-xl text-white font-bold text-sm shadow-xl"
                   >
                     Take Order
+                  </button>
+                )}
+
+              {user?.role === "Delivery_Person" &&
+                order.isDelivered === false &&
+                order.isTaken === true &&
+                order.isCanceled === false && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOrderStatusChange("Delivered", order.id);
+                    }}
+                    className="absolute bottom-5 right-5 bg-blue-600 hover:scale-105 py-2 px-4 rounded-xl text-white font-bold text-sm shadow-xl"
+                  >
+                    Deliver Order
                   </button>
                 )}
             </div>
