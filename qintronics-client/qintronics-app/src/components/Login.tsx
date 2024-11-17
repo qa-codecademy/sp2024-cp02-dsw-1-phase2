@@ -37,15 +37,20 @@ const Login = () => {
       transition={{ duration: 0.3 }}
       className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full mx-auto mt-16"
     >
-      <h2 className="text-3xl font-semibold mb-6 text-center">Sign In</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-3xl font-semibold mb-6 text-center text-[#1A3F6B]">
+        Welcome Back
+      </h2>
+      <p className="text-center text-gray-600 mb-6">
+        Sign in to access your account
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Email Address"
           value={formData.email}
           onChange={handleInputChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
           required
         />
         <input
@@ -54,26 +59,28 @@ const Login = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handleInputChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
           required
         />
         <motion.button
           type="submit"
           whileHover={{ scale: 1.05 }}
-          className="w-full bg-blue-500 text-white py-2 rounded-md"
+          className="w-full bg-[#1A3F6B] text-white py-3 rounded-lg font-medium transition-transform transform hover:scale-105 hover:bg-[#15406D]"
         >
           Sign In
         </motion.button>
       </form>
-      {error && <p className="mt-4 text-red-500">{error}</p>}
-      <div className="mt-4 flex justify-between items-center">
+      {error && (
+        <p className="mt-4 text-center text-red-500 font-medium">{error}</p>
+      )}
+      <div className="mt-6 flex justify-between items-center text-gray-600">
         <Link to="/register">
-          <button className="text-blue-500 hover:underline text-sm">
+          <button className="text-sm text-[#1A3F6B] hover:underline font-medium">
             Need an account? Create one
           </button>
         </Link>
         <Link to="/forgot-password">
-          <button className="text-blue-500 hover:underline text-sm">
+          <button className="text-sm text-[#1A3F6B] hover:underline font-medium">
             Forgot Password?
           </button>
         </Link>
