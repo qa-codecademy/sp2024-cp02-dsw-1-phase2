@@ -196,7 +196,11 @@ export class OrderReturnDto {
   })
   orderProduct: ProductsAndQuantityReturnDto[];
 
-  @Exclude()
+  @Expose()
+  @ApiProperty({
+    type: Date,
+    description: 'Created date',
+  })
   createdAt: Date;
 
   @Exclude()

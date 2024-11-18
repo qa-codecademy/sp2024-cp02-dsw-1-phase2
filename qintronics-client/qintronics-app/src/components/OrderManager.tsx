@@ -30,6 +30,7 @@ export interface Order {
   isCanceled: boolean;
   total: number;
   orderProduct: OrderProduct[];
+  createdAt: Date;
 }
 
 const OrderManager: React.FC = () => {
@@ -82,9 +83,7 @@ const OrderManager: React.FC = () => {
     }
 
     if (status === "Canceled") {
-      await axiosInstance
-        .put(`/orders/cancel/${orderId}`)
-        .then((res) => console.log(res));
+      await axiosInstance.put(`/orders/cancel/${orderId}`).then((res) => console.log(res));
     }
 
     if (status === "Delivered") {
@@ -99,22 +98,13 @@ const OrderManager: React.FC = () => {
   };
 
   const getOrderStatus = (order: Order) => {
-    if (
-      !order.isDelivered &&
-      !order.isTaken &&
-      !order.isCanceled &&
-      !order.isPaid
-    )
+    if (!order.isDelivered && !order.isTaken && !order.isCanceled && !order.isPaid)
       return <p className="font-semibold text-gray-500">Unpaid</p>;
 
-    if (order.isDelivered)
-      return <p className="font-semibold text-green-500">Delivered</p>;
-    if (order.isTaken)
-      return <p className="font-semibold text-yellow-500">Delivering...</p>;
-    if (order.isCanceled)
-      return <p className="font-semibold text-red-500">Cancelled</p>;
-    if (order.isPaid)
-      return <p className="font-semibold text-green-500">Paid</p>;
+    if (order.isDelivered) return <p className="font-semibold text-green-500">Delivered</p>;
+    if (order.isTaken) return <p className="font-semibold text-yellow-500">Delivering...</p>;
+    if (order.isCanceled) return <p className="font-semibold text-red-500">Cancelled</p>;
+    if (order.isPaid) return <p className="font-semibold text-green-500">Paid</p>;
   };
 
   if (loading) {
@@ -125,6 +115,18 @@ const OrderManager: React.FC = () => {
     return <div className="text-center text-gray-500">No orders found</div>;
   }
 
+  const getCreatedAtDate = (dateData: Date | undefined) => {
+    if (!dateData) return "";
+
+    const date = new Date(dateData);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${month} ${day} ${year}, ${hours}:${minutes}`;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -132,9 +134,7 @@ const OrderManager: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="space-y-8"
     >
-      <h2 className="text-3xl font-light text-gray-800 mb-8">
-        Order Management
-      </h2>
+      <h2 className="text-3xl font-light text-gray-800 mb-8">Order Management</h2>
 
       <div className="space-y-4">
         {orders.map((order, index) => (
@@ -157,12 +157,15 @@ const OrderManager: React.FC = () => {
                 {order.orderProduct.length}
               </p>
               <p>
-                <span className="font-semibold">Total: </span>$
-                {order.total.toLocaleString()}
+                <span className="font-semibold">Total: </span>${order.total.toLocaleString()}
               </p>
               <p>
                 <span className="font-semibold">Address: </span>
                 {order.address}, {order.city}, {order.zip}
+              </p>
+              <p>
+                <span className="font-semibold">Created at: </span>
+                {getCreatedAtDate(order?.createdAt)}
               </p>
               <p>
                 <span className="font-semibold">Preferred Delivery Date: </span>
