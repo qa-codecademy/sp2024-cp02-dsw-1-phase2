@@ -60,4 +60,13 @@ export class EmailService {
       context: { name, phone, message, email },
     });
   }
+
+  async sendNewsletterSubscribeEmail(email: string) {
+    await this.mailerService.sendMail({
+      subject: 'Welcome to the Qintronics Newsletter!',
+      to: email,
+      template: './newsletter-subscribe-email',
+      context: {},
+    });
+  }
 }

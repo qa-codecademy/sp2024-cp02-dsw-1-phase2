@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Bell, ArrowRight, Send, Check } from "lucide-react";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -33,6 +34,7 @@ const Newsletter = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Subscribed with email:", email);
+    axiosInstance.post("/contact/newsletter", { email });
     setIsSubmitted(true);
     setTimeout(() => {
       setIsSubmitted(false);
@@ -67,11 +69,9 @@ const Newsletter = () => {
                 Stay Ahead of Tech
               </motion.h2>
 
-              <motion.p
-                variants={itemVariants}
-                className="text-xl text-gray-500 max-w-2xl mx-auto"
-              >
-                Get exclusive deals, latest product updates, and tech insights delivered straight to your inbox.
+              <motion.p variants={itemVariants} className="text-xl text-gray-500 max-w-2xl mx-auto">
+                Get exclusive deals, latest product updates, and tech insights delivered straight to
+                your inbox.
               </motion.p>
             </div>
 
@@ -144,7 +144,8 @@ const Newsletter = () => {
                 </div>
 
                 <p className="text-sm text-gray-500">
-                  By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
+                  By subscribing, you agree to our Privacy Policy and consent to receive updates
+                  from our company.
                 </p>
               </motion.div>
             </motion.form>

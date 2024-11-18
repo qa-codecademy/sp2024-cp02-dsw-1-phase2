@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+      }
+      .header {
+        background: linear-gradient(to right, #1bd8c4, #1a3f6b);
+        border-radius: 5px;
+        color: #f3f3f3;
+        padding: 10px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      .content {
+        padding: 20px;
+        padding-bottom: 0;
+      }
+      .order-details {
+        margin: 40px 0 40px 0;
+      }
+      .product {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .address-details {
+        padding: 20px;
+        padding-top: 0;
+        border-radius: 5px;
+      }
+
+      .notification {
+        padding-top: 30px;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+      .notification a,
+      .notification h2,
+      .footer a {
+        color: #2dd9c4;
+        text-decoration: none;
+      }
+      .notification a:hover,
+      .footer a:hover {
+        font-weight: 800;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+      }
+
+      .unsubscribe {
+        text-align: center;
+        color: gray;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 5px;
+        }
+        .content,
+        .header,
+        .footer {
+          padding: 5px;
+        }
+        .header {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <p>Welcome to the Qintronics Newsletter!</p>
+      </div>
+
+      <div class="notification">
+        <h2>Thank you for subscribing!</h2>
+      </div>
+      <p class="unsubscribe">unsubscribe</p>
+      <div class="footer">
+        <p>Qintronics</p>
+        <p>
+          If you have any questions, feel free to contact us through
+          <a href="http://localhost:5173/contact" target="_blank"
+            >our contact form.</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
