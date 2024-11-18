@@ -36,6 +36,12 @@ export default function OrderOverview() {
     setOrder(orders.find((order: Order) => order.id === orderId));
   }, [orders]);
 
+  // Calculate grand total
+  const grandTotal = order?.orderProduct.reduce(
+    (acc, product) => acc + product.priceAtOrderTime * product.quantity,
+    0
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center text-[#1A3F6B] mb-8">
@@ -120,49 +126,62 @@ export default function OrderOverview() {
         <h1 className="text-2xl font-semibold text-[#1A3F6B] mb-6">
           Ordered Products
         </h1>
-        <div className="divide-y divide-gray-200">
-          {order?.orderProduct.map((product) => (
-            <div
-              key={product.product.id}
-              className="flex items-center justify-between py-4"
-            >
-              {/* Product Image and Details */}
-              <div className="flex items-center gap-4">
-                <img
-                  src={product.product.img}
-                  alt={product.product.name}
-                  className="w-16 h-16 object-cover rounded-md border border-gray-200"
-                />
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">
+        <table className="w-full table-auto border-collapse rounded-lg overflow-hidden shadow-md">
+          <thead>
+            <tr className="bg-[#f7f9fc] text-gray-700 text-left">
+              <th className="px-6 py-3 text-sm font-bold uppercase">Product</th>
+              <th className="px-6 py-3 text-sm font-bold uppercase text-center">
+                Quantity
+              </th>
+              <th className="px-6 py-3 text-sm font-bold uppercase text-center">
+                Single Price
+              </th>
+              <th className="px-6 py-3 text-sm font-bold uppercase text-center">
+                Total Price
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {order?.orderProduct.map((product, index) => (
+              <tr
+                key={product.product.id}
+                className={`${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                } hover:bg-gray-200`}
+              >
+                <td className="px-6 py-4 flex items-center gap-4">
+                  <img
+                    src={product.product.img}
+                    alt={product.product.name}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
+                  <span className="text-gray-900 font-medium">
                     {product.product.name}
-                  </h3>
-                  {/* Quantity below product name */}
-                  <p className="text-sm font-medium text-gray-700 mt-1">
-                    Quantity:{" "}
-                    <span className="text-[#1A3F6B] font-semibold">
-                      {product.quantity}
-                    </span>
-                  </p>
-                  {/* Single Price */}
-                  <p className="text-sm font-medium text-gray-700">
-                    Single Price:{" "}
-                    <span className="text-[#1A3F6B] font-bold">
-                      ${product.priceAtOrderTime.toLocaleString()}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Total Price */}
-              <p className="text-md font-medium text-gray-700">
-                Total:{" "}
-                <span className="text-[#1A3F6B] font-bold">
-                  ${product.priceAtOrderTime * product.quantity}
-                </span>
-              </p>
-            </div>
-          ))}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-center text-gray-700">
+                  {product.quantity}
+                </td>
+                <td className="px-6 py-4 text-center text-gray-700">
+                  ${product.priceAtOrderTime.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-center text-gray-700">
+                  $
+                  {(
+                    product.priceAtOrderTime * product.quantity
+                  ).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4 text-right">
+          <p className="text-lg font-bold text-gray-700">
+            Grand Total:{" "}
+            <span className="text-[#1A3F6B]">
+              ${grandTotal?.toLocaleString()}
+            </span>
+          </p>
         </div>
       </div>
     </div>
