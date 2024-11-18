@@ -146,12 +146,12 @@ const TrendingProducts = () => {
                     {index < 4 && (
                       <div className="absolute top-4 left-4 z-10">
                         <motion.div
-                          className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+                          className="flex items-center gap-1 bg-[#1A3F6B] backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.1 }}
                         >
-                          <TrendingUp size={14} className="text-green-400" />
+                          <TrendingUp size={14} className="text-[#1BD8C4]" />
                           <span>Hot Item</span>
                         </motion.div>
                       </div>
@@ -200,7 +200,7 @@ const TrendingProducts = () => {
                           <p className="text-xl font-medium text-gray-900">
                             ${product.price}
                           </p>
-                          <p className="text-sm text-green-600 font-medium">
+                          <p className="text-sm text-[#1BD8C4] font-medium">
                             Fast Selling
                           </p>
                         </div>

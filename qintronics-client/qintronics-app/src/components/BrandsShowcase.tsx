@@ -108,7 +108,8 @@ const BrandsShowcase = () => {
               Top Tech Brands
             </h2>
             <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-              Explore our curated selection of premium technology brands, each known for innovation and quality.
+              Explore our curated selection of premium technology brands, each
+              known for innovation and quality.
             </p>
           </div>
 
@@ -131,12 +132,12 @@ const BrandsShowcase = () => {
                 >
                   <div className="absolute top-4 left-4 z-10">
                     <motion.div
-                      className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+                      className="flex items-center gap-1 bg-[#1A3F6B] backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <TrendingUp size={14} className="text-purple-400" />
+                      <TrendingUp size={14} className="text-[#1BD8C4]" />
                       <span>Featured</span>
                     </motion.div>
                   </div>
@@ -150,11 +151,11 @@ const BrandsShowcase = () => {
                   </div>
 
                   <div className="p-6 space-y-4">
-                    <div className="min-h-[4rem] flex flex-col justify-between">
+                    {/* <div className="min-h-[4rem] flex flex-col justify-between">
                       <h3 className="text-2xl font-medium text-gray-900 text-center">
                         {brand.name}
                       </h3>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                       <Sparkles size={16} className="text-purple-400" />
@@ -179,7 +180,7 @@ const BrandsShowcase = () => {
           <div className="flex justify-center gap-4 mt-8">
             <motion.button
               className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               disabled={currentPage === 0}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -188,7 +189,9 @@ const BrandsShowcase = () => {
             </motion.button>
             <motion.button
               className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount - 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, pageCount - 1))
+              }
               disabled={currentPage === pageCount - 1}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

@@ -146,12 +146,12 @@ const CardsDiv = () => {
                   >
                     <div className="absolute top-4 left-4 z-10">
                       <motion.div
-                        className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+                        className="flex items-center gap-1 bg-[#1A3F6B] backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Sparkles size={14} className="text-purple-400" />
+                        <Sparkles size={14} className="text-[#1BD8C4]" />
                         <span>New Launch</span>
                       </motion.div>
                     </div>

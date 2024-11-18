@@ -69,7 +69,7 @@ const ProductCard = ({
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
+          className="flex items-center gap-1 bg-[#1A3F6B] backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
         >
           <Star size={12} className="text-yellow-400" />
           <span>Featured</span>
@@ -78,7 +78,7 @@ const ProductCard = ({
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-1 bg-red-500/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
+            className="flex items-center gap-1 bg-[#1BD8C4] backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
           >
             <Percent size={12} />
             <span>Save {product.discount}%</span>
@@ -284,7 +284,7 @@ const SliderDiv = () => {
         </motion.div>
       </AnimatePresence>
 
-      <motion.button
+      {/* <motion.button
         className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => {
           e.stopPropagation();
@@ -306,7 +306,7 @@ const SliderDiv = () => {
         whileTap={{ scale: 0.9 }}
       >
         <ChevronRight className="text-white" size={24} />
-      </motion.button>
+      </motion.button> */}
 
       {/* Slide indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">

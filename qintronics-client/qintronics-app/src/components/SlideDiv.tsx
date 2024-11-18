@@ -205,11 +205,8 @@ const SlideDiv = () => {
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.2 }}
                             >
-                              <div className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                                <Percent
-                                  size={14}
-                                  className="text-orange-400"
-                                />
+                              <div className="flex items-center gap-1 bg-[#1A3F6B] backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                                <Percent size={14} className="text-[#1BD8C4]" />
                                 <span>{product.discount}% OFF</span>
                               </div>
                               <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-black px-3 py-1.5 rounded-full text-sm font-medium">
@@ -279,7 +276,7 @@ const SlideDiv = () => {
                                     ${product.price.toFixed(2)}
                                   </p>
                                 </div>
-                                <p className="text-sm text-green-600 font-medium">
+                                <p className="text-sm text-[#1BD8C4] font-medium">
                                   Fast Selling
                                 </p>
                               </div>
