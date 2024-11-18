@@ -126,8 +126,8 @@ const CompareProducts = () => {
         setCategories(categoriesRes.data);
 
         const productsParams: ProductsRequestParams = {
-          page: 1,
-          pageSize: 9,
+          page: 5,
+          pageSize: 8,
           sortBy: "name",
           sort: "ASC",
           ...(searchTerm && { name: searchTerm }),

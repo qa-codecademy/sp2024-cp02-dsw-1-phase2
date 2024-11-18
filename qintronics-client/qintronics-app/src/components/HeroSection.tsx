@@ -387,9 +387,7 @@ const HeroSection = () => {
               className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full"
             >
               <Sparkles className="text-blue-400" />
-              <Link to="/products">
-                <span>New Collection Available</span>
-              </Link>
+              <span>New Collection Available</span>
             </motion.div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
               Transform Your Space with Style

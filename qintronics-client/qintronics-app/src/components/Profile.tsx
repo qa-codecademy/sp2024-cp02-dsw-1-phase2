@@ -1,438 +1,401 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Pencil, Save, X, ShieldCheck, CreditCard, User } from "lucide-react";
-import axiosInstance from "./../common/utils/axios-instance.util"; // Adjust the import path as needed
+import axios from "axios";
+import React, { useState } from "react";
+import axiosInstance from "./../common/utils/axios-instance.util";
 
-interface UserInfo {
-  id?: string;
+interface FormData {
   firstName: string;
   lastName: string;
   phone: string;
   address: string;
   city: string;
-  postalCode: number | string;
+  postalCode: number | "";
   country: string;
-  ccFullName?: string;
-  ccNum?: string;
-  expDate?: string;
-  cvv?: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  role: string;
-  userInfo: UserInfo;
+  ccFullName: string;
+  ccNum: string;
+  expDate: string;
+  cvv: string;
 }
 
 const Profile = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
-  const [activeSection, setActiveSection] = useState("personal");
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
+    ccFullName: "",
+    ccNum: "",
+    expDate: "",
+    cvv: "",
+  });
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const validateCreditCard = (number: string) => {
+    // Remove spaces and non-digits
+    const cleanNumber = number.replace(/\D/g, "");
+    // Check if the card number starts with valid prefixes
+    const validPrefixes = ["34", "37", "4", "5", "6"];
+    return validPrefixes.some((prefix) => cleanNumber.startsWith(prefix));
+  };
 
-  const fetchUserData = async () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Generate month options (01-12)
+  const months = Array.from({ length: 12 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
+
+  // Generate year options (current year + 10 years)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 11 }, (_, i) =>
+    (currentYear + i).toString().slice(-2)
+  );
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    let formattedValue = value;
+    let isValid = true;
+
+    switch (name) {
+      case "ccNum": {
+        formattedValue = value.replace(/\D/g, "").slice(0, 16);
+        if (formattedValue.length > 0) {
+          isValid = validateCreditCard(formattedValue);
+          if (!isValid) {
+            setError("Credit card number must start with 34, 37, 4, 5 or 6");
+          }
+        }
+        break;
+      }
+      case "cvv": {
+        formattedValue = value.replace(/\D/g, "").slice(0, 4);
+        const cvvNum = parseInt(formattedValue, 10); // Include radix for clarity
+        if (formattedValue.length > 0) {
+          if (cvvNum < 100 || cvvNum > 9999) {
+            setError("CVV must be between 100 and 9999");
+            isValid = false;
+          }
+        }
+        break;
+      }
+      case "phone": {
+        formattedValue = value.replace(/[^\d+]/g, "");
+        break;
+      }
+      case "postalCode": {
+        formattedValue = value.replace(/\D/g, "");
+        break;
+      }
+    }
+
+    if (isValid) {
+      setError(null);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formattedValue,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate before submission
+    if (!validateCreditCard(formData.ccNum)) {
+      setError("Invalid credit card number");
+      return;
+    }
+
+    const cvvNum = parseInt(formData.cvv);
+    if (cvvNum < 100 || cvvNum > 9999) {
+      setError("CVV must be between 100 and 9999");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
     try {
-      const response = await axiosInstance.get("/users/me");
-      setUser(response.data);
-    } catch (error) {
-      showToast("Failed to fetch user information", "error");
+      const payload = {
+        ...formData,
+        postalCode: formData.postalCode
+          ? parseInt(formData.postalCode.toString())
+          : "",
+        ccNum: formData.ccNum.replace(/\s+/g, ""),
+        expDate: `${formData.expDate}-01 00:00:00`,
+        cvv: parseInt(formData.cvv), // Ensure CVV is sent as integer
+      };
+
+      const response = await axiosInstance.patch("/user-info/update", payload);
+
+      if (response.data) {
+        console.log("Update successful:", response.data);
+        setSuccessMessage("Profile updated successfully!");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message?.[0] ||
+            err.response?.data?.message ||
+            "An error occurred while updating the profile. Please check your connection and try again."
+        );
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+      console.error("Update failed:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user?.userInfo) return;
-
-    const { name, value } = e.target;
-
-    setUser((prev) => {
-      if (!prev) return prev;
-
-      return {
-        ...prev,
-        userInfo: {
-          ...prev.userInfo,
-          [name]: value,
-          postalCode: parseInt(value),
-        },
-      };
-    });
-
-    // Clear error when field is edited
-    if (formErrors[name]) {
-      setFormErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
-
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    if (user?.userInfo) {
-      if (!user.userInfo.firstName) errors.firstName = "First name is required";
-      if (!user.userInfo.lastName) errors.lastName = "Last name is required";
-      if (
-        user.userInfo.phone &&
-        !/^\+?[\d\s-]{10,}$/.test(user.userInfo.phone)
-      ) {
-        errors.phone = "Invalid phone number";
-      }
-      if (user.userInfo.ccNum && !/^\d{16}$/.test(user.userInfo.ccNum)) {
-        errors.ccNum = "Card number must be 16 digits";
-      }
-      if (user.userInfo.cvv && !/^\d{3,4}$/.test(user.userInfo.cvv)) {
-        errors.cvv = "CVV must be 3 or 4 digits";
-      }
-    }
-    return errors;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors = validateForm();
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      showToast("Please check the form for errors", "error");
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.patch(
-        "/user-info/update",
-        user?.userInfo
-      );
-      setUser((prev) => (prev ? { ...prev, userInfo: response.data } : null));
-      setIsEditing(false);
-      showToast("Profile updated successfully", "success");
-    } catch (error) {
-      showToast("Failed to update profile", "error");
-    }
-  };
-
-  const FormField = ({
-    label,
-    name,
-    type = "text",
-    value = "",
-    error,
-    disabled = false,
-  }: {
-    label: string;
-    name: string;
-    type?: string;
-    value?: string | number;
-    error?: string;
-    disabled?: boolean;
-  }) => (
-    <div className="space-y-1">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value || ""}
-        onChange={handleChange}
-        disabled={disabled || !isEditing}
-        className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A3F6B] focus:border-[#1A3F6B] disabled:bg-gray-100 disabled:cursor-not-allowed transition-all ${
-          error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
-        }`}
-        placeholder={`Enter ${label.toLowerCase()}`}
-      />
-      {error && <p className="text-sm text-red-500">{error}</p>}
-    </div>
-  );
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 w-64 bg-gray-200 rounded" />
-            <div className="bg-white p-8 rounded-xl shadow-sm space-y-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-200 rounded" />
-              ))}
-            </div>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-2xl shadow-sm space-y-6 overflow-hidden">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Edit Profile
+            </h2>
           </div>
+
+          {error && (
+            <div className="mx-6 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="mx-6 bg-green-50 border border-green-100 text-green-600 px-4 py-3 rounded-xl text-sm">
+              {successMessage}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-6">
+            {/* Personal Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-base font-medium text-gray-900">
+                Personal Information
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+1234567890"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Address Section */}
+            <div className="space-y-4 pt-4">
+              <h3 className="text-base font-medium text-gray-900">Address</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Postal Code
+                  </label>
+                  <input
+                    type="text"
+                    name="postalCode"
+                    value={formData.postalCode}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Payment Information */}
+            <div className="space-y-4 pt-4">
+              <h3 className="text-base font-medium text-gray-900">
+                Payment Details
+              </h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Cardholder Name
+                </label>
+                <input
+                  type="text"
+                  name="ccFullName"
+                  value={formData.ccFullName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Card Number
+                </label>
+                <input
+                  type="text"
+                  name="ccNum"
+                  value={formData.ccNum}
+                  onChange={handleChange}
+                  placeholder="1234 5678 9012 3456"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Expiry Date
+                  </label>
+                  <div className="flex gap-2 items-center">
+                    <select
+                      name="expMonth"
+                      value={formData.expDate.split("-")[1] || ""}
+                      onChange={(e) => {
+                        const year =
+                          formData.expDate.split("-")[0] ||
+                          new Date().getFullYear();
+                        setFormData((prev) => ({
+                          ...prev,
+                          expDate: `${year}-${e.target.value}`,
+                        }));
+                      }}
+                      className="flex-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="">MM</option>
+                      {months.map((month) => (
+                        <option key={month} value={month}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-gray-500">/</span>
+                    <select
+                      name="expYear"
+                      value={formData.expDate.split("-")[0]?.slice(-2) || ""}
+                      onChange={(e) => {
+                        const month = formData.expDate.split("-")[1] || "01";
+                        const fullYear = "20" + e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          expDate: `${fullYear}-${month}`,
+                        }));
+                      }}
+                      className="flex-1 px-3 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="">YY</option>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    CVV
+                  </label>
+                  <input
+                    type="password"
+                    name="cvv"
+                    value={formData.cvv}
+                    onChange={handleChange}
+                    maxLength={4}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-xl transition-colors ${
+                isLoading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
+              } text-white font-medium shadow-sm`}
+            >
+              {isLoading ? "Updating..." : "Save Changes"}
+            </button>
+          </form>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-8"
-        >
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Account Settings
-            </h1>
-            <div className="flex items-center space-x-4">
-              {isEditing ? (
-                <>
-                  <button
-                    onClick={handleSubmit}
-                    className="relative flex items-center justify-center w-10 h-10 bg-[#1A3F6B] text-white rounded-full hover:bg-[#15406D] transition-transform transform hover:scale-105 group"
-                  >
-                    <Save className="h-5 w-5" />
-                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      Save
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="relative flex items-center justify-center w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 group"
-                  >
-                    <X className="h-5 w-5 text-gray-500" />
-                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      Cancel
-                    </span>
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-[#1A3F6B] text-white rounded-lg hover:bg-[#15406D] transition-transform transform hover:scale-105 flex items-center space-x-2"
-                >
-                  <Pencil className="h-4 w-4" />
-                  <span>Edit Profile</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8">
-              <button
-                onClick={() => setActiveSection("personal")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  activeSection === "personal"
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-                }`}
-              >
-                <User className="h-5 w-5 inline-block mr-2" />
-                Personal Information
-              </button>
-              <button
-                onClick={() => setActiveSection("payment")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  activeSection === "payment"
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-                }`}
-              >
-                <CreditCard className="h-5 w-5 inline-block mr-2" />
-                Payment Methods
-              </button>
-              <button
-                onClick={() => setActiveSection("security")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  activeSection === "security"
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-                }`}
-              >
-                <ShieldCheck className="h-5 w-5 inline-block mr-2" />
-                Security
-              </button>
-            </nav>
-          </div>
-
-          {/* Content Sections */}
-          <AnimatePresence mode="wait">
-            {activeSection === "personal" && (
-              <motion.div
-                key="personal"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-white shadow-lg rounded-xl p-8 space-y-8"
-              >
-                <h3 className="text-lg font-medium">Personal Information</h3>
-                <p className="text-gray-600">
-                  Update your personal details and ensure they are accurate.
-                </p>
-
-                <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                  {/* Name Fields */}
-                  <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <FormField
-                      label="First Name"
-                      name="firstName"
-                      value={user?.userInfo.firstName}
-                      error={formErrors.firstName}
-                    />
-                    <FormField
-                      label="Last Name"
-                      name="lastName"
-                      value={user?.userInfo.lastName}
-                      error={formErrors.lastName}
-                    />
-                  </div>
-
-                  {/* Contact Fields */}
-                  <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <FormField
-                      label="Phone"
-                      name="phone"
-                      value={user?.userInfo.phone}
-                      error={formErrors.phone}
-                    />
-                    <FormField
-                      label="Email"
-                      name="email"
-                      value={user?.email}
-                      disabled={true}
-                    />
-                  </div>
-
-                  {/* Address Information Section */}
-                  <FormField
-                    label="Address"
-                    name="address"
-                    value={user?.userInfo.address}
-                  />
-                  <FormField
-                    label="City"
-                    name="city"
-                    value={user?.userInfo.city}
-                  />
-                  <FormField
-                    label="Postal Code"
-                    name="postalCode"
-                    value={user?.userInfo.postalCode}
-                  />
-                  <FormField
-                    label="Country"
-                    name="country"
-                    value={user?.userInfo.country}
-                  />
-                </form>
-              </motion.div>
-            )}
-
-            {activeSection === "payment" && (
-              <motion.div
-                key="payment"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-white shadow-lg rounded-xl p-8 space-y-6"
-              >
-                <h3 className="text-lg font-medium">Payment Details</h3>
-                <p className="text-gray-600">
-                  Please provide your payment details below. Your information is
-                  secure.
-                </p>
-                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Left column */}
-                  <div className="space-y-6">
-                    <FormField
-                      label="Cardholder Name"
-                      name="ccFullName"
-                      value={user?.userInfo.ccFullName}
-                    />
-                    <FormField
-                      label="Expiration Date"
-                      name="expDate"
-                      type="date"
-                      value={user?.userInfo.expDate?.split(" ")[0]}
-                    />
-                  </div>
-
-                  {/* Right column */}
-                  <div className="space-y-6">
-                    <FormField
-                      label="Card Number"
-                      name="ccNum"
-                      value={user?.userInfo.ccNum}
-                      error={formErrors.ccNum}
-                    />
-                    <FormField
-                      label="CVV"
-                      name="cvv"
-                      type="password"
-                      value={user?.userInfo.cvv}
-                      error={formErrors.cvv}
-                    />
-                  </div>
-                </form>
-              </motion.div>
-            )}
-
-            {activeSection === "security" && (
-              <motion.div
-                key="security"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-white shadow-sm rounded-xl p-8"
-              >
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Account Security</h3>
-                  <p className="text-gray-600">
-                    Your account is protected with password authentication.
-                  </p>
-                  <button
-                    className="px-4 py-2 bg-[#1A3F6B] text-white font-medium rounded-lg hover:bg-[#15406D] shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center space-x-2"
-                    onClick={() => {
-                      /* Add password change logic */
-                    }}
-                  >
-                    <ShieldCheck className="h-5 w-5" />
-                    <span>Change Password</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      </div>
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className={`fixed inset-x-0 mx-auto bottom-4 px-6 py-3 rounded-lg shadow-lg text-center ${
-              toast.type === "success" ? "bg-green-500" : "bg-red-500"
-            } text-white w-fit`}
-          >
-            {toast.message}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
