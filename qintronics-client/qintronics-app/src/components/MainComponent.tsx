@@ -1,5 +1,5 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { ArrowUp, ChevronLeft } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Product } from "../common/types/Product-interface";
 import axiosInstance from "../common/utils/axios-instance.util";
@@ -135,28 +135,26 @@ const MainComponent = () => {
       >
         <Sidebar />
       </div>
-      
 
       {/* Main Content */}
-      <div className="flex flex-col min-h-screen w-full bg-white mx-auto">
-
+      <div className="flex flex-col min-h-screen w-full bg-white mx-auto py-6">
         {/* Hero Section */}
-          <HeroSection />
-                          {/* Categories */}
-                          <AnimatedSection className="bg-white border-b border-gray-200">
+        <HeroSection />
+        {/* Categories */}
+        <AnimatedSection className="bg-white border-b border-white">
           <div className="max-w-[100vw]">
             <FeaturedCategories />
           </div>
         </AnimatedSection>
-                {/* Special Offers */}
-                <AnimatedSection className="py-16 bg-gray-50">
+        {/* Special Offers */}
+        <AnimatedSection className="py-16 bg-gray-50">
           <div className="max-w-[80%] mx-auto">
             <SlideDiv products={discountedProducts} />
           </div>
         </AnimatedSection>
 
         {/* Trending Products */}
-        <AnimatedSection >
+        <AnimatedSection>
           <div className="max-w-[100vw] ">
             <TrendingProducts />
           </div>
@@ -170,15 +168,15 @@ const MainComponent = () => {
         </AnimatedSection>
 
         {/* Featured Brands */}
-        <AnimatedSection className="py-16">
+        <AnimatedSection>
           <div className="max-w-[80vw] mx-auto">
             <BrandsShowcase />
           </div>
         </AnimatedSection>
 
         {/* Newsletter */}
-        <AnimatedSection className="bg-white py-16">
-          <div className="max-w-[80vw] mx-auto px-8">
+        <AnimatedSection className="bg-white">
+          <div className="max-w-[90vw] mx-auto px-8">
             <Newsletter />
           </div>
         </AnimatedSection>
@@ -188,7 +186,7 @@ const MainComponent = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: showScrollTop ? 1 : 0 }}
           onClick={scrollToTop}
-          className="fixed bottom-20 right-8 bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-50"
+          className="z-0 fixed bottom-20 right-8 bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
         >
           <ArrowUp size={24} />
         </motion.button>

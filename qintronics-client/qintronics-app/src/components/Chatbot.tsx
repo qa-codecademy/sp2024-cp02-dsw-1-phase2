@@ -45,7 +45,7 @@ const Chatbot: React.FC<{ toggleChat: () => void }> = ({ toggleChat }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-blue-500 text-white p-4 flex justify-between items-center rounded-t-lg">
+      <div className="bg-[#1A3F6B] text-white p-4 flex justify-between items-center rounded-t-lg">
         <h4 className="font-bold">Qinbot</h4>
         <button className="text-lg" onClick={toggleChat}>
           ×
@@ -58,7 +58,7 @@ const Chatbot: React.FC<{ toggleChat: () => void }> = ({ toggleChat }) => {
             key={index}
             className={`p-2 rounded-lg max-w-xs ${
               message.from === "user"
-                ? "bg-blue-500 text-white self-end"
+                ? "bg-[#1A3F6B] text-white self-end"
                 : "bg-gray-200 text-black self-start"
             }`}
           >
@@ -88,7 +88,7 @@ const Chatbot: React.FC<{ toggleChat: () => void }> = ({ toggleChat }) => {
         />
         <button
           type="submit"
-          className="ml-3 bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className="ml-3 bg-[#1A3F6B] text-white px-4 py-2 rounded-lg"
         >
           Send
         </button>

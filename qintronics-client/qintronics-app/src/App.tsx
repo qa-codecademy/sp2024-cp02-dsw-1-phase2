@@ -90,7 +90,7 @@ function App() {
             onClick={toggleChat}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="bg-blue-600 text-white p-4 rounded-full shadow-lg focus:outline-none"
+            className="bg-[#1A3F6B] text-white p-4 rounded-full shadow-lg focus:outline-none"
           >
             💬 Chat
           </motion.button>

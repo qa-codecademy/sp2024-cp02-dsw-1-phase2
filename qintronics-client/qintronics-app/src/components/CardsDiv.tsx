@@ -192,12 +192,12 @@ const CardsDiv = () => {
                           <p className="text-xl font-medium text-gray-900">
                             ${product.price}
                           </p>
-                          <p className="text-sm text-purple-600 font-medium">
+                          <p className="text-sm text-[#1BD8C4] font-medium">
                             Launch Price
                           </p>
                         </div>
                         <motion.button
-                          className="rounded-full bg-black text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                          className="rounded-full bg-[#1A3F6B] text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-white hover:text-[#1A3F6B] hover:shadow-md transition-colors"
                           variants={buttonVariants}
                           whileHover="hover"
                           whileTap="tap"
@@ -215,7 +215,7 @@ const CardsDiv = () => {
 
             <div className="flex justify-center gap-4 mt-8">
               <motion.button
-                className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
                 disabled={currentPage === 0}
                 whileHover={{ scale: 1.05 }}
@@ -224,7 +224,7 @@ const CardsDiv = () => {
                 Previous
               </motion.button>
               <motion.button
-                className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount - 1))}
                 disabled={currentPage === pageCount - 1}
                 whileHover={{ scale: 1.05 }}

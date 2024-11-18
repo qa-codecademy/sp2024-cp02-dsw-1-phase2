@@ -110,12 +110,13 @@ const TrendingProducts = () => {
                 <Flame size={16} className="text-orange-400" />
                 <span>Trending Now</span>
               </motion.div>
-              
+
               <h2 className="text-5xl font-semibold tracking-tight text-gray-900">
                 Most Popular Products
               </h2>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                Discover what everyone's talking about. Our top trending products, curated based on popularity and sales.
+                Discover what everyone's talking about. Our top trending
+                products, curated based on popularity and sales.
               </p>
             </div>
 
@@ -138,7 +139,7 @@ const TrendingProducts = () => {
                   >
                     {index < 4 && (
                       <div className="absolute top-4 left-4 z-10">
-                        <motion.div 
+                        <motion.div
                           className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -149,24 +150,27 @@ const TrendingProducts = () => {
                         </motion.div>
                       </div>
                     )}
-                    
+
                     <div className="relative pt-[100%] bg-white">
                       <motion.img
                         src={product.img}
                         alt={product.name}
                         className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                       />
-                      <motion.div 
+                      <motion.div
                         className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-gray-900"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
                       >
-                        <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                        <Star
+                          size={14}
+                          className="text-yellow-400 fill-yellow-400"
+                        />
                         <span>4.9</span>
                       </motion.div>
                     </div>
-                    
+
                     <div className="p-6 space-y-4">
                       <div className="min-h-[6rem] flex flex-col justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
@@ -176,7 +180,7 @@ const TrendingProducts = () => {
                           {product.description}
                         </p>
                       </div>
-                      
+
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <div className="space-y-1">
                           <p className="text-xl font-medium text-gray-900">
@@ -187,7 +191,7 @@ const TrendingProducts = () => {
                           </p>
                         </div>
                         <motion.button
-                          className="rounded-full bg-black text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                          className="rounded-full bg-[#1A3F6B] text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-white hover:text-[#1A3F6B] hover:shadow-md transition-colors"
                           variants={buttonVariants}
                           whileHover="hover"
                           whileTap="tap"

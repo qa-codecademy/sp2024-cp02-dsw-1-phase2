@@ -1,9 +1,20 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Sparkles, Star, ArrowRight, ShoppingCart, TrendingUp, 
-  Clock, Package, Shield, Heart, Eye, ChevronLeft, 
-  ChevronRight, Percent, Award
+import {
+  Sparkles,
+  Star,
+  ArrowRight,
+  ShoppingCart,
+  TrendingUp,
+  Clock,
+  Package,
+  Shield,
+  Heart,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Percent,
+  Award,
 } from "lucide-react";
 import { BaseProduct, Product } from "../common/types/products-interface";
 import fetchProducts from "../common/utils/fetchProducts";
@@ -28,7 +39,13 @@ const handleAddToCart = (
   addToCart(cartItem);
 };
 
-const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (id: string) => void }) => (
+const ProductCard = ({
+  product,
+  onNavigate,
+}: {
+  product: Product;
+  onNavigate: (id: string) => void;
+}) => (
   <motion.div
     onClick={() => onNavigate(product.id)}
     className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100"
@@ -43,7 +60,7 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
         className="absolute inset-0 w-full h-full object-cover p-4 group-hover:scale-105 transition-transform duration-500"
       />
       <div className="absolute top-3 left-3 flex flex-col gap-2">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
@@ -52,7 +69,7 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
           <span>Featured</span>
         </motion.div>
         {product.discount && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-1 bg-red-500/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium"
@@ -91,7 +108,9 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
                 <Star
                   key={i}
                   size={14}
-                  className={i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
+                  className={
+                    i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                  }
                 />
               ))}
             </div>
@@ -101,7 +120,7 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
         <div className="flex flex-col items-end">
           {product.discount && (
             <span className="text-sm text-gray-500 line-through">
-              ${(product.price * (1 + product.discount/100)).toFixed(2)}
+              ${(product.price * (1 + product.discount / 100)).toFixed(2)}
             </span>
           )}
           <span className="text-xl font-bold text-gray-900">
@@ -118,7 +137,7 @@ const ProductCard = ({ product, onNavigate } : { product: Product, onNavigate: (
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={(event) => handleAddToCart(event, product)}
-          className="px-4 py-2 bg-black text-white rounded-full flex items-center gap-2 hover:bg-gray-800 transition-colors"
+          className="px-4 py-2 bg-[#1A3F6B] text-white rounded-full flex items-center gap-2 hover:bg-white hover:text-[#1A3F6B] hover:shadow-md transition-colors"
         >
           <ShoppingCart size={16} />
           <span>Add</span>
@@ -180,7 +199,7 @@ const SliderDiv = () => {
   }
 
   return (
-    <div 
+    <div
       className="relative h-96 bg-gradient-to-br from-neutral-900 to-black rounded-2xl overflow-hidden shadow-xl group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -194,7 +213,10 @@ const SliderDiv = () => {
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative h-full" onClick={() => navigate(`/products/${products[currentIndex].id}`)}>
+          <div
+            className="relative h-full"
+            onClick={() => navigate(`/products/${products[currentIndex].id}`)}
+          >
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
             <img
               src={products[currentIndex].img}
@@ -216,12 +238,18 @@ const SliderDiv = () => {
                   Best Seller
                 </span>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-2">{products[currentIndex].name}</h2>
-              <p className="text-white/80 mb-4 line-clamp-2">{products[currentIndex].description}</p>
+              <h2 className="text-3xl font-bold text-white mb-2">
+                {products[currentIndex].name}
+              </h2>
+              <p className="text-white/80 mb-4 line-clamp-2">
+                {products[currentIndex].description}
+              </p>
               <div className="flex items-center gap-4">
                 <div className="text-white">
                   <span className="text-sm opacity-80">Starting at</span>
-                  <div className="text-2xl font-bold">${products[currentIndex].price}</div>
+                  <div className="text-2xl font-bold">
+                    ${products[currentIndex].price}
+                  </div>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -237,19 +265,25 @@ const SliderDiv = () => {
           </div>
         </motion.div>
       </AnimatePresence>
-      
+
       <motion.button
         className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={(e) => { e.stopPropagation(); prevSlide(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          prevSlide();
+        }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
         <ChevronLeft className="text-white" size={24} />
       </motion.button>
-      
+
       <motion.button
         className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={(e) => { e.stopPropagation(); nextSlide(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          nextSlide();
+        }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
@@ -262,7 +296,7 @@ const SliderDiv = () => {
           <button
             key={index}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'bg-white w-4' : 'bg-white/50'
+              index === currentIndex ? "bg-white w-4" : "bg-white/50"
             }`}
             onClick={() => {
               setCurrentIndex(index);
@@ -301,18 +335,18 @@ const HeroSection = () => {
     {
       icon: <Clock className="text-blue-500" />,
       title: "Same Day Delivery",
-      description: "Order before 2 PM"
+      description: "Order before 2 PM",
     },
     {
       icon: <Shield className="text-green-500" />,
       title: "Secure Shopping",
-      description: "Protected Payments"
+      description: "Protected Payments",
     },
     {
       icon: <Package className="text-purple-500" />,
       title: "Free Returns",
-      description: "30-Day Guarantee"
-    }
+      description: "30-Day Guarantee",
+    },
   ];
 
   return (
@@ -323,7 +357,7 @@ const HeroSection = () => {
           animate="visible"
           variants={{
             hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
           }}
           className="space-y-8"
         >
@@ -335,13 +369,16 @@ const HeroSection = () => {
               className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full"
             >
               <Sparkles className="text-blue-400" />
-              <span>New Collection Available</span>
+              <Link to="/products">
+                <span>New Collection Available</span>
+              </Link>
             </motion.div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
               Transform Your Space with Style
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore our curated selection of premium products designed to elevate your lifestyle.
+              Explore our curated selection of premium products designed to
+              elevate your lifestyle.
             </p>
           </div>
 
@@ -355,9 +392,7 @@ const HeroSection = () => {
                 transition={{ delay: index * 0.1 }}
                 className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  {feature.icon}
-                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">{feature.icon}</div>
                 <div>
                   <h3 className="font-medium text-gray-900">{feature.title}</h3>
                   <p className="text-sm text-gray-500">{feature.description}</p>
@@ -375,12 +410,12 @@ const HeroSection = () => {
 
             {/* Top Trending Products */}
             <div className="col-span-12 lg:col-span-4 space-y-6">
-<FlashSale/>
+              <FlashSale />
             </div>
 
             {/* Featured Products Grid */}
             <div className="col-span-12">
-              <div className="flex items-center justify-between mb-6">
+              {/* <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Featured Products</h2>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -391,8 +426,8 @@ const HeroSection = () => {
                   View All
                   <ArrowRight size={16} />
                 </motion.button>
-              </div>
-              
+              </div> */}
+
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(3)].map((_, i) => (

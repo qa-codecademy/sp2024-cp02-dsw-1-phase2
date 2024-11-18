@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ShoppingCart, 
-  Flame, 
+import {
+  ShoppingCart,
+  Flame,
   Percent,
   Star,
   Clock,
   Box,
-  TrendingUp
+  TrendingUp,
+  ArrowRight,
 } from "lucide-react";
 import { Product } from "../common/types/Product-interface";
 import fetchProducts from "../common/utils/fetchProducts";
@@ -16,8 +17,7 @@ import { CartItem } from "../common/interfaces/cart.item.interface";
 import { useNavigate } from "react-router-dom";
 import { BaseProduct } from "../common/types/products-interface";
 
-
-const SlideDiv: FC = () => {
+const SlideDiv = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -116,7 +116,9 @@ const SlideDiv: FC = () => {
           </div>
         ) : products.length === 0 ? (
           <div className="flex justify-center items-center h-64">
-            <p className="text-gray-500 text-lg">No discounted products available at the moment.</p>
+            <p className="text-gray-500 text-lg">
+              No discounted products available at the moment.
+            </p>
           </div>
         ) : (
           <motion.div
@@ -134,22 +136,34 @@ const SlideDiv: FC = () => {
                 <Flame size={16} className="text-orange-400" />
                 <span>Flash Sales</span>
               </motion.div>
-              
+
               <h2 className="text-5xl font-semibold tracking-tight text-gray-900">
                 Limited Time Deals
               </h2>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                Don't miss out on these exclusive discounts. Limited stock available.
+                Don't miss out on these exclusive discounts. Limited stock
+                available.
               </p>
+              <div className="flex justify-end">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md  rounded-full flex items-center gap-2"
+                  onClick={() => navigate("/sales")}
+                >
+                  View All
+                  <ArrowRight size={16} />
+                </motion.button>
+              </div>
             </div>
 
             <div className="relative">
-              <div 
+              <div
                 ref={scrollContainerRef}
                 className="overflow-x-auto custom-scrollbar scroll-smooth"
               >
                 <AnimatePresence mode="wait">
-                  <motion.div 
+                  <motion.div
                     className="flex gap-8 pb-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -179,28 +193,37 @@ const SlideDiv: FC = () => {
                               alt={product.name}
                               className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                             />
-                            <motion.div 
+                            <motion.div
                               className="absolute top-4 left-4 flex flex-col gap-2"
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.2 }}
                             >
                               <div className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                                <Percent size={14} className="text-orange-400" />
+                                <Percent
+                                  size={14}
+                                  className="text-orange-400"
+                                />
                                 <span>{product.discount}% OFF</span>
                               </div>
                               <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-black px-3 py-1.5 rounded-full text-sm font-medium">
-                                <TrendingUp size={14} className="text-green-400" />
+                                <TrendingUp
+                                  size={14}
+                                  className="text-green-400"
+                                />
                                 <span>Save ${savings}</span>
                               </div>
                             </motion.div>
-                            <motion.div 
+                            <motion.div
                               className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-gray-900"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.5 }}
                             >
-                              <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                              <Star
+                                size={14}
+                                className="text-yellow-400 fill-yellow-400"
+                              />
                               <span>4.9</span>
                             </motion.div>
                           </div>
@@ -219,12 +242,17 @@ const SlideDiv: FC = () => {
 
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Clock size={16} />
-                              <span>Ends in {Math.floor(Math.random() * 24)}h {Math.floor(Math.random() * 60)}m</span>
+                              <span>
+                                Ends in {Math.floor(Math.random() * 24)}h{" "}
+                                {Math.floor(Math.random() * 60)}m
+                              </span>
                             </div>
 
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Box size={16} />
-                              <span>{Math.floor(Math.random() * 100)} units left</span>
+                              <span>
+                                {Math.floor(Math.random() * 100)} units left
+                              </span>
                             </div>
 
                             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -243,11 +271,13 @@ const SlideDiv: FC = () => {
                               </div>
 
                               <motion.button
-                                className="rounded-full bg-black text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                                className="rounded-full bg-[#1A3F6B] text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-white hover:text-[#1A3F6B] hover:shadow-md transition-colors"
                                 variants={buttonVariants}
                                 whileHover="hover"
                                 whileTap="tap"
-                                onClick={(event) => handleAddToCart(event, product)}
+                                onClick={(event) =>
+                                  handleAddToCart(event, product)
+                                }
                               >
                                 <ShoppingCart size={16} />
                                 <span>Add</span>
