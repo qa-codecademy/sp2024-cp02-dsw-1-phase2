@@ -7,6 +7,12 @@ import { BaseProduct, Product } from "../common/types/products-interface";
 import addToCart from "../common/utils/addToCart";
 import { fetchProducts } from "../common/utils/fetchProducts";
 
+const getRandomRating = () => {
+  const randomRating = 3.5 + Math.random() * 1.5; // Scale random number to 3.5–5
+  const filledStars = Math.round(randomRating); // Rounded to nearest whole number
+  return { randomRating: randomRating.toFixed(1), filledStars };
+};
+
 const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -163,11 +169,19 @@ const TrendingProducts = () => {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
                       >
-                        <Star
-                          size={14}
-                          className="text-yellow-400 fill-yellow-400"
-                        />
-                        <span>4.9</span>
+                        {(() => {
+                          const { randomRating } = getRandomRating();
+
+                          return (
+                            <>
+                              <Star
+                                size={14}
+                                className="text-yellow-400 fill-yellow-400"
+                              />
+                              <span>{randomRating}</span>
+                            </>
+                          );
+                        })()}
                       </motion.div>
                     </div>
 

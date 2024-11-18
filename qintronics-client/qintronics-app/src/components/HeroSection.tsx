@@ -40,7 +40,7 @@ const handleAddToCart = (
 };
 
 const getRandomRating = () => {
-  const randomRating = Math.random() * 5; // Random rating between 0 and 5
+  const randomRating = 3.5 + Math.random() * 1.5; // Scale random number to 3.5–5
   const filledStars = Math.round(randomRating); // Rounded to nearest whole number
   return { randomRating: randomRating.toFixed(1), filledStars };
 };
