@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BaseProduct, Product } from "../common/types/products-interface";
 import { fetchProducts } from "../common/utils/fetchProducts";
-import { ShoppingCart, Sparkles, Clock, Box, } from "lucide-react";
+import { ShoppingCart, Sparkles, Clock, Box } from "lucide-react";
 import addToCart from "../common/utils/addToCart";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 import { useNavigate } from "react-router-dom";
@@ -117,19 +117,20 @@ const CardsDiv = () => {
                 <Sparkles size={16} className="text-purple-400" />
                 <span>Just Launched</span>
               </motion.div>
-              
+
               <h2 className="text-5xl font-semibold tracking-tight text-gray-900">
                 New Arrivals
               </h2>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                Be among the first to explore our latest products. Fresh arrivals that set new trends.
+                Be among the first to explore our latest products. Fresh
+                arrivals that set new trends.
               </p>
             </div>
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentPage}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 cursor-pointer"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -144,7 +145,7 @@ const CardsDiv = () => {
                     onClick={() => handleNavigateClick(product.id)}
                   >
                     <div className="absolute top-4 left-4 z-10">
-                      <motion.div 
+                      <motion.div
                         className="flex items-center gap-1 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -154,14 +155,14 @@ const CardsDiv = () => {
                         <span>New Launch</span>
                       </motion.div>
                     </div>
-                    
+
                     <div className="relative pt-[100%] bg-white">
                       <motion.img
                         src={product.img}
                         alt={product.name}
                         className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                       />
-                      <motion.div 
+                      <motion.div
                         className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-gray-900"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -171,7 +172,7 @@ const CardsDiv = () => {
                         <span>{Math.floor(Math.random() * 24)}h ago</span>
                       </motion.div>
                     </div>
-                    
+
                     <div className="p-6 space-y-4">
                       <div className="min-h-[6rem] flex flex-col justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
@@ -184,9 +185,11 @@ const CardsDiv = () => {
 
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Box size={16} />
-                        <span>Only {Math.floor(Math.random() * 50) + 1} in stock</span>
+                        <span>
+                          Only {Math.floor(Math.random() * 50) + 1} in stock
+                        </span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <div className="space-y-1">
                           <p className="text-xl font-medium text-gray-900">
@@ -216,7 +219,7 @@ const CardsDiv = () => {
             <div className="flex justify-center gap-4 mt-8">
               <motion.button
                 className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
                 disabled={currentPage === 0}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -225,7 +228,9 @@ const CardsDiv = () => {
               </motion.button>
               <motion.button
                 className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount - 1))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, pageCount - 1))
+                }
                 disabled={currentPage === pageCount - 1}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

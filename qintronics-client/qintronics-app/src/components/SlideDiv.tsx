@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -108,7 +108,7 @@ const SlideDiv = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-neutral-50 to-white py-16">
+    <div className="bg-gradient-to-b from-neutral-50 to-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
@@ -182,7 +182,7 @@ const SlideDiv = () => {
                       return (
                         <motion.div
                           key={product.id}
-                          className="flex-none w-80 group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+                          className="flex-none w-80 group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
                           variants={cardVariants}
                           whileHover="hover"
                           onClick={() => navigate(`/products/${product.id}`)}

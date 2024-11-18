@@ -39,6 +39,12 @@ const handleAddToCart = (
   addToCart(cartItem);
 };
 
+const getRandomRating = () => {
+  const randomRating = Math.random() * 5; // Random rating between 0 and 5
+  const filledStars = Math.round(randomRating); // Rounded to nearest whole number
+  return { randomRating: randomRating.toFixed(1), filledStars };
+};
+
 const ProductCard = ({
   product,
   onNavigate,
@@ -103,18 +109,30 @@ const ProductCard = ({
             {product.name}
           </h3>
           <div className="flex items-center gap-2 mt-1">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  className={
-                    i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                  }
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-500">(4.0)</span>
+            {(() => {
+              const { randomRating, filledStars } = getRandomRating();
+
+              return (
+                <>
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={14}
+                        className={
+                          i < filledStars
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    ({randomRating})
+                  </span>
+                </>
+              );
+            })()}
           </div>
         </div>
         <div className="flex flex-col items-end">
@@ -439,7 +457,7 @@ const HeroSection = () => {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 cursor-pointer">
                   {products.slice(0, 3).map((product) => (
                     <ProductCard
                       key={product.id}
