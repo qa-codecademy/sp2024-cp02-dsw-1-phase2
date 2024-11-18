@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -38,6 +40,9 @@ import { ProductUpdateDto } from './dtos/product-update.dto';
 import { Product } from './product.entity';
 import { ProductsService } from './products.service';
 import { getProductByIdQueryDto } from './dtos/product-by-id.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -92,12 +97,64 @@ export class ProductsController {
   @ApiBody({
     type: ProductCreateDto,
   })
-  createProduct(@Body() body: ProductCreateDto): Promise<Product> {
+  @UseInterceptors(
+    FileInterceptor('img', {
+      storage: diskStorage({
+        destination: path.join(
+          __dirname,
+          '../../../qintronics-client/qintronics-app/public/data/images/test',
+        ),
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+        },
+      }),
+
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  createProduct(
+    @Body() body: ProductCreateDto,
+    @UploadedFile() img: Express.Multer.File,
+  ): Promise<Product> {
+    if (!img) {
+      throw new Error('Image file is required');
+    }
+    const imageURL = `/data/images/test/${img.filename}`;
+    body.img = imageURL;
+    body.specifications = JSON.parse(body.specifications);
+
+    console.log(body);
+
     return this.productsService.createProduct(body);
   }
 
   // ========== UPDATE PRODUCT ==========
   @Put('/:id')
+  @UseInterceptors(
+    FileInterceptor('img', {
+      storage: diskStorage({
+        destination: path.join(
+          __dirname,
+          '../../../qintronics-client/qintronics-app/public/data/images/test',
+        ),
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+        },
+      }),
+
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @ApiOperation({ summary: 'Update Product' })
   @ApiOkResponse({
     description: 'Product updated successfully.',
@@ -120,7 +177,17 @@ export class ProductsController {
   updateProduct(
     @Param('id') id: string,
     @Body() body: ProductUpdateDto,
+    @UploadedFile() img: Express.Multer.File,
   ): Promise<Product> {
+    if (img) {
+      const imageURL = `/data/images/test/${img.filename}`;
+      body.img = imageURL;
+    }
+
+    body.specifications = JSON.parse(body.specifications);
+
+    console.log(body);
+
     return this.productsService.updateProduct(id, body);
   }
 

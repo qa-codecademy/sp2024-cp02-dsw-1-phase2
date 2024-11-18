@@ -1,6 +1,6 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
+import React from "react";
 import { Product } from "../common/types/Product-interface";
 
 interface ProductGridProps {
@@ -12,24 +12,15 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({
   products,
-  onCreateProduct,
   onUpdateProduct,
   onRemoveProduct,
 }) => (
   <div>
-    <motion.button
-      onClick={onCreateProduct}
-      className="mb-6 px-4 py-2 bg-blue-500 text-white rounded-md flex items-center hover:bg-blue-600 transition-colors duration-200"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <PlusCircle size={16} className="mr-2" /> Create Product
-    </motion.button>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
         <motion.div
           key={product.id}
-          className="bg-white p-4 rounded-lg shadow-sm"
+          className="bg-white p-4 rounded-lg shadow-sm transition-all duration-200 hover:scale-105"
           whileHover={{ y: -5, transition: { duration: 0.2 } }}
         >
           <img
@@ -48,7 +39,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           <div className="mt-4 flex justify-end space-x-2">
             <motion.button
               onClick={() => onUpdateProduct(product.id)}
-              className="p-2 bg-blue-500 text-white rounded-full"
+              className="p-2 bg-[#1A3F6B] text-white rounded-full"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
