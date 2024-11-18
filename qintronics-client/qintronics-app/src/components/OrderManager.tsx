@@ -4,6 +4,15 @@ import axiosInstance from "../common/utils/axios-instance.util";
 import { AuthContext } from "../context/auth.context";
 import { useNavigate } from "react-router-dom";
 
+// Import icons from lucide-react
+import {
+  ShoppingCart,
+  DollarSign,
+  MapPin,
+  CalendarPlus2,
+  CalendarClock,
+} from "lucide-react";
+
 interface Product {
   id: string;
   name: string;
@@ -43,12 +52,6 @@ const OrderManager: React.FC = () => {
     fetchOrders();
   }, [user]);
 
-  useEffect(() => {
-    if (user?.role === "Customer") {
-      setOrders(orders.filter((order) => order.email === user?.email));
-    }
-  }, [user]);
-
   const fetchOrders = async () => {
     if (user?.role === "Customer") {
       await axiosInstance.get(`/orders/${user?.userId}`).then((res) => {
@@ -83,7 +86,9 @@ const OrderManager: React.FC = () => {
     }
 
     if (status === "Canceled") {
-      await axiosInstance.put(`/orders/cancel/${orderId}`).then((res) => console.log(res));
+      await axiosInstance
+        .put(`/orders/cancel/${orderId}`)
+        .then((res) => console.log(res));
     }
 
     if (status === "Delivered") {
@@ -98,13 +103,22 @@ const OrderManager: React.FC = () => {
   };
 
   const getOrderStatus = (order: Order) => {
-    if (!order.isDelivered && !order.isTaken && !order.isCanceled && !order.isPaid)
+    if (
+      !order.isDelivered &&
+      !order.isTaken &&
+      !order.isCanceled &&
+      !order.isPaid
+    )
       return <p className="font-semibold text-gray-500">Unpaid</p>;
 
-    if (order.isDelivered) return <p className="font-semibold text-green-500">Delivered</p>;
-    if (order.isTaken) return <p className="font-semibold text-yellow-500">Delivering...</p>;
-    if (order.isCanceled) return <p className="font-semibold text-red-500">Cancelled</p>;
-    if (order.isPaid) return <p className="font-semibold text-green-500">Paid</p>;
+    if (order.isDelivered)
+      return <p className="font-semibold text-green-500">Delivered</p>;
+    if (order.isTaken)
+      return <p className="font-semibold text-yellow-500">Delivering...</p>;
+    if (order.isCanceled)
+      return <p className="font-semibold text-red-500">Cancelled</p>;
+    if (order.isPaid)
+      return <p className="font-semibold text-green-500">Paid</p>;
   };
 
   if (loading) {
@@ -132,92 +146,129 @@ const OrderManager: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="space-y-8"
+      className="space-y-8 px-4 lg:px-16 xl:px-24 bg-gray-50 py-10 min-h-screen flex justify-center"
     >
-      <h2 className="text-3xl font-light text-gray-800 mb-8">Order Management</h2>
+      <div className="max-w-7xl w-full space-y-6">
+        {/* Header */}
+        <h2 className="text-4xl font-semibold text-[#1A3F6B] text-center mb-8">
+          Order Management
+        </h2>
 
-      <div className="space-y-4">
-        {orders.map((order, index) => (
-          <motion.div
-            key={order.id}
-            className="flex items-center justify-between p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow duration-200"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => navigate(`/order/${order.id}`)}
-          >
-            <div className="flex flex-col justify-center gap-2 w-full cursor-pointer">
-              <div className="flex justify-between items-center">
-                <p className="italic">Order #{index + 1}</p>
+        {/* Orders */}
+        <div className="space-y-6">
+          {orders.map((order, index) => (
+            <motion.div
+              key={order.id}
+              className="relative flex flex-col p-6 border border-gray-200 bg-white rounded-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => navigate(`/order/${order.id}`)}
+            >
+              {/* Order Header */}
+              <div className="flex justify-between items-center mb-4">
+                <p className="italic text-lg font-medium text-gray-700">
+                  Order #{index + 1}
+                </p>
                 {getOrderStatus(order)}
               </div>
-              <hr />
-              <p>
-                <span className="font-semibold">Products: </span>
-                {order.orderProduct.length}
-              </p>
-              <p>
-                <span className="font-semibold">Total: </span>${order.total.toLocaleString()}
-              </p>
-              <p>
-                <span className="font-semibold">Address: </span>
-                {order.address}, {order.city}, {order.zip}
-              </p>
-              <p>
-                <span className="font-semibold">Created at: </span>
-                {getCreatedAtDate(order?.createdAt)}
-              </p>
-              <p>
-                <span className="font-semibold">Preferred Delivery Date: </span>
-                {order.prefDeliveryDate}
-              </p>
-              {(user?.role === "Customer" || user?.role === "Admin") &&
-                order.isDelivered === false &&
-                order.isTaken === false &&
-                order.isCanceled === false && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOrderStatusChange("Canceled", order.id);
-                    }}
-                    className="absolute bottom-5 right-5 bg-red-500 hover:scale-105 py-2 px-4 rounded-xl text-white font-bold text-sm shadow-xl"
-                  >
-                    Cancel
-                  </button>
-                )}
+              <hr className="border-gray-300 mb-4" />
 
-              {user?.role === "Delivery_Person" &&
-                order.isDelivered === false &&
-                order.isTaken === false &&
-                order.isCanceled === false && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOrderStatusChange("Taken", order.id);
-                    }}
-                    className="absolute bottom-5 right-5 bg-blue-600 hover:scale-105 py-2 px-4 rounded-xl text-white font-bold text-sm shadow-xl"
-                  >
-                    Take Order
-                  </button>
-                )}
+              {/* Order Details */}
+              <div className="space-y-4">
+                <p className="flex items-center gap-3">
+                  <ShoppingCart className="w-6 h-6 text-gray-600" />
+                  <span className="font-semibold text-gray-800">
+                    Products:{" "}
+                  </span>
+                  <span className="text-gray-700">
+                    {order.orderProduct.length}
+                  </span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <DollarSign className="w-6 h-6 text-gray-600" />
+                  <span className="font-semibold text-gray-800">Total: </span>
+                  <span className="text-gray-700">
+                    ${order.total.toLocaleString()}
+                  </span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <MapPin className="w-6 h-6 text-gray-600" />
+                  <span className="font-semibold text-gray-800">Address: </span>
+                  <span className="text-gray-700">
+                    {order.address}, {order.city}, {order.zip}
+                  </span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <CalendarPlus2 className="w-6 h-6 text-gray-600" />
+                  <span className="font-semibold text-gray-800">
+                    Created at:{" "}
+                  </span>
+                  <span className="text-gray-700">
+                    {getCreatedAtDate(order?.createdAt)}
+                  </span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <CalendarClock className="w-6 h-6 text-gray-600" />
+                  <span className="font-semibold text-gray-800">
+                    Preferred Delivery Date:{" "}
+                  </span>
+                  <span className="text-gray-700">
+                    {order.prefDeliveryDate}
+                  </span>
+                </p>
+              </div>
 
-              {user?.role === "Delivery_Person" &&
-                order.isDelivered === false &&
-                order.isTaken === true &&
-                order.isCanceled === false && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOrderStatusChange("Delivered", order.id);
-                    }}
-                    className="absolute bottom-5 right-5 bg-blue-600 hover:scale-105 py-2 px-4 rounded-xl text-white font-bold text-sm shadow-xl"
-                  >
-                    Deliver Order
-                  </button>
-                )}
-            </div>
-          </motion.div>
-        ))}
+              {/* Action Buttons */}
+              <div className="mt-4 flex justify-end gap-4">
+                {(user?.role === "Customer" || user?.role === "Admin") &&
+                  !order.isDelivered &&
+                  !order.isTaken &&
+                  !order.isCanceled && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOrderStatusChange("Canceled", order.id);
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-300"
+                    >
+                      Cancel
+                    </button>
+                  )}
+
+                {user?.role === "Delivery_Person" &&
+                  !order.isDelivered &&
+                  !order.isTaken &&
+                  !order.isCanceled && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOrderStatusChange("Taken", order.id);
+                      }}
+                      className="bg-[#1A3F6B] hover:bg-[#123456] text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-300"
+                    >
+                      Take Order
+                    </button>
+                  )}
+
+                {user?.role === "Delivery_Person" &&
+                  !order.isDelivered &&
+                  order.isTaken &&
+                  !order.isCanceled && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOrderStatusChange("Delivered", order.id);
+                      }}
+                      className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-300"
+                    >
+                      Deliver Order
+                    </button>
+                  )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
