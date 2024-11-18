@@ -114,7 +114,7 @@ const SlideDiv = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-neutral-50 to-white py-8">
+    <div className="bg-gradient-to-b from-neutral-50 to-white py-8 rounded-lg shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">

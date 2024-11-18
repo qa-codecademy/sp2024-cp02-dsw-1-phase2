@@ -218,7 +218,7 @@ const SliderDiv = () => {
 
   return (
     <div
-      className="relative h-96 bg-gradient-to-br from-neutral-900 to-black rounded-2xl overflow-hidden shadow-xl group"
+      className="relative h-96 bg-white overflow-hidden shadow-xl group rounded-lg"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -239,7 +239,7 @@ const SliderDiv = () => {
             <img
               src={products[currentIndex].img}
               alt={products[currentIndex].name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-scale-down"
             />
             <motion.div
               className="absolute inset-0 flex flex-col justify-end p-6"
@@ -247,11 +247,11 @@ const SliderDiv = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-sm text-white border border-white/20 flex items-center gap-2">
-                  <TrendingUp size={14} className="text-green-400" />
+                <span className="bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full text-sm text-white border border-white/20 flex items-center gap-2">
+                  <TrendingUp size={14} className="text-[#1BD8C4]" />
                   Trending
                 </span>
-                <span className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-sm text-white border border-white/20 flex items-center gap-2">
+                <span className="bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full text-sm text-white border border-white/20 flex items-center gap-2">
                   <Award size={14} className="text-yellow-400" />
                   Best Seller
                 </span>
