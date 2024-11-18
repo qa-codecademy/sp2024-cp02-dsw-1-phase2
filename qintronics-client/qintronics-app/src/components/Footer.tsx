@@ -135,7 +135,7 @@ const Footer = () => {
         </div>
         <div className="mt-12 pt-8 border-t border-gray-400 text-center">
           <p className="text-sm">
-            &copy; 2024 Qintronics. All rights reserved.
+            &copy; {new Date().getFullYear()} Qintronics. All rights reserved.
           </p>
         </div>
       </div>

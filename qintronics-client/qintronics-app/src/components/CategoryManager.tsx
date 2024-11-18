@@ -29,7 +29,7 @@ const CategoryManager: React.FC = () => {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [icon, setIcon] = useState<File | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // For success messages
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
