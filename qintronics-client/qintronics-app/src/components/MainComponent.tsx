@@ -111,7 +111,7 @@ const MainComponent = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -119,25 +119,8 @@ const MainComponent = () => {
 
   return (
     <div className="flex relative" ref={mainRef}>
-      {/* Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black opacity-10 z-40"
-          onClick={toggleSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div
-        className={`fixed top-32 left-0 bg-white transition-transform duration-300 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } z-50 h-[calc(100vh-20rem)]`}
-      >
-        <Sidebar />
-      </div>
-
       {/* Main Content */}
-      <div className="flex flex-col min-h-screen w-full bg-white mx-auto py-6">
+      <div className="flex flex-col min-h-screen max-w-[100vw] bg-white mx-auto py-6">
         {/* Hero Section */}
         <HeroSection />
         {/* Categories */}

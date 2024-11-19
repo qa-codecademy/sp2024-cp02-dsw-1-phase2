@@ -64,7 +64,7 @@ const CheckoutForm: React.FC = () => {
           phone: phone || "",
           address: address || "",
           city: city || "",
-          zipCode: postalCode.toString() || "",
+          zipCode: postalCode || "",
           deliveryDay: "",
         });
       })
