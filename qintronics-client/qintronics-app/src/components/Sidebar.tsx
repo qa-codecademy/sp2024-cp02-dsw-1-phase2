@@ -42,6 +42,7 @@ const Sidebar = React.memo(() => {
   const handleCategoryClick = (categoryName: string) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedCategory(categoryName);
+    console.log(categoryName);
     if (categoryName === "Gift Cards") {
       navigate("/category/gift-cards");
     } else {

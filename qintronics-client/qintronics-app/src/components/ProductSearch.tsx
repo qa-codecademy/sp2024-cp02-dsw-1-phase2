@@ -10,7 +10,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
   setSearchTerm,
 }) => {
   return (
-    <div className="mb-4">
+    <div>
       <input
         type="text"
         value={searchTerm}

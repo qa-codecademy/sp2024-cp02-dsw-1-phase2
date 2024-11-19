@@ -30,16 +30,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           />
           <h3 className="text-lg font-medium mb-2">{product.name}</h3>
           <p className="text-gray-600 mb-2">{product.brand}</p>
-          <p className="text-blue-600 font-medium">
+          <p className="text-[#1A3F6B] font-bold">
             ${product.price.toFixed(2)}
           </p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500 mt-2 font-bold">
             Stock: {product.availability}
           </p>
           <div className="mt-4 flex justify-end space-x-2">
             <motion.button
               onClick={() => onUpdateProduct(product.id)}
-              className="p-2 bg-[#1A3F6B] text-white rounded-full"
+              className="p-2 bg-[#1A3F6B] text-white rounded"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -47,7 +47,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             </motion.button>
             <motion.button
               onClick={() => onRemoveProduct(product.id)}
-              className="p-2 bg-red-500 text-white rounded-full"
+              className="p-2 bg-red-500 text-white rounded"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >

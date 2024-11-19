@@ -143,10 +143,10 @@ body {
 }
 
 /* Optional: Adjustments for the input field */
-input {
+/* input {
   border: none;
   outline: none;
-}
+} */
 
 input::placeholder {
   color: #aaa; /* Light gray placeholder */

@@ -2,7 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
-import { FindOptionsWhere, ILike, MoreThan, Not, Repository } from 'typeorm';
+import {
+  Equal,
+  FindOptionsWhere,
+  ILike,
+  MoreThan,
+  Not,
+  Repository,
+} from 'typeorm';
 import { ProductCreateDto } from './dtos/product-create.dto';
 import { ProductQueryDto } from './dtos/product-query.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
@@ -35,12 +42,20 @@ export class ProductsService {
     sort = 'ASC',
     userId,
     random = false,
+    includeGiftCards = false,
   }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
 
     const giftCardCategory = await this.categoryRepository.findOne({
       where: { name: ILike('Gift Cards') },
     });
+
+    if (!includeGiftCards && giftCardCategory) {
+      whereQuery = {
+        ...whereQuery,
+        categoryId: Not(Equal(giftCardCategory.id)),
+      };
+    }
 
     if (discount) {
       whereQuery = {

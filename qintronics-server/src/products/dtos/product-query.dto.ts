@@ -95,4 +95,13 @@ export class ProductQueryDto {
   @IsOptional()
   @Type(() => Boolean)
   random?: boolean;
+
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Include Gift Cards?',
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  includeGiftCards?: boolean;
 }

@@ -133,6 +133,7 @@ const GiftCard = () => {
         categoryName: "Gift Cards",
         page: 1,
         pageSize: 1,
+        includeGiftCards: true,
       })
       .then((res) => {
         console.log(res.data.products[0].id);
@@ -343,9 +344,9 @@ const GiftCard = () => {
                   key={amount}
                   className={`cursor-pointer flex justify-center items-center h-20 w-full sm:h-24 sm:w-24 border-2 rounded-lg transition-all duration-300 ${
                     selectedAmount === amount
-                      ? "border-blue-500 bg-blue-100 shadow-lg"
+                      ? "border-[#1A3F6B] bg-[#1A3F6B]/30 shadow-lg"
                       : "border-gray-300 bg-gray-100"
-                  } hover:bg-blue-50 hover:shadow-md hover:border-blue-500`}
+                  } hover:bg-[#1A3F6B]/30 hover:shadow-md hover:border-[#1A3F6B]/30`}
                 >
                   <input
                     type="radio"

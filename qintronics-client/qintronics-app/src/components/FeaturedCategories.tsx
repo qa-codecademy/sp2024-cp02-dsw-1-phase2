@@ -157,7 +157,11 @@ const FeaturedCategories = () => {
                   type: "spring",
                   stiffness: 100,
                 }}
-                onClick={() => navigate(`/category/${category.name}`)}
+                onClick={
+                  category.name === "Gift Cards"
+                    ? () => navigate("/category/gift-cards")
+                    : () => navigate(`/category/${category.name}`)
+                }
                 onHoverStart={() => setHoveredIndex(idx)}
                 onHoverEnd={() => setHoveredIndex(null)}
                 className="group cursor-pointer"

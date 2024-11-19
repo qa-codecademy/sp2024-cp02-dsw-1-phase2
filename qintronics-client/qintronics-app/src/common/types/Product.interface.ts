@@ -15,7 +15,7 @@ export interface Product {
   brand: string;
   description: string;
   img: string;
-  specifications: Specifications;
+  specifications: any;
   price: number;
   warranty: string;
   availability: number;

@@ -6,20 +6,25 @@ import Pagination from "./Pagination";
 import ProductForm from "./ProductForm";
 import ProductGrid from "./ProductGrid";
 import ProductSearch from "./ProductSearch";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const ProductManagement = () => {
   // State management
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(5); // Changed from 5 to 1 as starting page
+  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    id: string | null;
+    isOpen: boolean;
+  }>({ id: null, isOpen: false });
 
   const { deleteProduct } = useProducts();
 
@@ -53,11 +58,11 @@ const ProductManagement = () => {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (!searchTerm) {
-        fetchProducts(5);
+        fetchProducts(1);
         return;
       }
       fetchProducts(1, searchTerm);
-    }, 500); // Debounce search for better performance
+    }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
@@ -66,11 +71,6 @@ const ProductManagement = () => {
   const handleCreateProduct = async (formData: FormData) => {
     setError(null);
     try {
-      // Log form data for debugging
-      for (const pair of formData.entries()) {
-        console.log("Form Data:", pair[0], pair[1]);
-      }
-
       const response = await axiosInstance.post("/products/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -81,6 +81,7 @@ const ProductManagement = () => {
         setIsFormOpen(false);
         fetchProducts(page);
       }
+      setSuccess("Product created successfully");
     } catch (err: any) {
       console.error("Error creating product:", err);
       if (err.response?.data?.message) {
@@ -103,8 +104,10 @@ const ProductManagement = () => {
 
       if (response.data) {
         setSelectedProduct(null);
+        setIsFormOpen(false);
         fetchProducts(page);
       }
+      setSuccess("Product updated successfully");
     } catch (err: any) {
       console.error("Error updating product:", err);
       if (err.response?.data?.message) {
@@ -116,14 +119,12 @@ const ProductManagement = () => {
   };
 
   // Delete product handler
-  const handleDeleteProduct = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) {
-      return;
-    }
+  const handleDeleteProduct = async () => {
+    if (!deleteConfirmation.id) return;
 
     setError(null);
     try {
-      await deleteProduct(id);
+      await deleteProduct(deleteConfirmation.id);
       // Recalculate page if necessary
       const newTotal = total - 1;
       const maxPage = Math.ceil(newTotal / pageSize);
@@ -132,20 +133,17 @@ const ProductManagement = () => {
       } else {
         fetchProducts(page);
       }
+      setDeleteConfirmation({ id: null, isOpen: false });
     } catch (err) {
       console.error("Error deleting product:", err);
       setError("Failed to delete product. Please try again.");
+      setDeleteConfirmation({ id: null, isOpen: false });
     }
   };
 
-  // Handle page size change
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
-    if (newPageSize === 48) {
-      setPage(2);
-    } else if (newPageSize === 24) {
-      setPage(3);
-    } else setPage(5);
+    setPage(1);
   };
 
   return (
@@ -157,6 +155,46 @@ const ProductManagement = () => {
         </div>
       )}
 
+      {/* Success Message */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative">
+          {success}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation.isOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-15 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex items-center mb-4">
+              <Trash2 className="text-red-500 mr-2" />
+              <h2 className="text-xl font-bold text-gray-800">
+                Delete Product
+              </h2>
+            </div>
+            <p className="mb-4">
+              Are you sure you want to delete this product?
+            </p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() =>
+                  setDeleteConfirmation({ id: null, isOpen: false })
+                }
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProduct}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Loading State */}
       {isLoading && (
         <div className="text-center py-4">
@@ -165,20 +203,25 @@ const ProductManagement = () => {
       )}
 
       {/* Search and Add New Product */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-center gap-4">
         <ProductSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <motion.button
-          onClick={() => setIsFormOpen(true)}
-          className="mb-6 px-4 py-2 bg-[#1A3F6B] text-white rounded-md flex items-center transition-colors duration-200"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <PlusCircle size={16} className="mr-2" /> Add New Product
-        </motion.button>
+        {!isFormOpen && (
+          <motion.button
+            onClick={() => {
+              setSelectedProduct(null);
+              setIsFormOpen(true);
+            }}
+            className=" px-4 py-2 bg-[#1A3F6B] text-white rounded-md flex items-center transition-colors duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <PlusCircle size={16} className="mr-2" /> Add New Product
+          </motion.button>
+        )}
       </div>
 
       {/* Create Product Form */}
-      {isFormOpen && (
+      {isFormOpen && !selectedProduct && (
         <ProductForm
           onSubmit={handleCreateProduct}
           onCancel={() => setIsFormOpen(false)}
@@ -201,13 +244,16 @@ const ProductManagement = () => {
         products={products}
         onUpdateProduct={(id) => {
           const product = products.find((p) => p.id === id);
-          if (product) setSelectedProduct(product);
+          if (product) {
+            setSelectedProduct(product);
+            setIsFormOpen(false);
+          }
         }}
-        onRemoveProduct={handleDeleteProduct}
+        onRemoveProduct={(id) => setDeleteConfirmation({ id, isOpen: true })}
       />
 
       {/* Pagination and Page Size Controls */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex items-center justify-center gap-4">
         <Pagination
           currentPage={page}
           totalPages={Math.ceil(total / pageSize)}
@@ -217,7 +263,7 @@ const ProductManagement = () => {
         <select
           value={pageSize}
           onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-          className="ml-4 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="rounded h-full border-gray-300 shadow-sm focus:border-[#1A3F6B] focus:ring-[#1A3F6B]"
         >
           <option value={12}>12 per page</option>
           <option value={24}>24 per page</option>
