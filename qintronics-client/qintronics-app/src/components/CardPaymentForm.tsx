@@ -252,7 +252,6 @@ const CardPaymentForm: React.FC = () => {
     clearCart();
     selectedCart(navigate);
     if (orderDetails) {
-      console.log(orderDetails, "orderDetails");
       axiosInstance
         .post("/orders", { ...orderDetails, isPaid: true })
         .then(() => {

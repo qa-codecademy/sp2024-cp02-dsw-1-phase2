@@ -17,7 +17,6 @@ export default function OrderOverview() {
 
   useEffect(() => {
     axiosInstance.get(`/orders/single/${orderId}`).then((res) => {
-      console.log(res.data);
       setOrder(res.data);
     });
   }, []);

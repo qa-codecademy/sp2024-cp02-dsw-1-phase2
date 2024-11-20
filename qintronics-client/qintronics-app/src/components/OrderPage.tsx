@@ -118,8 +118,6 @@ const CheckoutForm: React.FC = () => {
       }
     } else if (method === "card") {
       if (validateCheckoutForm()) {
-        if (orderDetails) setOrderDetails({ ...orderDetails, isPaid: true });
-
         navigate("/payment");
       } else {
         orderFormIncomplete();

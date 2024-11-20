@@ -88,7 +88,13 @@ export class OrdersService {
       const productQuantity =
         productsAndQuantity.find((pq) => pq.productId === product.id)
           ?.quantity || 1;
-      return acc + product.price * productQuantity;
+      if (product.discount > 0) {
+        return Math.round(
+          acc + product.price * (1 - product.discount / 100) * productQuantity,
+        );
+      } else {
+        return acc + product.price * productQuantity;
+      }
     }, 0);
   }
 
@@ -284,7 +290,7 @@ export class OrdersService {
       if (product.discount > 0) {
         productPriceMap.set(
           product.id,
-          product.price * (1 - product.discount / 100),
+          Math.round(product.price * (1 - product.discount / 100)),
         );
       } else {
         productPriceMap.set(product.id, product.price);
@@ -325,8 +331,6 @@ export class OrdersService {
         user: true,
       },
     });
-
-    console.log(completeOrder, 'success');
 
     return plainToInstance(OrderReturnDto, completeOrder, {
       excludeExtraneousValues: true,
