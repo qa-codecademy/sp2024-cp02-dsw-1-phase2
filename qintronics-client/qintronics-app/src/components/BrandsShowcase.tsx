@@ -164,7 +164,7 @@ const BrandsShowcase = () => {
 
                     <div className="flex items-center justify-center pt-4 border-t border-gray-100">
                       <motion.button
-                        className="rounded-full bg-black text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                        className="rounded-full bg-[#1A3F6B] text-white px-6 py-2 text-sm font-medium flex items-center gap-2 hover:bg-[#15406D] transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -179,7 +179,7 @@ const BrandsShowcase = () => {
 
           <div className="flex justify-center gap-4 mt-8">
             <motion.button
-              className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
               disabled={currentPage === 0}
               whileHover={{ scale: 1.05 }}
@@ -188,7 +188,7 @@ const BrandsShowcase = () => {
               Previous
             </motion.button>
             <motion.button
-              className="px-6 py-2 rounded-full bg-black text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 rounded-full bg-[#1A3F6B] text-white hover:bg-white hover:text-[#1A3F6B] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, pageCount - 1))
               }

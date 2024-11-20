@@ -69,9 +69,12 @@ const Newsletter = () => {
                 Stay Ahead of Tech
               </motion.h2>
 
-              <motion.p variants={itemVariants} className="text-xl text-gray-500 max-w-2xl mx-auto">
-                Get exclusive deals, latest product updates, and tech insights delivered straight to
-                your inbox.
+              <motion.p
+                variants={itemVariants}
+                className="text-xl text-gray-500 max-w-2xl mx-auto"
+              >
+                Get exclusive deals, latest product updates, and tech insights
+                delivered straight to your inbox.
               </motion.p>
             </div>
 
@@ -105,7 +108,7 @@ const Newsletter = () => {
                     </div>
                     <motion.button
                       type="submit"
-                      className="bg-black text-white px-8 py-4 rounded-2xl font-medium inline-flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors duration-200"
+                      className="bg-[#1A3F6B] text-white px-8 py-4 rounded-2xl font-medium inline-flex items-center justify-center gap-2 hover:bg-[#15406D] transition-colors duration-200"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -122,7 +125,9 @@ const Newsletter = () => {
                     className="bg-green-50 text-green-800 rounded-2xl p-4 flex items-center justify-center gap-2"
                   >
                     <Check size={20} />
-                    <span>Thank you for subscribing! Check your inbox soon.</span>
+                    <span>
+                      Thank you for subscribing! Check your inbox soon.
+                    </span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -144,8 +149,8 @@ const Newsletter = () => {
                 </div>
 
                 <p className="text-sm text-gray-500">
-                  By subscribing, you agree to our Privacy Policy and consent to receive updates
-                  from our company.
+                  By subscribing, you agree to our Privacy Policy and consent to
+                  receive updates from our company.
                 </p>
               </motion.div>
             </motion.form>
