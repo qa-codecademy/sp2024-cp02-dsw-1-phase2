@@ -66,7 +66,7 @@ const SectionManager: React.FC = () => {
   const [editingName, setEditingName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // New success message state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     sectionId: string;
@@ -268,6 +268,9 @@ const SectionManager: React.FC = () => {
                       whileTap={{ scale: 0.9 }}
                     >
                       <Check size={16} />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Save
+                      </span>
                     </motion.button>
 
                     <motion.button
@@ -280,6 +283,9 @@ const SectionManager: React.FC = () => {
                       whileTap={{ scale: 0.9 }}
                     >
                       <X size={16} />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Cancel
+                      </span>
                     </motion.button>
                   </div>
                 ) : (
@@ -297,6 +303,9 @@ const SectionManager: React.FC = () => {
                         disabled={loading}
                       >
                         <Edit2 size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Edit
+                        </span>
                       </motion.button>
 
                       <motion.button
@@ -313,6 +322,9 @@ const SectionManager: React.FC = () => {
                         whileTap={{ scale: 0.9 }}
                       >
                         <Trash2 size={16} />
+                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Delete
+                        </span>
                       </motion.button>
                     </div>
                   </>

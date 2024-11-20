@@ -3,6 +3,58 @@ import { Check, Edit2, Loader2, PlusCircle, Trash2, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../common/utils/axios-instance.util";
 
+const DeleteConfirmationModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  categoryName,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  categoryName: string;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium text-gray-800">Delete Category</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <p className="text-gray-600 mb-4">
+          Are you sure you want to delete{" "}
+          <span className="font-semibold">{categoryName}</span>? This action
+          cannot be undone.
+        </p>
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              onConfirm();
+              onClose();
+            }}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface Category {
   id: string;
   name: string;
@@ -30,6 +82,11 @@ const CategoryManager: React.FC = () => {
   const [icon, setIcon] = useState<File | null>(null);
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    categoryId: string;
+    categoryName: string;
+  }>({ isOpen: false, categoryId: "", categoryName: "" });
 
   useEffect(() => {
     fetchCategories();
@@ -121,20 +178,14 @@ const CategoryManager: React.FC = () => {
     }
   };
 
-  const handleRemoveCategory = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this category?"))
-      return;
-
+  const handleDeleteCategory = async (categoryId: string) => {
     try {
-      setLoading(true);
-      await axiosInstance.delete(`/categories/${id}`);
-      await fetchCategories(); // Fetch fresh data after deleting
-      setError(null);
+      await axiosInstance.delete(`/categories/${categoryId}`);
+      await fetchCategories();
+      setDeleteModal({ isOpen: false, categoryId: "", categoryName: "" });
     } catch (err) {
-      setError("Failed to delete category");
+      setError("Failed to delete category. Please try again later.");
       console.error("Error deleting category:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -382,7 +433,13 @@ const CategoryManager: React.FC = () => {
                         </motion.button>
 
                         <motion.button
-                          onClick={() => handleRemoveCategory(category.id)}
+                          onClick={() =>
+                            setDeleteModal({
+                              isOpen: true,
+                              categoryId: category.id,
+                              categoryName: category.name,
+                            })
+                          }
                           disabled={loading}
                           className="p-2 text-red-500 hover:text-red-600 disabled:opacity-50 relative group"
                           whileHover={{ scale: 1.1 }}
@@ -402,6 +459,14 @@ const CategoryManager: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
+      <DeleteConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={() =>
+          setDeleteModal({ isOpen: false, categoryId: "", categoryName: "" })
+        }
+        onConfirm={() => handleDeleteCategory(deleteModal.categoryId)}
+        categoryName={deleteModal.categoryName}
+      />
     </div>
   );
 };
