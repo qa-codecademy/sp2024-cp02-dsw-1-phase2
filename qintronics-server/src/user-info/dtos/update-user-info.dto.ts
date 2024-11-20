@@ -144,6 +144,7 @@ export class UpdateUserInfoDto {
   @IsInt()
   @Min(100)
   @Max(9999)
+  @Transform(({ value }) => parseInt(value))
   @ApiPropertyOptional({
     type: Number,
     description: `CVV card number`,

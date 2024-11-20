@@ -8,7 +8,6 @@ import CardsDiv from "./CardsDiv";
 import FeaturedCategories from "./FeaturedCategories";
 import HeroSection from "./HeroSection";
 import Newsletter from "./Newsletter";
-import Sidebar from "./Sidebar";
 import SlideDiv from "./SlideDiv";
 import TrendingProducts from "./TrendingProducts";
 
@@ -27,7 +26,6 @@ const fetchProducts = async (
   }> = {}
 ) => {
   try {
-    console.log(params, "PARAMS");
     const response = await axiosInstance.post("/products", {
       page: 5,
       pageSize: 12,
@@ -92,7 +90,6 @@ const MainComponent = () => {
         setDiscountedProducts(discounted.products);
         setTrendingProducts(trending.products);
         setFlashSaleProducts(flashSale.products);
-        console.log(trending.products, "PRODUCTS TRENDING");
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {

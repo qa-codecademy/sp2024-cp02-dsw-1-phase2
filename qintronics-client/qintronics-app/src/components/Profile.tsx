@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../common/utils/axios-instance.util";
 
+// Interfaces
 interface BasicFormData {
   firstName: string;
   lastName: string;
@@ -18,6 +19,7 @@ interface PaymentFormData {
   cvv: string;
 }
 
+// ProfileBasicInfo Component
 const ProfileBasicInfo: React.FC<{
   formData: BasicFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -129,12 +131,18 @@ const ProfileBasicInfo: React.FC<{
   </div>
 );
 
+// ProfilePaymentInfo Component
 const ProfilePaymentInfo: React.FC<{
   formData: PaymentFormData;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-}> = ({ formData, onChange }) => {
+  errors: {
+    ccNum?: string;
+    cvv?: string;
+    expDate?: string;
+  };
+}> = ({ formData, onChange, errors }) => {
   const months = Array.from({ length: 12 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
   );
@@ -169,8 +177,13 @@ const ProfilePaymentInfo: React.FC<{
           value={formData.ccNum}
           onChange={onChange}
           placeholder="1234 5678 9012 3456"
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+          className={`w-full px-4 py-2 rounded-lg border ${
+            errors.ccNum ? "border-red-500" : "border-gray-200"
+          } focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors`}
         />
+        {errors.ccNum && (
+          <p className="text-red-500 text-xs mt-1">{errors.ccNum}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -207,6 +220,9 @@ const ProfilePaymentInfo: React.FC<{
               ))}
             </select>
           </div>
+          {errors.expDate && (
+            <p className="text-red-500 text-xs mt-1">{errors.expDate}</p>
+          )}
         </div>
 
         <div>
@@ -219,14 +235,20 @@ const ProfilePaymentInfo: React.FC<{
             value={formData.cvv}
             onChange={onChange}
             maxLength={4}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+            className={`w-full px-4 py-2 rounded-lg border ${
+              errors.cvv ? "border-red-500" : "border-gray-200"
+            } focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors`}
           />
+          {errors.cvv && (
+            <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
+// Main Profile Component
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [isLoading, setIsLoading] = useState(false);
@@ -249,6 +271,12 @@ const Profile = () => {
     expDate: "",
     cvv: "",
   });
+
+  const [paymentFormErrors, setPaymentFormErrors] = useState<{
+    ccNum?: string;
+    cvv?: string;
+    expDate?: string;
+  }>({});
 
   useEffect(() => {
     axiosInstance
@@ -292,7 +320,85 @@ const Profile = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setPaymentFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Special handling for expiry date
+    if (name === "expMonth" || name === "expYear") {
+      const currentMonth =
+        name === "expMonth"
+          ? value
+          : paymentFormData.expDate.split("-")[1] || "";
+      const currentYear =
+        name === "expYear"
+          ? value
+          : paymentFormData.expDate.split("-")[0]?.slice(-2) || "";
+
+      const newExpDate =
+        name === "expMonth"
+          ? `${currentYear}-${value}`
+          : `${value}-${currentMonth}`;
+
+      setPaymentFormData((prev) => ({
+        ...prev,
+        expDate: newExpDate,
+      }));
+    } else {
+      setPaymentFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    // Clear any existing error for this field
+    if (["ccNum", "cvv", "expMonth", "expYear"].includes(name)) {
+      setPaymentFormErrors((prev) => ({
+        ...prev,
+        [name === "expMonth" || name === "expYear" ? "expDate" : name]:
+          undefined,
+      }));
+    }
+  };
+
+  const validateCreditCard = () => {
+    const errors: {
+      ccNum?: string;
+      cvv?: string;
+      expDate?: string;
+    } = {};
+
+    // Credit Card Number Validation
+    const cleanNumber = paymentFormData.ccNum.replace(/\D/g, "");
+    const validPrefixes = ["34", "37", "4", "5", "6"];
+
+    if (!cleanNumber) {
+      errors.ccNum = "Card number is required";
+    } else if (
+      !validPrefixes.some((prefix) => cleanNumber.startsWith(prefix))
+    ) {
+      errors.ccNum = "Invalid card number prefix";
+    } else if (![15, 16].includes(cleanNumber.length)) {
+      errors.ccNum = "Card number must be 15 or 16 digits";
+    }
+
+    // CVV Validation
+    const cleanCVV = paymentFormData.cvv.replace(/\D/g, "");
+    if (!cleanCVV) {
+      errors.cvv = "CVV is required";
+    } else if (parseInt(cleanCVV) < 100 || parseInt(cleanCVV) > 9999) {
+      errors.cvv = "CVV must be between 100 and 9999";
+    }
+
+    // Expiry Date Validation
+    const [year, month] = paymentFormData.expDate.split("-");
+    if (!year || !month) {
+      errors.expDate = "Expiry date is required";
+    } else {
+      const currentDate = new Date();
+      const expDate = new Date(parseInt(`20${year}`), parseInt(month) - 1);
+
+      if (expDate < currentDate) {
+        errors.expDate = "Card has expired";
+      }
+    }
+
+    setPaymentFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -302,8 +408,25 @@ const Profile = () => {
     setSuccessMessage(null);
 
     try {
-      const formData = activeTab === "basic" ? basicFormData : paymentFormData;
-      if (basicFormData) {
+      if (activeTab === "payment") {
+        // Validate payment form before submission
+        const isValid = validateCreditCard();
+        if (!isValid) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Prepare the payload with expiry date formatted as YYYY-MM
+        const formattedPaymentData = {
+          ...paymentFormData,
+          expDate: `20${paymentFormData.expDate.split("-")[0]}-${
+            paymentFormData.expDate.split("-")[1]
+          }-01 00:00:00`,
+        };
+        console.log(formattedPaymentData);
+        await axiosInstance.patch("/user-info/update", formattedPaymentData);
+      } else {
+        // Existing logic for basic info
         const cleanedData = Object.entries(basicFormData).reduce(
           (acc, [key, value]) => {
             if (value !== "") {
@@ -319,21 +442,9 @@ const Profile = () => {
             10
           );
         }
-        console.log(cleanedData);
         await axiosInstance.patch("/user-info/update", cleanedData);
-      } else {
-        if (paymentFormData.cvv) {
-          (paymentFormData.cvv = paymentFormData.cvv), 10;
-        }
-        if (paymentFormData.ccNum) {
-          paymentFormData.ccNum = paymentFormData.ccNum.replace(/\s+/g, "");
-        }
-        if (paymentFormData.expDate) {
-          paymentFormData.expDate = `${paymentFormData.expDate}-01 00:00:00`;
-        }
-
-        await axiosInstance.patch("/user-info/update", paymentFormData);
       }
+
       setSuccessMessage(
         `${
           activeTab === "basic" ? "Basic" : "Payment"
@@ -374,7 +485,7 @@ const Profile = () => {
                 onClick={() => setActiveTab("basic")}
                 className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
                   activeTab === "basic"
-                    ? "bg-white text-blue-600 border-b-2 border-blue-600"
+                    ? "bg-white text-[#1A3F6B] border-b-2 border-[#1A3F6B]"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -384,41 +495,43 @@ const Profile = () => {
                 onClick={() => setActiveTab("payment")}
                 className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
                   activeTab === "payment"
-                    ? "bg-white text-blue-600 border-b-2 border-blue-600"
+                    ? "bg-white text-[#1A3F6B] border-b-2 border-[#1A3F6B]"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 Payment Details
               </button>
             </div>
+            <div className="flex justify-center">
+              <form onSubmit={handleSubmit}>
+                {activeTab === "basic" ? (
+                  <ProfileBasicInfo
+                    formData={basicFormData}
+                    onChange={handleBasicChange}
+                  />
+                ) : (
+                  <ProfilePaymentInfo
+                    formData={paymentFormData}
+                    onChange={handlePaymentChange}
+                    errors={paymentFormErrors}
+                  />
+                )}
 
-            <form onSubmit={handleSubmit}>
-              {activeTab === "basic" ? (
-                <ProfileBasicInfo
-                  formData={basicFormData}
-                  onChange={handleBasicChange}
-                />
-              ) : (
-                <ProfilePaymentInfo
-                  formData={paymentFormData}
-                  onChange={handlePaymentChange}
-                />
-              )}
-
-              <div className="mt-6">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className={`w-full py-3 px-4 rounded-lg transition-colors ${
-                    isLoading
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
-                  } text-white font-medium`}
-                >
-                  {isLoading ? "Updating..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
+                <div className="mt-6">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`w-full py-3 px-4 rounded-lg transition-colors ${
+                      isLoading
+                        ? "bg-blue-400 cursor-not-allowed"
+                        : "bg-[#1A3F6B] hover:bg-[#1A3F6B]/95 active:bg-[#1A3F6B]85"
+                    } text-white font-medium`}
+                  >
+                    {isLoading ? "Updating..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
