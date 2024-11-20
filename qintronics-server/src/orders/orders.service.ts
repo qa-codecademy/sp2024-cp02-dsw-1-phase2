@@ -281,7 +281,14 @@ export class OrdersService {
 
     const productPriceMap = new Map<string, number>();
     products.forEach((product) => {
-      productPriceMap.set(product.id, product.price);
+      if (product.discount > 0) {
+        productPriceMap.set(
+          product.id,
+          product.price * (1 - product.discount / 100),
+        );
+      } else {
+        productPriceMap.set(product.id, product.price);
+      }
     });
 
     const total = this.updateTotal(products, body.productsAndQuantity);
@@ -318,6 +325,8 @@ export class OrdersService {
         user: true,
       },
     });
+
+    console.log(completeOrder, 'success');
 
     return plainToInstance(OrderReturnDto, completeOrder, {
       excludeExtraneousValues: true,
@@ -357,7 +366,7 @@ export class OrdersService {
     });
     const wholeUser = await this.findUserById(user?.userId);
     await this.emailService.sendOrderCancelationEmail(
-      wholeUser.email,
+      orderToBeCanceled.email,
       wholeUser.userInfo?.firstName,
       updatedOrder,
     );

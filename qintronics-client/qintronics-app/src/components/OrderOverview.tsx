@@ -12,29 +12,15 @@ import {
 } from "lucide-react";
 
 export default function OrderOverview() {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [order, setOrder] = useState<Order>();
   const orderId = useParams().orderId;
 
-  const payload = {
-    paginationQueries: {
-      page: 1,
-      perPage: 10,
-    },
-    queryParams: {
-      userMail: order?.email,
-    },
-  };
-
   useEffect(() => {
-    axiosInstance.post(`/orders/get`, payload).then((res) => {
-      setOrders(res.data.data);
+    axiosInstance.get(`/orders/single/${orderId}`).then((res) => {
+      console.log(res.data);
+      setOrder(res.data);
     });
   }, []);
-
-  useEffect(() => {
-    setOrder(orders.find((order: Order) => order.id === orderId));
-  }, [orders]);
 
   // Calculate grand total
   const grandTotal = order?.orderProduct.reduce(

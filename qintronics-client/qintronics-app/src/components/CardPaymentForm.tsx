@@ -251,6 +251,18 @@ const CardPaymentForm: React.FC = () => {
   const handleUseSelectedCard = () => {
     clearCart();
     selectedCart(navigate);
+    if (orderDetails) {
+      console.log(orderDetails, "orderDetails");
+      axiosInstance
+        .post("/orders", { ...orderDetails, isPaid: true })
+        .then(() => {
+          clearCart();
+          setTimeout(() => {
+            paymentSuccessful(navigate);
+          }, 1000);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (

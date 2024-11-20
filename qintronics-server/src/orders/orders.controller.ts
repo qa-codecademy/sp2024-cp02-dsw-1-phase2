@@ -86,7 +86,7 @@ export class OrdersController {
   }
 
   //* GET ORDER BY ID
-  @Roles(Role.Admin, Role.DeliveryPerson)
+  @Roles(Role.Admin, Role.DeliveryPerson, Role.Customer)
   @Get('/single/:orderId')
   @ApiOperation({ summary: 'Retrieve order by ID' })
   @ApiParam({
