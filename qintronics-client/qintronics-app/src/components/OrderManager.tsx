@@ -5,13 +5,7 @@ import { AuthContext } from "../context/auth.context";
 import { useNavigate } from "react-router-dom";
 
 // Import icons from lucide-react
-import {
-  ShoppingCart,
-  DollarSign,
-  MapPin,
-  CalendarPlus2,
-  CalendarClock,
-} from "lucide-react";
+import { ShoppingCart, DollarSign, MapPin, CalendarPlus2, CalendarClock } from "lucide-react";
 
 interface Product {
   id: string;
@@ -45,12 +39,16 @@ export interface Order {
 const OrderManager: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPrevPage, setHasPrevPage] = useState(false);
+  const [page, setPage] = useState(1);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
-  }, [user]);
+    setLoading(false);
+  }, [user, page]);
 
   const fetchOrders = async () => {
     if (user?.role === "Customer") {
@@ -62,8 +60,8 @@ const OrderManager: React.FC = () => {
 
     const payload = {
       paginationQueries: {
-        page: 1,
-        perPage: 10,
+        page: page,
+        perPage: 5,
       },
       queryParams: {},
     };
@@ -71,6 +69,8 @@ const OrderManager: React.FC = () => {
     if (user?.role === "Delivery_Person" || user?.role === "Admin") {
       await axiosInstance.post(`/orders/get`, { ...payload }).then((res) => {
         setOrders(res.data.data);
+        setHasNextPage(res.data.meta.hasNextPage);
+        setHasPrevPage(res.data.meta.hasPreviousPage);
         setLoading(false);
       });
     }
@@ -86,9 +86,7 @@ const OrderManager: React.FC = () => {
     }
 
     if (status === "Canceled") {
-      await axiosInstance
-        .put(`/orders/cancel/${orderId}`)
-        .then((res) => console.log(res));
+      await axiosInstance.put(`/orders/cancel/${orderId}`).then((res) => console.log(res));
     }
 
     if (status === "Delivered") {
@@ -103,22 +101,13 @@ const OrderManager: React.FC = () => {
   };
 
   const getOrderStatus = (order: Order) => {
-    if (
-      !order.isDelivered &&
-      !order.isTaken &&
-      !order.isCanceled &&
-      !order.isPaid
-    )
+    if (!order.isDelivered && !order.isTaken && !order.isCanceled && !order.isPaid)
       return <p className="font-semibold text-gray-500">Unpaid</p>;
 
-    if (order.isDelivered)
-      return <p className="font-semibold text-green-500">Delivered</p>;
-    if (order.isTaken)
-      return <p className="font-semibold text-yellow-500">Delivering...</p>;
-    if (order.isCanceled)
-      return <p className="font-semibold text-red-500">Cancelled</p>;
-    if (order.isPaid)
-      return <p className="font-semibold text-green-500">Paid</p>;
+    if (order.isDelivered) return <p className="font-semibold text-green-500">Delivered</p>;
+    if (order.isTaken) return <p className="font-semibold text-yellow-500">Delivering...</p>;
+    if (order.isCanceled) return <p className="font-semibold text-red-500">Cancelled</p>;
+    if (order.isPaid) return <p className="font-semibold text-green-500">Paid</p>;
   };
 
   if (loading) {
@@ -150,13 +139,11 @@ const OrderManager: React.FC = () => {
     >
       <div className="max-w-7xl w-full space-y-6">
         {/* Header */}
-        <h2 className="text-4xl font-semibold text-[#1A3F6B] text-center mb-8">
-          Order Management
-        </h2>
+        <h2 className="text-4xl font-semibold text-[#1A3F6B] text-center mb-8">Order Management</h2>
 
         {/* Orders */}
         <div className="space-y-6">
-          {orders.map((order, index) => (
+          {orders.map((order) => (
             <motion.div
               key={order.id}
               className="relative flex flex-col p-6 border border-gray-200 bg-white rounded-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -168,7 +155,7 @@ const OrderManager: React.FC = () => {
               {/* Order Header */}
               <div className="flex justify-between items-center mb-4">
                 <p className="italic text-lg font-medium text-gray-700">
-                  Order #{index + 1}
+                  Order #{Math.floor(Math.random() * 9999) + 1}
                 </p>
                 {getOrderStatus(order)}
               </div>
@@ -178,19 +165,13 @@ const OrderManager: React.FC = () => {
               <div className="space-y-4">
                 <p className="flex items-center gap-3">
                   <ShoppingCart className="w-6 h-6 text-gray-600" />
-                  <span className="font-semibold text-gray-800">
-                    Products:{" "}
-                  </span>
-                  <span className="text-gray-700">
-                    {order.orderProduct.length}
-                  </span>
+                  <span className="font-semibold text-gray-800">Products: </span>
+                  <span className="text-gray-700">{order.orderProduct.length}</span>
                 </p>
                 <p className="flex items-center gap-3">
                   <DollarSign className="w-6 h-6 text-gray-600" />
                   <span className="font-semibold text-gray-800">Total: </span>
-                  <span className="text-gray-700">
-                    ${order.total.toLocaleString()}
-                  </span>
+                  <span className="text-gray-700">${order.total.toLocaleString()}</span>
                 </p>
                 <p className="flex items-center gap-3">
                   <MapPin className="w-6 h-6 text-gray-600" />
@@ -201,21 +182,13 @@ const OrderManager: React.FC = () => {
                 </p>
                 <p className="flex items-center gap-3">
                   <CalendarPlus2 className="w-6 h-6 text-gray-600" />
-                  <span className="font-semibold text-gray-800">
-                    Created at:{" "}
-                  </span>
-                  <span className="text-gray-700">
-                    {getCreatedAtDate(order?.createdAt)}
-                  </span>
+                  <span className="font-semibold text-gray-800">Created at: </span>
+                  <span className="text-gray-700">{getCreatedAtDate(order?.createdAt)}</span>
                 </p>
                 <p className="flex items-center gap-3">
                   <CalendarClock className="w-6 h-6 text-gray-600" />
-                  <span className="font-semibold text-gray-800">
-                    Preferred Delivery Date:{" "}
-                  </span>
-                  <span className="text-gray-700">
-                    {order.prefDeliveryDate}
-                  </span>
+                  <span className="font-semibold text-gray-800">Preferred Delivery Date: </span>
+                  <span className="text-gray-700">{order.prefDeliveryDate}</span>
                 </p>
               </div>
 
@@ -268,6 +241,29 @@ const OrderManager: React.FC = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+        <div className="flex justify-between items-center">
+          <button
+            disabled={!hasPrevPage}
+            onClick={() => {
+              setPage((prevPage) => prevPage - 1);
+              window.scroll(0, 0);
+            }}
+            className="w-28 bg-[#1A3F6B] hover:bg-[#123456] text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-300 disabled:bg-gray-200"
+          >
+            Previous
+          </button>
+
+          <button
+            disabled={!hasNextPage}
+            onClick={() => {
+              setPage((prevPage) => prevPage + 1);
+              window.scroll(0, 0);
+            }}
+            className="w-28 bg-[#1A3F6B] hover:bg-[#123456] text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-300 disabled:bg-gray-200"
+          >
+            Next
+          </button>
         </div>
       </div>
     </motion.div>
