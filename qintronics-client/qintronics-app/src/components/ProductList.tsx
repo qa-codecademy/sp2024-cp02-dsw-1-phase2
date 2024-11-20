@@ -186,7 +186,7 @@ const ProductList = ({
                       className={`relative w-full h-auto max-w-[180px] sm:max-w-[220px] lg:max-w-[240px] bg-white rounded-lg text-center cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] flex flex-col group`}
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      style={{ animationDelay: `${index * 0.1}s`, height: "430px" }}
                     >
                       {/* Discount Badge */}
                       {product.discount > 0 && (
@@ -255,6 +255,7 @@ const ProductList = ({
                           className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-2 rounded-lg shadow-md transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase text-xs sm:text-sm lg:text-base w-auto"
                           aria-label="Add to Cart"
                           onClick={(event) => handleAddToCart(event, product)}
+                      
                         >
                           <FaShoppingCart className="mr-1" />
                           Add to Cart
