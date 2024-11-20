@@ -1,4 +1,3 @@
-// auth.context.ts
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { User } from "../common/interfaces/user.interface";
 import axiosInstance from "../common/utils/axios-instance.util";
@@ -56,40 +55,39 @@ export default function AuthContextProvider({
     );
 
     const responseInterceptorId = axiosInstance.interceptors.response.use(
-      (response) => {
-        return response;
-      },
+      (response) => response,
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response) {
-          if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+        if (
+          error.response &&
+          error.response.status === 401 &&
+          !originalRequest._retry &&
+          originalRequest.url !== "/auth/refresh-tokens"
+        ) {
+          originalRequest._retry = true;
 
-            try {
-              const receivedUser = await axiosInstance.post(
-                "/auth/refresh-tokens"
-              );
+          try {
+            const receivedUser = await axiosInstance.post(
+              "/auth/refresh-tokens"
+            );
+            setUser(receivedUser.data);
 
-              setUser(receivedUser.data);
+            return axiosInstance(originalRequest);
+          } catch (refreshError: any) {
+            setUser(null);
 
-              return axiosInstance(originalRequest);
-            } catch (error: any) {
-              setUser(null);
-
-              // Redirect to login?
-
-              if (error.response && error.response.data) {
-                return Promise.reject(error.response.data);
-              }
-
-              return Promise.reject(error);
+            if (refreshError.response && refreshError.response.data) {
+              return Promise.reject(refreshError.response.data);
             }
-          }
-          if (error.response.status === 403 && error.response.data) {
-            return Promise.reject(error.response.data);
+            return Promise.reject(refreshError);
           }
         }
+
+        if (error.response && error.response.status === 403) {
+          return Promise.reject(error.response.data);
+        }
+
         return Promise.reject(error);
       }
     );
