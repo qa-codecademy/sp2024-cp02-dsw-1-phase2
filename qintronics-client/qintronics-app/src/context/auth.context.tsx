@@ -42,8 +42,6 @@ export default function AuthContextProvider({
       .finally(() => setIsLoading(false));
   }, []);
 
-  useEffect(() => console.log("isLoading ", isLoading), [isLoading]);
-
   useEffect(() => {
     const requestInterceptorId = axiosInstance.interceptors.request.use(
       (config) => {

@@ -56,10 +56,11 @@ const CartPage: React.FC = () => {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cartItems.reduce((total, item) => {
+      const discountedPrice =
+        item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price;
+      return total + discountedPrice * item.quantity;
+    }, 0);
   };
 
   const handleCheckout = () => {
@@ -156,7 +157,9 @@ const CartPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-4 text-center font-semibold text-gray-900 px-4">
-                    ${item.discount > 0 ? (item.price * (1 - item.discount)).toFixed(2) : item.price.toFixed(2)}
+                    {item.discount > 0
+                      ? (item.price * (1 - item.discount / 100)).toFixed(2)
+                      : item.price.toFixed(2)}
                   </td>
                   <td className="py-4 text-center px-4">
                     <div className="flex items-center justify-center space-x-2">
@@ -181,7 +184,7 @@ const CartPage: React.FC = () => {
                         }}
                       />
 
-                   <style>{`
+                      <style>{`
                     input[type="number"]::-webkit-outer-spin-button,
                     input[type="number"]::-webkit-inner-spin-button {
                       -webkit-appearance: none;
@@ -191,7 +194,7 @@ const CartPage: React.FC = () => {
                       -moz-appearance: textfield;
                     }
                   `}</style>
-                      
+
                       <button
                         className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
                         style={{ width: "40px", height: "40px" }}
@@ -202,7 +205,14 @@ const CartPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-4 text-center font-semibold text-gray-900 px-4">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    $
+                    {item.discount > 0
+                      ? (
+                          item.price *
+                          (1 - item.discount / 100) *
+                          item.quantity
+                        ).toFixed(2)
+                      : (item.price * item.quantity).toFixed(2)}
                   </td>
                 </tr>
               ))}

@@ -257,7 +257,13 @@ const Header = ({ onLoginClick }: HeaderProps) => {
                             {product.brand}
                           </p>
                           <p className="text-sm font-medium mt-1">
-                            ${product.price}
+                            $
+                            {product.discount > 0
+                              ? (
+                                  product.price *
+                                  (1 - product.discount / 100)
+                                ).toFixed(2)
+                              : product.price.toFixed(2)}
                           </p>
                         </div>
                         {/* <div className="ml-auto">

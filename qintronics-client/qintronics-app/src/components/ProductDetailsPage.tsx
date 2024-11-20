@@ -341,6 +341,7 @@ const ProductDetailsPage = () => {
                       price: product.price,
                       quantity: Number(quantity),
                       image: product.img,
+                      discount: product.discount,
                     };
                     addToCart(cartItem); // Add product to cart
                   }}
