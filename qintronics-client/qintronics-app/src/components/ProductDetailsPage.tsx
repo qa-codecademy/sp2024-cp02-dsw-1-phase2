@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Heart } from "lucide-react"; // Importing lucide-react icons
+import { Heart } from "lucide-react"; // Importing lucide-react icons
 import { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus, FaSearchPlus, FaShoppingCart } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";

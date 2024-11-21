@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
