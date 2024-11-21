@@ -33,7 +33,6 @@ const Newsletter = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Subscribed with email:", email);
     axiosInstance.post("/contact/newsletter", { email });
     setIsSubmitted(true);
     setTimeout(() => {

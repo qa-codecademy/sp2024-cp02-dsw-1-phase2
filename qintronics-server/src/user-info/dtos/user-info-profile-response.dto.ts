@@ -72,4 +72,11 @@ export class UserInfoProfileResponseDto extends NoSensitiveUserInfoResponseDto {
     example: '2024-05-01 00:00:00',
   })
   expDate: Date;
+
+  @Expose()
+  @ApiResponseProperty({
+    type: String,
+    example: 'John Doe',
+  })
+  ccFullName: string;
 }

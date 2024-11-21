@@ -294,8 +294,6 @@ const Profile = () => {
           },
         } = res.data;
 
-        console.log(res.data, "SUCCESS");
-
         setBasicFormData({
           firstName: firstName || "",
           lastName: lastName || "",
@@ -423,7 +421,6 @@ const Profile = () => {
             paymentFormData.expDate.split("-")[1]
           }-01 00:00:00`,
         };
-        console.log(formattedPaymentData);
         await axiosInstance.patch("/user-info/update", formattedPaymentData);
       } else {
         // Existing logic for basic info

@@ -299,8 +299,7 @@ const CardPaymentForm: React.FC = () => {
                     {savedCard?.ccNum
                       ? `************${savedCard.ccNum.slice(-4)}`
                       : "xxxx xxxx xxxx xxxx"}{" "}
-                    — {savedCard?.firstName || "Customer"}{" "}
-                    {savedCard?.lastName || "Name"}
+                    — {savedCard?.ccFullName || "Customer"}
                   </span>
                   {savedCard.expDate ? (
                     !isNaN(Date.parse(savedCard.expDate)) ? (

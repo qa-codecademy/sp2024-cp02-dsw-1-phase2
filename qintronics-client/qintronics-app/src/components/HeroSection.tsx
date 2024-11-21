@@ -1,27 +1,25 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+  ArrowRight,
+  Award,
+  Clock,
+  Eye,
+  Heart,
+  Package,
+  Percent,
+  Shield,
+  ShoppingCart,
   Sparkles,
   Star,
-  ArrowRight,
-  ShoppingCart,
   TrendingUp,
-  Clock,
-  Package,
-  Shield,
-  Heart,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  Percent,
-  Award,
 } from "lucide-react";
-import { BaseProduct, Product } from "../common/types/products-interface";
-import fetchProducts from "../common/utils/fetchProducts";
-import { Link, useNavigate } from "react-router-dom";
-import FlashSale from "./FlashSale";
-import addToCart from "../common/utils/addToCart";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BaseProduct, Product } from "../common/types/products-interface";
+import addToCart from "../common/utils/addToCart";
+import fetchProducts from "../common/utils/fetchProducts";
+import FlashSale from "./FlashSale";
 
 const handleAddToCart = (
   event: React.MouseEvent<HTMLButtonElement>,
@@ -35,6 +33,7 @@ const handleAddToCart = (
     price: product.price,
     quantity: 1,
     image: product.img,
+    discount: product.discount,
   };
   addToCart(cartItem);
 };
@@ -86,13 +85,13 @@ const ProductCard = ({
         )}
       </div>
       <div className="absolute top-3 right-3 flex flex-col gap-2">
-        <motion.button
+        {/* <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="p-2 bg-white/90 hover:bg-white shadow-lg backdrop-blur-sm rounded-full text-gray-700 hover:text-red-500 transition-colors"
         >
           <Heart size={16} />
-        </motion.button>
+        </motion.button> */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -138,11 +137,11 @@ const ProductCard = ({
         <div className="flex flex-col items-end">
           {product.discount && (
             <span className="text-sm text-gray-500 line-through">
-              ${(product.price * (1 + product.discount / 100)).toFixed(2)}
+              ${product.price}
             </span>
           )}
           <span className="text-xl font-bold text-gray-900">
-            ${product.price}
+            ${(product.price * (1 - product.discount / 100)).toFixed(2)}
           </span>
         </div>
       </div>

@@ -128,8 +128,6 @@ export class ProductsController {
     body.img = imageURL;
     body.specifications = JSON.parse(body.specifications);
 
-    console.log(body);
-
     return this.productsService.createProduct(body);
   }
 
@@ -185,8 +183,6 @@ export class ProductsController {
     }
 
     body.specifications = JSON.parse(body.specifications);
-
-    console.log(body);
 
     return this.productsService.updateProduct(id, body);
   }

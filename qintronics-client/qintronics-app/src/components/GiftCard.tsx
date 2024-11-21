@@ -148,7 +148,6 @@ const GiftCard = () => {
     }
 
     if (!selectedAmount) {
-      console.log("Please select a gift card amount.");
       return;
     }
     const cartItem: CartItem = {
@@ -158,6 +157,7 @@ const GiftCard = () => {
       price: product.price,
       quantity: 1,
       image: product.img,
+      discount: 0,
     };
     addToCart(cartItem);
 

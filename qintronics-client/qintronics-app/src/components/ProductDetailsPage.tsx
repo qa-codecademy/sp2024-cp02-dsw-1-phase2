@@ -232,12 +232,12 @@ const ProductDetailsPage = () => {
                     <Heart size={24} className="transition-all" />
                   </button>
                 )}
-                <button
+                {/* <button
                   className="flex items-center justify-center w-12 h-12 text-[#1A3F6B] border border-[#1A3F6B] rounded-full hover:bg-[#1A3F6B] hover:text-white transition-all"
                   title="Compare Products" // Tooltip for comparing products
                 >
                   <ArrowRightLeft size={24} className="transition-all" />
-                </button>
+                </button> */}
               </div>
 
               {/* Product Price and Discount */}

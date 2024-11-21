@@ -89,6 +89,7 @@ const TrendingProducts = () => {
       price: product.price,
       quantity: 1,
       image: product.img,
+      discount: product.discount,
     };
     addToCart(cartItem);
   };
