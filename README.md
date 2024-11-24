@@ -125,8 +125,8 @@ Qintronics is a comprehensive full-stack e-commerce application built to provide
 
 - **PostgreSQL:**
 
-- Includes tables for users, products, orders, categories, sections, and more.
-- Complex relations between tables to support all the functionalities of the application.
+  - Includes tables for users, products, orders, categories, sections, and more.
+  - Complex relations between tables to support all the functionalities of the application.
 
 # 📧 Email Notifications
 
